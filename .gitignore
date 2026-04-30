@@ -27,4 +27,5 @@ node_modules/
 Thumbs.db
 
 # Claude
-/docs/superpowers/
+/.ai/superpowers/
+.claude/
