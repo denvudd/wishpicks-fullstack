@@ -1,0 +1,14 @@
+{
+  "app": {
+    "name": "Wishpicks"
+  },
+  "landing": {
+    "title": "Gift exactly what they want",
+    "tagline": "Create wishlists, share with friends, and get the gifts you actually dream of.",
+    "login": "Sign in",
+    "register": "Get started"
+  },
+  "nav": {
+    "language": "Language"
+  }
+}
