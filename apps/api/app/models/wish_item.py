@@ -1,7 +1,16 @@
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import UUID, Boolean, ForeignKey, Integer, Numeric, SmallInteger, String, Text
+from sqlalchemy import (
+    UUID,
+    Boolean,
+    ForeignKey,
+    Integer,
+    Numeric,
+    SmallInteger,
+    String,
+    Text,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDMixin

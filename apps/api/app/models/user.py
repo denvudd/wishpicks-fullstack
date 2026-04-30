@@ -12,7 +12,9 @@ class User(Base, UUIDMixin, TimestampMixin):
     display_name: Mapped[str | None] = mapped_column(String, nullable=True)
     avatar_url: Mapped[str | None] = mapped_column(String, nullable=True)
     password_hash: Mapped[str | None] = mapped_column(String, nullable=True)
-    google_id: Mapped[str | None] = mapped_column(String, unique=True, nullable=True, index=True)
+    google_id: Mapped[str | None] = mapped_column(
+        String, unique=True, nullable=True, index=True
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     wishlists: Mapped[list["Wishlist"]] = relationship(
