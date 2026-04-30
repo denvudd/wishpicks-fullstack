@@ -8,7 +8,7 @@
 - [ ] UI / Styling
 - [ ] Chore / Config
 - [ ] CI
-- [ ] Perfomance
+- [ ] Performance
 - [ ] Revert
 - [ ] Testing
 
