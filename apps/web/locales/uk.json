@@ -10,5 +10,49 @@
   },
   "nav": {
     "language": "Мова"
+  },
+  "auth": {
+    "login": {
+      "title": "Увійти до Wishpicks",
+      "subtitle": "З поверненням",
+      "email": "Електронна пошта",
+      "email_placeholder": "ви@example.com",
+      "password": "Пароль",
+      "password_placeholder": "••••••••",
+      "submit": "Увійти",
+      "submitting": "Вхід…",
+      "no_account": "Немає акаунту?",
+      "register_link": "Створити",
+      "or": "або",
+      "google": "Продовжити з Google"
+    },
+    "register": {
+      "title": "Створити акаунт",
+      "subtitle": "Почни складати вішлісти",
+      "display_name": "Імʼя",
+      "display_name_placeholder": "Як до тебе звертатись?",
+      "email": "Електронна пошта",
+      "email_placeholder": "ви@example.com",
+      "password": "Пароль",
+      "password_placeholder": "Не менше 8 символів",
+      "submit": "Створити акаунт",
+      "submitting": "Створення акаунту…",
+      "have_account": "Вже є акаунт?",
+      "login_link": "Увійти",
+      "or": "або",
+      "google": "Продовжити з Google"
+    },
+    "callback": {
+      "processing": "Виконується вхід…"
+    },
+    "errors": {
+      "INVALID_CREDENTIALS": "Неправильна пошта або пароль.",
+      "EMAIL_ALREADY_EXISTS": "Акаунт з такою поштою вже існує.",
+      "NOT_AUTHENTICATED": "Сесія закінчилась. Увійдіть знову.",
+      "SESSION_REVOKED": "Вашу сесію було скасовано. Увійдіть знову.",
+      "unknown": "Щось пішло не так. Спробуй ще раз.",
+      "network": "Не вдалося зʼєднатися з сервером. Перевір підключення."
+    },
+    "logout": "Вийти"
   }
 }

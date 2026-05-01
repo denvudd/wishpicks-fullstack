@@ -10,5 +10,49 @@
   },
   "nav": {
     "language": "Language"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to Wishpicks",
+      "subtitle": "Welcome back",
+      "email": "Email",
+      "email_placeholder": "you@example.com",
+      "password": "Password",
+      "password_placeholder": "••••••••",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "no_account": "Don't have an account?",
+      "register_link": "Create one",
+      "or": "or",
+      "google": "Continue with Google"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Start building your wishlists",
+      "display_name": "Display name",
+      "display_name_placeholder": "How should we call you?",
+      "email": "Email",
+      "email_placeholder": "you@example.com",
+      "password": "Password",
+      "password_placeholder": "At least 8 characters",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "have_account": "Already have an account?",
+      "login_link": "Sign in",
+      "or": "or",
+      "google": "Continue with Google"
+    },
+    "callback": {
+      "processing": "Signing you in…"
+    },
+    "errors": {
+      "INVALID_CREDENTIALS": "Incorrect email or password.",
+      "EMAIL_ALREADY_EXISTS": "An account with this email already exists.",
+      "NOT_AUTHENTICATED": "Session expired. Please sign in again.",
+      "SESSION_REVOKED": "Your session was revoked. Please sign in again.",
+      "unknown": "Something went wrong. Please try again.",
+      "network": "Could not reach the server. Check your connection."
+    },
+    "logout": "Sign out"
   }
 }

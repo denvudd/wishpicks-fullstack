@@ -9,6 +9,13 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
   ],
 
+  css: ['~/assets/css/main.css'],
+
+  ui: {
+    // @ts-expect-error Nuxt UI types are not updated yet
+    prose: true
+  },
+
   i18n: {
     defaultLocale: 'uk',
     locales: [
@@ -36,6 +43,6 @@ export default defineNuxtConfig({
         host: 'localhost',
         protocol: 'ws',
       },
-    },
+  },
   },
 })
