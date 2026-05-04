@@ -61,7 +61,7 @@ wishpicks/
 | Migrations | Alembic | Version-controlled schema changes |
 | Validation | Pydantic v2 | Request/response schemas, settings management |
 | Auth | Custom JWT (`python-jose`) | Zero cost, full control, no vendor lock-in |
-| Password hashing | bcrypt via `passlib` | Industry standard, cost factor 12 |
+| Password hashing | `bcrypt` (direct) | passlib incompatible with bcrypt >= 4.0; use bcrypt library directly |
 | URL scraping | `httpx` + `BeautifulSoup4` | Async HTTP + HTML parsing for product import |
 | Rate limiting | slowapi + Redis (Upstash) | Persistent rate limit counters across restarts and multiple workers |
 | Cache | Redis (Upstash) | URL parser cache, session blocklist; free serverless tier via HTTP |
