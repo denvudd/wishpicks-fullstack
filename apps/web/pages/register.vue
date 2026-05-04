@@ -1,14 +1,25 @@
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center px-4 py-16">
+  <div class="min-h-screen flex flex-col items-center justify-center bg-brand-white dark:bg-brand-black px-4 py-16 font-body">
     <div class="w-full max-w-sm space-y-6">
       <div class="text-center space-y-1">
-        <NuxtLink :to="localePath('/')" class="text-2xl font-bold tracking-tight">
+        <NuxtLink
+          :to="localePath('/')"
+          class="text-2xl font-bold font-heading text-black dark:text-white tracking-tight"
+        >
           {{ $t('app.name') }}
         </NuxtLink>
-        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('auth.register.subtitle') }}</p>
+        <p class="text-sm text-body-gray dark:text-muted-gray">
+          {{ $t('auth.register.subtitle') }}
+        </p>
       </div>
 
       <UCard>
+        <template #header>
+          <h1 class="text-base font-semibold text-black dark:text-white">
+            {{ $t('auth.register.title') }}
+          </h1>
+        </template>
+
         <div class="space-y-4">
           <UAlert
             v-if="errorKey"
@@ -17,14 +28,14 @@
             :description="$t(errorKey)"
           />
 
-          <form class="space-y-4" @submit.prevent="handleSubmit">
+          <UForm :state="form" class="space-y-4" @submit="handleSubmit">
             <UFormField :label="$t('auth.register.display_name')" name="display_name">
               <UInput
                 v-model="form.display_name"
                 type="text"
+                class="w-full"
                 :placeholder="$t('auth.register.display_name_placeholder')"
                 autocomplete="name"
-                class="w-full"
               />
             </UFormField>
 
@@ -32,10 +43,10 @@
               <UInput
                 v-model="form.email"
                 type="email"
+                class="w-full"
                 :placeholder="$t('auth.register.email_placeholder')"
                 autocomplete="email"
                 required
-                class="w-full"
               />
             </UFormField>
 
@@ -43,45 +54,47 @@
               <UInput
                 v-model="form.password"
                 type="password"
+                class="w-full"
                 :placeholder="$t('auth.register.password_placeholder')"
                 autocomplete="new-password"
                 required
-                class="w-full"
               />
             </UFormField>
 
-            <UButton type="submit" class="w-full" :loading="isLoading">
-              {{ isLoading ? $t('auth.register.submitting') : $t('auth.register.submit') }}
-            </UButton>
-          </form>
+            <UButton
+              type="submit"
+              color="neutral"
+              variant="solid"
+              block
+              :loading="isLoading"
+              :label="isLoading ? $t('auth.register.submitting') : $t('auth.register.submit')"
+            />
+          </UForm>
 
-          <div class="flex items-center gap-3">
-            <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-            <span class="text-xs text-gray-400">{{ $t('auth.register.or') }}</span>
-            <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-          </div>
+          <USeparator :label="$t('auth.register.or')" />
 
           <UButton
             variant="outline"
             color="neutral"
-            class="w-full"
+            block
             leading-icon="i-simple-icons-google"
+            :label="$t('auth.register.google')"
             @click="loginWithGoogle"
-          >
-            {{ $t('auth.register.google') }}
-          </UButton>
+          />
         </div>
-      </UCard>
 
-      <p class="text-center text-sm text-gray-500 dark:text-gray-400">
-        {{ $t('auth.register.have_account') }}
-        <NuxtLink
-          :to="localePath('/login')"
-          class="font-medium text-primary underline-offset-4 hover:underline"
-        >
-          {{ $t('auth.register.login_link') }}
-        </NuxtLink>
-      </p>
+        <template #footer>
+          <p class="text-center text-sm text-body-gray dark:text-muted-gray">
+            {{ $t('auth.register.have_account') }}
+            <NuxtLink
+              :to="localePath('/login')"
+              class="font-medium text-black dark:text-white underline underline-offset-4"
+            >
+              {{ $t('auth.register.login_link') }}
+            </NuxtLink>
+          </p>
+        </template>
+      </UCard>
     </div>
   </div>
 </template>
@@ -98,10 +111,7 @@ const form = reactive({ display_name: '', email: '', password: '' })
 const isLoading = ref(false)
 const errorCode = ref<string | null>(null)
 
-const errorKey = computed(() => {
-  if (!errorCode.value) return null
-  return `auth.errors.${errorCode.value}`
-})
+const errorKey = computed(() => errorCode.value ? `auth.errors.${errorCode.value}` : null)
 
 async function handleSubmit() {
   isLoading.value = true
