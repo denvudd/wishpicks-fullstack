@@ -95,11 +95,14 @@ import type { ApiFetchError } from '~/types/api'
 definePageMeta({ middleware: 'guest' })
 
 const localePath = useLocalePath()
+const route = useRoute()
 const { login, loginWithGoogle } = useAuth()
 
 const form = reactive({ email: '', password: '' })
 const isLoading = ref(false)
-const errorCode = ref<string | null>(null)
+const errorCode = ref<string | null>(
+  typeof route.query.error === 'string' ? route.query.error : null
+)
 
 const errorKey = computed(() => errorCode.value ? `auth.errors.${errorCode.value}` : null)
 

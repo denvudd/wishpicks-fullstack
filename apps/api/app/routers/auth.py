@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
+from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.limiter import limiter
@@ -152,3 +153,52 @@ async def me(
     current_user: User = Depends(get_current_user),
 ):
     return AuthResponse(data=UserResponse.model_validate(current_user))
+
+
+@router.get(
+    "/google",
+    summary="Redirect to Google OAuth consent screen",
+    status_code=302,
+    responses={302: {"description": "Redirect to Google consent screen"}},
+)
+@limiter.limit("10/minute")
+async def google_login(request: Request):
+    from app.services.google_oauth import get_google_auth_url
+
+    return RedirectResponse(url=get_google_auth_url())
+
+
+@router.get(
+    "/google/callback",
+    summary="Handle Google OAuth callback, issue session cookies, redirect to frontend",
+    status_code=302,
+    responses={302: {"description": "Redirect to dashboard or login on failure"}},
+)
+@limiter.limit("10/minute")
+async def google_callback(
+    request: Request,
+    code: str | None = None,
+    error: str | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    from app.core.settings import settings
+
+    error_redirect = RedirectResponse(
+        url=f"{settings.FRONTEND_URL}/login?error=oauth_failed",
+        status_code=302,
+    )
+
+    if error or not code:
+        return error_redirect
+
+    try:
+        user, access_token, refresh_token = await auth_service.google_login(db, code)
+    except Exception:
+        return error_redirect
+
+    success_redirect = RedirectResponse(
+        url=f"{settings.FRONTEND_URL}/dashboard",
+        status_code=302,
+    )
+    _set_auth_cookies(success_redirect, access_token, refresh_token)
+    return success_redirect

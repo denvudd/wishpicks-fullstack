@@ -31,6 +31,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
         body = {"error": {"code": "HTTP_ERROR", "message": str(detail)}}
     return JSONResponse(status_code=exc.status_code, content=body)
 
+
 add_cors_middleware(app)
 add_security_headers_middleware(app)
 add_csrf_middleware(app)
