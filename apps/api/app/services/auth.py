@@ -202,3 +202,14 @@ async def _revoke_all_user_tokens(db: AsyncSession, redis, user_id: uuid.UUID) -
         .values(revoked=True)
     )
     await db.commit()
+
+
+async def google_login(db: AsyncSession, code: str) -> tuple[User, str, str]:
+    from app.services.google_oauth import exchange_code_for_profile, upsert_google_user
+
+    profile = await exchange_code_for_profile(code)
+    user = await upsert_google_user(db, profile)
+    access_token, refresh_token = await _issue_tokens(db, user.id)
+    await db.commit()
+    await db.refresh(user)
+    return user, access_token, refresh_token
