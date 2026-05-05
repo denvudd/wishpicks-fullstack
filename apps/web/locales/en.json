@@ -1,50 +1,66 @@
 {
-  "app": {
-    "name": "Wishpicks"
-  },
+  "app": { "name": "Wishpicks" },
   "landing": {
-    "title": "Gift exactly what they want",
-    "tagline": "Create wishlists, share with friends, and get the gifts you actually dream of.",
-    "login": "Sign in",
-    "register": "Get started"
+    "badge": "Gift lists, without the guessing",
+    "title": "Gift exactly\nwhat they want",
+    "tagline": "Create a wishlist, share a link with friends. They pick and reserve gifts — without spoiling the surprise.",
+    "register": "Create your wishlist",
+    "login": "See how it works",
+    "note": "Free to use · No account needed to view",
+    "steps_label": "How it works",
+    "steps": [
+      { "n": "01", "title": "Create a wishlist", "body": "Add items by pasting a product URL or typing manually. Wishpicks pulls the title, image and price automatically." },
+      { "n": "02", "title": "Share your link", "body": "Copy your unique wishlist link and send it to anyone — via messenger, email or socials. No app required." },
+      { "n": "03", "title": "Friends reserve gifts", "body": "Guests open the link and mark items as reserved. You never see who picked what — the surprise stays intact." }
+    ],
+    "features_label": "Built around the surprise",
+    "features": [
+      { "icon": "🔒", "title": "Surprise stays safe", "body": "The wishlist owner never sees reservation status. Only guests can see what's been picked." },
+      { "icon": "🔗", "title": "Share without signing up", "body": "Anyone with the link can view and reserve. No account needed for guests." },
+      { "icon": "📎", "title": "URL auto-import", "body": "Paste any product link — Wishpicks fetches the name, photo and price for you." },
+      { "icon": "📌", "title": "Save others' lists", "body": "Authenticated users can bookmark a friend's wishlist or save individual items to their own collection." }
+    ],
+    "privacy_label": "What your friends see",
+    "privacy_heading_1": "Guests see everything.",
+    "privacy_heading_2": "You see nothing.",
+    "privacy_body": "Reservations are visible only to other guests — never to the list owner. The element of surprise is preserved by design, not by trust.",
+    "bullets": ["No login required for guests", "Real-time reservation sync", "Duplicate gifts are impossible"],
+    "cta_title": "Ready to share your wishlist?",
+    "cta_sub": "It takes less than two minutes.",
+    "cta_btn": "Get started — it's free",
+    "cta_signin": "Already have an account?",
+    "preview_title": "Olena's Birthday 🎂",
+    "preview_sub": "8 items · 3 reserved",
+    "preview_note": "Tap an item to reserve it — the owner will never know it was you.",
+    "preview_url": "wishpicks.app/w/elena-bday",
+    "preview_items": [
+      { "name": "Sony WH-1000XM5", "price": "₴ 12 499" },
+      { "name": "Aesop Rind Hand Cream", "price": "₴ 890" },
+      { "name": "Moleskine Classic Notebook", "price": "₴ 620" }
+    ],
+    "reserve": "Reserve",
+    "reserved": "Reserved"
   },
-  "nav": {
-    "language": "Language"
-  },
+  "nav": { "language": "Language" },
   "auth": {
     "login": {
-      "title": "Sign in to Wishpicks",
-      "subtitle": "Welcome back",
-      "email": "Email",
-      "email_placeholder": "you@example.com",
-      "password": "Password",
-      "password_placeholder": "••••••••",
-      "submit": "Sign in",
-      "submitting": "Signing in…",
-      "no_account": "Don't have an account?",
-      "register_link": "Create one",
-      "or": "or",
-      "google": "Continue with Google"
+      "title": "Sign in to Wishpicks", "subtitle": "Welcome back",
+      "email": "Email", "email_placeholder": "you@example.com",
+      "password": "Password", "password_placeholder": "••••••••",
+      "submit": "Sign in", "submitting": "Signing in…",
+      "no_account": "Don't have an account?", "register_link": "Create one",
+      "or": "or", "google": "Continue with Google"
     },
     "register": {
-      "title": "Create your account",
-      "subtitle": "Start building your wishlists",
-      "display_name": "Display name",
-      "display_name_placeholder": "How should we call you?",
-      "email": "Email",
-      "email_placeholder": "you@example.com",
-      "password": "Password",
-      "password_placeholder": "At least 8 characters",
-      "submit": "Create account",
-      "submitting": "Creating account…",
-      "have_account": "Already have an account?",
-      "login_link": "Sign in",
-      "or": "or",
-      "google": "Continue with Google"
+      "title": "Create your account", "subtitle": "Start building your wishlists",
+      "display_name": "Display name", "display_name_placeholder": "How should we call you?",
+      "email": "Email", "email_placeholder": "you@example.com",
+      "password": "Password", "password_placeholder": "At least 8 characters",
+      "submit": "Create account", "submitting": "Creating account…",
+      "have_account": "Already have an account?", "login_link": "Sign in",
+      "or": "or", "google": "Continue with Google"
     },
-    "callback": {
-      "processing": "Signing you in…"
-    },
+    "callback": { "processing": "Signing you in…" },
     "errors": {
       "INVALID_CREDENTIALS": "Incorrect email or password.",
       "EMAIL_ALREADY_EXISTS": "An account with this email already exists.",
