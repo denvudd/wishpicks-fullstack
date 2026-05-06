@@ -6,7 +6,7 @@
     "tagline": "Create a wishlist, share a link with friends. They pick and reserve gifts — without spoiling the surprise.",
     "register": "Create your wishlist",
     "login": "See how it works",
-    "note": "Free to use · No account needed to view",
+    "note": "Free to use · No credit card required",
     "steps_label": "How it works",
     "steps": [
       { "n": "01", "title": "Create a wishlist", "body": "Add items by pasting a product URL or typing manually. Wishpicks pulls the title, image and price automatically." },
@@ -60,12 +60,30 @@
       "have_account": "Already have an account?", "login_link": "Sign in",
       "or": "or", "google": "Continue with Google"
     },
+    "verify_email": {
+      "title": "Verify your email",
+      "subtitle": "Check your inbox",
+      "instructions": "We sent a 6-digit code to {email}. Enter it below to confirm your address.",
+      "code": "Verification code",
+      "code_placeholder": "123456",
+      "submit": "Verify email",
+      "submitting": "Verifying…",
+      "resend": "Resend code",
+      "resend_cooldown": "Resend in {seconds}s",
+      "resend_success": "A new code has been sent to your inbox.",
+      "no_code": "Didn't receive it?",
+      "skip": "Continue without verifying"
+    },
     "callback": { "processing": "Signing you in…" },
     "errors": {
       "INVALID_CREDENTIALS": "Incorrect email or password.",
       "EMAIL_ALREADY_EXISTS": "An account with this email already exists.",
       "NOT_AUTHENTICATED": "Session expired. Please sign in again.",
       "SESSION_REVOKED": "Your session was revoked. Please sign in again.",
+      "OTP_INVALID": "Invalid or expired verification code.",
+      "OTP_MAX_ATTEMPTS": "Too many failed attempts. Request a new code.",
+      "RESEND_COOLDOWN": "Please wait before requesting another code.",
+      "EMAIL_ALREADY_VERIFIED": "Email is already verified.",
       "unknown": "Something went wrong. Please try again.",
       "network": "Could not reach the server. Check your connection.",
       "oauth_failed": "Google sign-in failed. Please try again."
