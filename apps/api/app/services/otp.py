@@ -19,6 +19,8 @@ class OTPCooldownError(Exception):
 
 
 async def generate_and_store_otp(redis, user_id: uuid.UUID) -> str:
+    if redis is None:
+        raise RuntimeError("Redis unavailable — cannot store OTP")
     code = f"{random.randint(0, 999999):06d}"
     await redis.setex(f"email_otp:{user_id}", _OTP_TTL, code)
     await redis.delete(f"email_otp_attempts:{user_id}")
@@ -26,6 +28,8 @@ async def generate_and_store_otp(redis, user_id: uuid.UUID) -> str:
 
 
 async def verify_otp(redis, user_id: uuid.UUID, code: str) -> None:
+    if redis is None:
+        raise OTPInvalidError()
     otp_key = f"email_otp:{user_id}"
     attempts_key = f"email_otp_attempts:{user_id}"
 
@@ -48,6 +52,8 @@ async def verify_otp(redis, user_id: uuid.UUID, code: str) -> None:
 
 
 async def check_and_set_cooldown(redis, user_id: uuid.UUID) -> None:
+    if redis is None:
+        return
     cooldown_key = f"email_otp_cooldown:{user_id}"
     existing = await redis.get(cooldown_key)
     if existing is not None:
