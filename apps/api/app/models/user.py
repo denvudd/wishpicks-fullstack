@@ -16,6 +16,9 @@ class User(Base, UUIDMixin, TimestampMixin):
         String, unique=True, nullable=True, index=True
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_email_verified: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False
+    )
 
     wishlists: Mapped[list["Wishlist"]] = relationship(
         "Wishlist", back_populates="owner", cascade="all, delete-orphan"

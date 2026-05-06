@@ -1,3 +1,4 @@
+import logging
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -11,6 +12,10 @@ from app.core.settings import settings
 from app.models.refresh_token import RefreshToken
 from app.models.user import User
 from app.schemas.auth import LoginRequest, RegisterRequest
+from app.services.email import send_verification_email
+from app.services.otp import generate_and_store_otp
+
+logger = logging.getLogger(__name__)
 
 
 def _hash_password(password: str) -> str:
@@ -29,7 +34,9 @@ async def _issue_tokens(db: AsyncSession, user_id: uuid.UUID) -> tuple[str, str]
     return create_access_token(user_id), create_refresh_token(user_id, jti)
 
 
-async def register(db: AsyncSession, data: RegisterRequest) -> tuple[User, str, str]:
+async def register(
+    db: AsyncSession, redis, data: RegisterRequest
+) -> tuple[User, str, str]:
     existing = await db.scalar(select(User).where(User.email == data.email))
     if existing:
         raise HTTPException(
@@ -51,6 +58,13 @@ async def register(db: AsyncSession, data: RegisterRequest) -> tuple[User, str, 
     access_token, refresh_token = await _issue_tokens(db, user.id)
     await db.commit()
     await db.refresh(user)
+
+    try:
+        otp = await generate_and_store_otp(redis, user.id)
+        await send_verification_email(user.email, otp)
+    except Exception as exc:
+        logger.error("Failed to send OTP after registration for %s: %s", user.email, exc)  # noqa: E501
+
     return user, access_token, refresh_token
 
 
