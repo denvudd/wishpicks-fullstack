@@ -21,11 +21,11 @@
         </template>
 
         <div class="space-y-4">
-          <UAlert
-            v-if="errorKey"
+          <UiAlert
+            :show="!!errorKey"
             color="error"
             variant="soft"
-            :description="$t(errorKey)"
+            :description="errorKey ? $t(errorKey) : ''"
           />
 
           <UForm :state="form" class="space-y-4" @submit="handleSubmit">

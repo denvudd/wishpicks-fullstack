@@ -53,8 +53,8 @@ export const useAuth = () => {
     try {
       const user = await authApi.register(data)
       store.setUser(user)
-      
-      await navigateTo(localePath('/dashboard'))
+      const destination = user.is_email_verified ? '/dashboard' : '/auth/verify-email'
+      await navigateTo(localePath(destination))
     } catch (err) {
       store.setStatus('unauthenticated')
       throw err
@@ -71,6 +71,16 @@ export const useAuth = () => {
     await navigateTo(localePath('/'))
   }
 
+  async function verifyEmail(code: string): Promise<void> {
+    const user = await authApi.verifyEmail(code)
+    store.setUser(user)
+    await navigateTo(localePath('/dashboard'))
+  }
+
+  async function resendVerification(): Promise<void> {
+    await authApi.resendVerification()
+  }
+
   function loginWithGoogle(): void {
     window.location.href = authApi.googleAuthUrl()
   }
@@ -84,6 +94,8 @@ export const useAuth = () => {
     login,
     register,
     logout,
+    verifyEmail,
+    resendVerification,
     loginWithGoogle,
   }
 }

@@ -57,5 +57,13 @@ export default defineAppConfig({
         label: 'text-sm font-medium text-black dark:text-white mb-1',
       },
     },
+
+    alert: {
+      slots: {
+        root: [
+          'rounded-lg',
+        ]
+      }
+    }
   },
 })

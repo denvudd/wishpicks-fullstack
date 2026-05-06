@@ -62,6 +62,7 @@ async def upsert_google_user(db: AsyncSession, profile: dict) -> User:
         user = await db.scalar(select(User).where(User.email == email))
         if user:
             user.google_id = google_id
+            user.is_email_verified = True
             if not user.avatar_url and avatar_url:
                 user.avatar_url = avatar_url
             await db.flush()
@@ -73,6 +74,7 @@ async def upsert_google_user(db: AsyncSession, profile: dict) -> User:
         google_id=google_id,
         display_name=display_name,
         avatar_url=avatar_url,
+        is_email_verified=True,
     )
     db.add(user)
     await db.flush()
