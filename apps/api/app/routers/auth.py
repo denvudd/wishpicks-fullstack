@@ -2,6 +2,7 @@ from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cookies import clear_auth_cookies, set_auth_cookies
 from app.core.limiter import limiter
 from app.dependencies.get_current_user import get_current_user
 from app.dependencies.get_db import get_db
@@ -28,36 +29,6 @@ from app.services.otp import (
 router = APIRouter()
 
 
-def _set_auth_cookies(
-    response: Response, access_token: str, refresh_token: str
-) -> None:
-    from app.core.settings import settings
-
-    secure = settings.ENVIRONMENT == "production"
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        secure=secure,
-        samesite="lax",
-        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-    )
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        httponly=True,
-        secure=secure,
-        samesite="lax",
-        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
-        path="/api/auth/refresh",
-    )
-
-
-def _clear_auth_cookies(response: Response) -> None:
-    response.delete_cookie("access_token")
-    response.delete_cookie("refresh_token", path="/api/auth/refresh")
-
-
 @router.post(
     "/register",
     response_model=AuthResponse,
@@ -77,7 +48,7 @@ async def register(
     redis=Depends(get_redis),
 ):
     user, access_token, refresh_token = await auth_service.register(db, redis, data)
-    _set_auth_cookies(response, access_token, refresh_token)
+    set_auth_cookies(response, access_token, refresh_token)
     return AuthResponse(data=UserResponse.model_validate(user))
 
 
@@ -95,7 +66,7 @@ async def login(
     db: AsyncSession = Depends(get_db),
 ):
     user, access_token, refresh_token = await auth_service.login(db, data)
-    _set_auth_cookies(response, access_token, refresh_token)
+    set_auth_cookies(response, access_token, refresh_token)
     return AuthResponse(data=UserResponse.model_validate(user))
 
 
@@ -123,7 +94,7 @@ async def logout(
         except JWTError:
             pass
     await auth_service.logout(db, jti_str)
-    _clear_auth_cookies(response)
+    clear_auth_cookies(response)
 
 
 @router.post(
@@ -153,7 +124,7 @@ async def refresh(
     user, access_token, new_refresh_token = await auth_service.refresh_tokens(
         db, redis, refresh_token
     )
-    _set_auth_cookies(response, access_token, new_refresh_token)
+    set_auth_cookies(response, access_token, new_refresh_token)
     return AuthResponse(data=UserResponse.model_validate(user))
 
 
@@ -216,7 +187,7 @@ async def google_callback(
         url=f"{settings.FRONTEND_URL}/dashboard",
         status_code=302,
     )
-    _set_auth_cookies(success_redirect, access_token, refresh_token)
+    set_auth_cookies(success_redirect, access_token, refresh_token)
     return success_redirect
 
 
