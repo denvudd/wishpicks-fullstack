@@ -41,7 +41,19 @@
     "reserve": "Reserve",
     "reserved": "Reserved"
   },
-  "nav": { "language": "Language" },
+  "theme": {
+    "switch_to_light": "Switch to light mode",
+    "switch_to_dark": "Switch to dark mode",
+    "switch_to_system": "Switch to system theme"
+  },
+  "nav": {
+    "language": "Language",
+    "collections": "Collections",
+    "interesting": "Interesting",
+    "profile": "Profile",
+    "reserved": "Reserved",
+    "settings": "Settings"
+  },
   "auth": {
     "login": {
       "title": "Sign in to Wishpicks", "subtitle": "Welcome back",
@@ -89,5 +101,18 @@
       "oauth_failed": "Google sign-in failed. Please try again."
     },
     "logout": "Sign out"
+  },
+  "profile": {
+    "display_name": "Display name",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "username_label": "Username",
+    "share": "Share profile",
+    "share_copied": "Link copied",
+    "save": "Save",
+    "saving": "Saving…",
+    "wishlists_section": "My wishlists",
+    "board_section": "Wish board",
+    "coming_soon": "Coming soon"
   }
 }

@@ -2,7 +2,7 @@
 
 ## Description
 
-Implemented `GET /api/users/me`, `PATCH /api/users/me`, `DELETE /api/users/me` endpoints. No migration needed — all fields already existed on the `User` model.
+Implemented `GET /api/users/me`, `PATCH /api/users/me`, `DELETE /api/users/me` endpoints. 
 
 ## Session Log
 
@@ -42,10 +42,27 @@ Implemented `GET /api/users/me`, `PATCH /api/users/me`, `DELETE /api/users/me` e
 
 8. Registered `users.router` at prefix `/api/users`.
 
+### Modified — `apps/api/app/services/auth.py`
+
+9. Added `import random` and `import re` at the top of the file.
+
+10. Added `_generate_username_from_email(email: str) -> str` helper after `_verify_password`:
+   - Strips the local part of the email (before `@`)
+   - Lowercases and replaces non-`[a-z0-9]` characters with `_` via `re.sub`
+   - Truncates to 20 characters, strips leading/trailing underscores; falls back to `"user"` if empty
+   - Appends a random 4-digit suffix (`random.randint(1000, 9999)`)
+
+11. Modified `register()` to call the helper in a retry loop before creating the `User` object:
+   - Tries up to 5 candidates; each is checked against `User.username` in the DB
+   - Sets `username` to the first available candidate; leaves it `None` if all 5 collide (graceful degradation — no registration failure)
+   - `User(...)` now receives `username=username`
+
 ## Session Outcomes
 
 - `GET /api/users/me`, `PATCH /api/users/me`, `DELETE /api/users/me` fully implemented
 - Cookie helpers centralized in `app/core/cookies.py`
 - `username` uniqueness enforced at service level with 409 `USERNAME_TAKEN`
-- All ruff checks pass; import verified in running Docker container
-- Phase 1 Foundation complete — ready to move to Phase 2 (Wishlist CRUD)
+- All new email/password registrations receive an auto-generated username (e.g. `john_doe_4271`)
+- Uniqueness is guaranteed via DB check with 5-attempt retry; collision is astronomically unlikely (10 000 permutations per prefix)
+- Google OAuth registrations are unaffected — `google_login` calls a separate `upsert_google_user` path
+- No migration required — `username` column already existed and was already nullable

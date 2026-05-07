@@ -1,6 +1,6 @@
 <template>
   <div class="p-6">
-    <p class="text-muted-gray">TODO: collections</p>
+    <p class="text-muted-gray">TODO: reserved</p>
   </div>
 </template>
 

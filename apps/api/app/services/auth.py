@@ -1,4 +1,6 @@
 import logging
+import random
+import re
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -26,6 +28,13 @@ def _verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 
+def _generate_username_from_email(email: str) -> str:
+    prefix = re.sub(r"[^a-z0-9]", "_", email.split("@")[0].lower())
+    prefix = prefix[:20].strip("_") or "user"
+    suffix = random.randint(1000, 9999)
+    return f"{prefix}_{suffix}"
+
+
 async def _issue_tokens(db: AsyncSession, user_id: uuid.UUID) -> tuple[str, str]:
     jti = uuid.uuid4()
     expires_at = datetime.now(UTC) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
@@ -48,10 +57,20 @@ async def register(
                 }
             },
         )
+    # Generate a unique username derived from the email prefix
+    username: str | None = None
+    for _ in range(5):
+        candidate = _generate_username_from_email(data.email)
+        taken = await db.scalar(select(User).where(User.username == candidate))
+        if not taken:
+            username = candidate
+            break
+
     user = User(
         email=data.email,
         password_hash=_hash_password(data.password),
         display_name=data.display_name,
+        username=username,
     )
     db.add(user)
     await db.flush()
