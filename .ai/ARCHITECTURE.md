@@ -498,10 +498,10 @@ Phases represent logical groupings of work, completed in order. No dates attache
 
 - Monorepo setup, Docker Compose configuration, environment variable structure
 - Database schema design + initial Alembic migration
+- Nuxt project setup: routing, i18n configuration, dark/light theme, auth composable + Pinia store
 - Full auth system: register, login, logout, token refresh, refresh token rotation + theft detection
 - Google OAuth integration
 - User profile read + update
-- Nuxt project setup: routing, i18n configuration, dark/light theme, auth composable + Pinia store
 
 ### Phase 2 — Core product
 

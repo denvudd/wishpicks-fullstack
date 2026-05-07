@@ -5,14 +5,14 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
     '@nuxtjs/i18n',
+    '@nuxtjs/color-mode',
     '@pinia/nuxt',
     '@nuxt/eslint',
   ],
 
   css: ['~/assets/css/main.css'],
-
+  
   ui: {
-    // @ts-expect-error Nuxt UI types are not updated yet
     prose: true
   },
 

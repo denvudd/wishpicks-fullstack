@@ -25,35 +25,7 @@
         <div class="flex items-center gap-2">
           <UiLanguageSwitcher />
 
-          <ClientOnly>
-            <button
-              class="hover:bg-chip-gray theme-toggle flex h-9 w-9 items-center justify-center rounded-full text-black transition-all duration-200 dark:text-white dark:hover:bg-white/10"
-              :aria-label="
-                colorMode.value === 'dark'
-                  ? 'Switch to light mode'
-                  : 'Switch to dark mode'
-              "
-              @click="
-                colorMode.preference =
-                  colorMode.value === 'dark' ? 'light' : 'dark'
-              "
-            >
-              <UIcon
-                :name="
-                  colorMode.value === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon'
-                "
-                class="h-4 w-4"
-              />
-            </button>
-            <template #fallback>
-              <button
-                class="hover:bg-chip-gray theme-toggle flex h-9 w-9 items-center justify-center rounded-full text-black transition-all duration-200 dark:text-white dark:hover:bg-white/10"
-                aria-label="Toggle theme"
-              >
-                <UIcon name="i-lucide-moon" class="h-4 w-4" />
-              </button>
-            </template>
-          </ClientOnly>
+          <UiColorModeToggle />
 
           <UButton
             color="neutral"
@@ -128,7 +100,6 @@
 definePageMeta({ middleware: 'guest' })
 
 const localePath = useLocalePath()
-const colorMode = useColorMode()
 const { t } = useI18n()
 
 const scrollProgress = ref(0)
@@ -155,14 +126,3 @@ const footerLinks = computed(() => [
   { label: 'GitHub', href: '#' },
 ])
 </script>
-
-<style scoped>
-.theme-toggle {
-  transition:
-    background 0.15s,
-    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.theme-toggle:hover {
-  transform: rotate(18deg);
-}
-</style>
