@@ -159,5 +159,75 @@
     "wishlists_section": "Мої вішлісти",
     "board_section": "Дошка бажань",
     "coming_soon": "Скоро буде"
+  },
+  "wishlists": {
+    "title": "Мої вішлісти",
+    "new": "Новий вішліст",
+    "empty_title": "Поки що немає вішлістів",
+    "empty_body": "Створи перший і поділись з друзями",
+    "items_count": "{n} товар | {n} товари | {n} товарів",
+    "loading": "Завантаження…",
+    "create": {
+      "title": "Новий вішліст",
+      "name_label": "Назва",
+      "name_placeholder": "Наприклад: День народження",
+      "submit": "Створити",
+      "submitting": "Створення…"
+    },
+    "visibility": {
+      "label": "Приватність",
+      "public": "Публічний",
+      "public_desc": "Будь-хто може переглядати цей вішліст. Він відображатиметься у твоєму профілі.",
+      "link_only": "За посиланням",
+      "link_only_desc": "Лише ті, в кого є посилання, можуть переглядати цей вішліст.",
+      "private": "Приватний",
+      "private_desc": "Лише ти та запрошені тобою користувачі можуть переглядати цей вішліст."
+    },
+    "reservation": {
+      "label": "Режим резервування",
+      "anonymous": "Анонімне",
+      "anonymous_desc": "Будь-хто може резервувати. Ти не побачиш, хто зробив резерв.",
+      "registered_only": "Тільки зареєстровані",
+      "registered_only_desc": "Тільки зареєстровані користувачі можуть резервувати. Ти бачитимеш імʼя резервувальника."
+    },
+    "settings": {
+      "title": "Налаштування",
+      "tab_basic": "Основне",
+      "tab_access": "Доступ",
+      "tab_booking": "Резервування",
+      "save": "Зберегти",
+      "saving": "Збереження…",
+      "description_label": "Опис",
+      "description_placeholder": "Необовʼязково",
+      "event_type_label": "Тип події",
+      "event_type_none": "Без події",
+      "event_date_label": "Дата події",
+      "event_date_placeholder": "Оберіть дату",
+      "delete": "Видалити вішліст",
+      "delete_confirm_body": "Цю дію не можна скасувати. Всі дані вішліста будуть видалені.",
+      "delete_confirm_yes": "Так, видалити",
+      "delete_cancel": "Скасувати",
+      "copy_link": "Скопіювати посилання",
+      "link_copied": "Посилання скопійовано",
+      "invite_label": "Запрошені",
+      "invite_email_placeholder": "friend@example.com",
+      "invite_submit": "Запросити",
+      "invite_revoke": "Відкликати",
+      "deleting": "Видалення…"
+    },
+    "event_type": {
+      "birthday": "День народження",
+      "wedding": "Весілля",
+      "anniversary": "Ювілей",
+      "new_year": "Новий рік",
+      "other": "Інше"
+    },
+    "errors": {
+      "WISHLIST_LIMIT_REACHED": "Ти досяг максимуму — 10 вішлістів.",
+      "INVITE_ALREADY_SENT": "Цю пошту вже запрошено.",
+      "INVITE_NOT_APPLICABLE": "Запрошення доступні лише для приватних вішлістів.",
+      "network": "Не вдалося зʼєднатися з сервером. Перевір підключення.",
+      "unknown": "Щось пішло не так. Спробуй ще раз."
+    }
   }
 }

@@ -5,6 +5,7 @@ from app.models.saved import SavedItem, SavedWishlist
 from app.models.user import User
 from app.models.wish_item import WishItem
 from app.models.wishlist import Wishlist
+from app.models.wishlist_invite import WishlistInvite
 
 __all__ = [
     "Base",
@@ -15,4 +16,5 @@ __all__ = [
     "RefreshToken",
     "SavedWishlist",
     "SavedItem",
+    "WishlistInvite",
 ]

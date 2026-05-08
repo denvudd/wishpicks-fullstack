@@ -1,10 +1,12 @@
 import uuid
+from datetime import date
 
-from sqlalchemy import UUID, Boolean, Enum, ForeignKey, String, Text
+from sqlalchemy import Date, Enum, ForeignKey, String, Text
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDMixin
-from app.models.enums import EventType
+from app.models.enums import EventType, ReservationMode, WishlistVisibility
 
 
 class Wishlist(Base, UUIDMixin, TimestampMixin):
@@ -22,7 +24,17 @@ class Wishlist(Base, UUIDMixin, TimestampMixin):
     event_type: Mapped[EventType | None] = mapped_column(
         Enum(EventType, native_enum=False), nullable=True
     )
-    is_public: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    event_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    visibility: Mapped[WishlistVisibility] = mapped_column(
+        Enum(WishlistVisibility, native_enum=False),
+        nullable=False,
+        server_default=WishlistVisibility.link_only.value,
+    )
+    reservation_mode: Mapped[ReservationMode] = mapped_column(
+        Enum(ReservationMode, native_enum=False),
+        nullable=False,
+        server_default=ReservationMode.anonymous.value,
+    )
     slug: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True)
 
     owner: Mapped["User"] = relationship("User", back_populates="wishlists")
@@ -31,4 +43,7 @@ class Wishlist(Base, UUIDMixin, TimestampMixin):
     )
     saved_by: Mapped[list["SavedWishlist"]] = relationship(
         "SavedWishlist", back_populates="wishlist", cascade="all, delete-orphan"
+    )
+    invites: Mapped[list["WishlistInvite"]] = relationship(
+        "WishlistInvite", back_populates="wishlist", cascade="all, delete-orphan"
     )
