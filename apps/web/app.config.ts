@@ -42,7 +42,44 @@ export default defineAppConfig({
       slots: {
         base: [
           'rounded-lg',
-          'border border-black dark:border-white',
+          'bg-white dark:bg-black',
+          'text-black dark:text-white',
+          'placeholder:text-muted-gray',
+          'focus:outline-none focus:ring-0',
+          'w-full',
+        ],
+        root: ['w-full'],
+      },
+    },
+
+    textarea: {
+      slots: {
+        base: [
+          'rounded-lg',
+          'bg-white dark:bg-black',
+          'text-black dark:text-white',
+        ],
+        root: ['w-full'],
+      },
+    },
+
+    radioGroup: {
+      slots: {
+        base: [
+          'rounded-lg',
+          'bg-white dark:bg-black',
+          'text-black dark:text-white',
+          'placeholder:text-muted-gray',
+          'focus:outline-none focus:ring-0',
+        ],
+        indicator: 'animate-in fade-in transition-all duration-200 ease-out',
+      },
+    },
+
+    select: {
+      slots: {
+        base: [
+          'rounded-lg',
           'bg-white dark:bg-black',
           'text-black dark:text-white',
           'placeholder:text-muted-gray',
@@ -60,10 +97,15 @@ export default defineAppConfig({
 
     alert: {
       slots: {
-        root: [
-          'rounded-lg',
-        ]
-      }
-    }
+        root: ['rounded-lg'],
+      },
+    },
+
+    modal: {
+      slots: {
+        content:
+          'rounded-xl! transition-[height,transform] duration-200 ease-out',
+      },
+    },
   },
 })

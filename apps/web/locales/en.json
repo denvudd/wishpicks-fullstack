@@ -114,5 +114,75 @@
     "wishlists_section": "My wishlists",
     "board_section": "Wish board",
     "coming_soon": "Coming soon"
+  },
+  "wishlists": {
+    "title": "My wishlists",
+    "new": "New wishlist",
+    "empty_title": "No wishlists yet",
+    "empty_body": "Create your first one and share it with friends",
+    "items_count": "{n} item | {n} items",
+    "loading": "Loading…",
+    "create": {
+      "title": "New wishlist",
+      "name_label": "Name",
+      "name_placeholder": "E.g. Birthday wishlist",
+      "submit": "Create",
+      "submitting": "Creating…"
+    },
+    "visibility": {
+      "label": "Privacy",
+      "public": "Public",
+      "public_desc": "Anyone can view this wishlist. It will appear on your profile.",
+      "link_only": "Link only",
+      "link_only_desc": "Only people with the link can view this wishlist.",
+      "private": "Private",
+      "private_desc": "Only you and invited users can view this wishlist."
+    },
+    "reservation": {
+      "label": "Reservation mode",
+      "anonymous": "Anonymous",
+      "anonymous_desc": "Anyone can reserve items. You won't see who reserved what.",
+      "registered_only": "Registered only",
+      "registered_only_desc": "Only registered users can reserve. You'll see the reserver's name."
+    },
+    "settings": {
+      "title": "Settings",
+      "tab_basic": "Basic",
+      "tab_access": "Access",
+      "tab_booking": "Booking",
+      "save": "Save",
+      "saving": "Saving…",
+      "description_label": "Description",
+      "description_placeholder": "Optional",
+      "event_type_label": "Event type",
+      "event_type_none": "No event",
+      "event_date_label": "Event date",
+      "event_date_placeholder": "Select date",
+      "delete": "Delete wishlist",
+      "delete_confirm_body": "This action cannot be undone. All wishlist data will be permanently deleted.",
+      "delete_confirm_yes": "Yes, delete",
+      "delete_cancel": "Cancel",
+      "copy_link": "Copy link",
+      "link_copied": "Link copied",
+      "invite_label": "Invited",
+      "invite_email_placeholder": "friend@example.com",
+      "invite_submit": "Invite",
+      "invite_revoke": "Revoke",
+      "deleting": "Deleting…"
+    },
+    "event_type": {
+      "birthday": "Birthday",
+      "wedding": "Wedding",
+      "anniversary": "Anniversary",
+      "new_year": "New Year",
+      "other": "Other"
+    },
+    "errors": {
+      "WISHLIST_LIMIT_REACHED": "You have reached the maximum of 10 wishlists.",
+      "INVITE_ALREADY_SENT": "This email has already been invited.",
+      "INVITE_NOT_APPLICABLE": "Invites are only available for private wishlists.",
+      "network": "Could not reach the server. Check your connection.",
+      "unknown": "Something went wrong. Please try again."
+    }
   }
 }

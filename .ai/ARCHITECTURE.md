@@ -67,7 +67,7 @@ wishpicks/
 | Cache | Redis (Upstash) | URL parser cache, session blocklist; free serverless tier via HTTP |
 | Settings | `pydantic-settings` | Typed config from `.env` file |
 
-### Infrastructure — zero-cost MVP
+### Infrastructure
 
 | Concern | Decision | Notes |
 |---|---|---|
@@ -79,7 +79,7 @@ wishpicks/
 | Cache / Rate limit store | Upstash Redis | Free tier: 10k commands/day, 256 MB; HTTP-based, no sidecar needed |
 | Local dev | Docker Compose | Postgres + Redis + API + Web, fully reproducible |
 
-> **Rule:** Every infrastructure choice must have a free tier covering ~1,000 users. No paid services at MVP stage.
+> **Rule:** Every infrastructure choice must have a free tier covering ~1,000 users. 
 
 ---
 
