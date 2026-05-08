@@ -18,6 +18,8 @@ from app.schemas.wishlists import (
     WishlistSingleResponse,
     WishlistUpdate,
 )
+from app.schemas.items import WishItemCreate, WishItemListResponse, WishItemSingleResponse
+from app.services import items as item_service
 from app.services import wishlist_invites as invite_service
 from app.services import wishlists as wishlist_service
 
@@ -216,3 +218,56 @@ async def delete_invite(
 ) -> None:
     wishlist = await wishlist_service.get_wishlist(db, wishlist_id, current_user)
     await invite_service.delete_invite(db, wishlist, invite_id)
+
+
+@router.get(
+    "/{wishlist_id}/items",
+    summary="List items in a wishlist",
+    response_model=WishItemListResponse,
+    responses={
+        401: {"description": "Not authenticated"},
+        403: {"description": "Forbidden — not the owner"},
+        404: {"description": "Wishlist not found"},
+    },
+)
+async def list_items(
+    wishlist_id: uuid.UUID,
+    request: Request,
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> WishItemListResponse:
+    wishlist = await wishlist_service.get_wishlist(db, wishlist_id, current_user)
+    rows, total = await item_service.list_items(db, wishlist, limit, offset)
+    items = [
+        item_service.build_item_response(row.WishItem, bool(row.is_reserved))
+        for row in rows
+    ]
+    return WishItemListResponse(
+        data={"items": items, "total": total, "limit": limit, "offset": offset}
+    )
+
+
+@router.post(
+    "/{wishlist_id}/items",
+    summary="Add a wish item to a wishlist",
+    response_model=WishItemSingleResponse,
+    status_code=201,
+    responses={
+        401: {"description": "Not authenticated"},
+        403: {"description": "Forbidden — not the owner"},
+        404: {"description": "Wishlist not found"},
+        422: {"description": "Validation error"},
+    },
+)
+async def create_item(
+    wishlist_id: uuid.UUID,
+    body: WishItemCreate,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> WishItemSingleResponse:
+    wishlist = await wishlist_service.get_wishlist(db, wishlist_id, current_user)
+    item = await item_service.create_item(db, wishlist, body)
+    return WishItemSingleResponse(data=item_service.build_item_response(item, False))
