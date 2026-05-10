@@ -70,6 +70,18 @@ async def create_item(db: AsyncSession, wishlist: Wishlist, data: WishItemCreate
     return item
 
 
+async def get_item_by_id(db: AsyncSession, item_id: uuid.UUID) -> WishItem:
+    item = (
+        await db.execute(select(WishItem).where(WishItem.id == item_id))
+    ).scalar_one_or_none()
+    if item is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"error": {"code": "ITEM_NOT_FOUND", "message": "Wish item not found."}},
+        )
+    return item
+
+
 async def get_item_for_owner(
     db: AsyncSession, item_id: uuid.UUID, user: User
 ) -> WishItem:

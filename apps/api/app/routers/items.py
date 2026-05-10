@@ -12,6 +12,25 @@ from app.services import items as item_service
 router = APIRouter()
 
 
+@router.get(
+    "/{item_id}",
+    summary="Get a wish item",
+    response_model=WishItemSingleResponse,
+    responses={
+        401: {"description": "Not authenticated"},
+        404: {"description": "Item not found"},
+    },
+)
+async def get_item(
+    item_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> WishItemSingleResponse:
+    item = await item_service.get_item_by_id(db, item_id)
+    is_reserved = await item_service.get_is_reserved(db, item.id)
+    return WishItemSingleResponse(data=item_service.build_item_response(item, is_reserved))
+
+
 @router.patch(
     "/{item_id}",
     summary="Update a wish item",

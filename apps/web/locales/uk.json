@@ -166,6 +166,10 @@
     "empty_title": "Поки що немає вішлістів",
     "empty_body": "Створи перший і поділись з друзями",
     "items_count": "{n} товар | {n} товари | {n} товарів",
+    "items_layout": {
+      "switch_to_masonry": "Мозаїчне розташування",
+      "switch_to_grid": "Фіксована сітка"
+    },
     "loading": "Завантаження…",
     "create": {
       "title": "Новий вішліст",
@@ -228,6 +232,74 @@
       "INVITE_NOT_APPLICABLE": "Запрошення доступні лише для приватних вішлістів.",
       "network": "Не вдалося зʼєднатися з сервером. Перевір підключення.",
       "unknown": "Щось пішло не так. Спробуй ще раз."
+    }
+  },
+  "items": {
+    "new": "Нове бажання",
+    "entry_title": "Додати бажання",
+    "entry_placeholder": "Назва або посилання на товар…",
+    "entry_url_note": "URL-парсинг буде доступний незабаром. Назву та деталі заповни вручну.",
+    "entry_continue": "Далі",
+    "form_title_create": "Деталі бажання",
+    "form_title_edit": "Редагувати бажання",
+    "preview_label": "Нове бажання",
+    "fields": {
+      "title": "Назва",
+      "title_placeholder": "Наприклад: Sony WH-1000XM5",
+      "product_url": "Посилання на магазин",
+      "product_url_placeholder": "https://…",
+      "price_exact": "Ціна",
+      "price_range": "Діапазон",
+      "price_placeholder": "0.00",
+      "price_min_placeholder": "Від",
+      "price_max_placeholder": "До",
+      "currency": "Валюта",
+      "wishlist": "Вішліст",
+      "notes": "Нотатки для дарувальників",
+      "notes_placeholder": "Підказки або побажання…"
+    },
+    "advanced": {
+      "title": "Додаткові налаштування",
+      "priority": "Пріоритет",
+      "tags": "Теги",
+      "tags_placeholder": "Додати тег і натиснути Enter…",
+      "description": "Опис",
+      "description_placeholder": "Докладніше про бажання…"
+    },
+    "priority": {
+      "normal": "Хочеться мати",
+      "high": "Дуже бажане",
+      "must_have": "Найбажаніше"
+    },
+    "submit_create": "Додати бажання",
+    "submit_edit": "Зберегти зміни",
+    "submitting": "Збереження…",
+    "delete": "Видалити бажання",
+    "delete_confirm_body": "Цю дію не можна скасувати.",
+    "delete_confirm_yes": "Видалити",
+    "delete_cancel": "Скасувати",
+    "deleting": "Видалення…",
+    "edit": "Редагувати",
+    "copy": "Зробити копію",
+    "share": "Поділитися",
+    "fulfill": "Виконати",
+    "show_more": "Показати більше",
+    "show_less": "Сховати",
+    "fulfill_question": "Здійснити це бажання?",
+    "open_store": "Перейти до магазину",
+    "share_title": "Поділитися бажанням",
+    "share_copy_link": "Скопіювати посилання",
+    "share_link_copied": "Скопійовано!",
+    "share_via": "Поділитись через:",
+    "empty_title": "Ще немає бажань",
+    "empty_body": "Додай перше бажання до цього вішлісту",
+    "empty_action": "Додати бажання",
+    "reserved": "Зарезервовано",
+    "add": "Додати бажання",
+    "card_open_detail": "Відкрити деталі бажання: {title}",
+    "errors": {
+      "unknown": "Щось пішло не так. Спробуй ще раз.",
+      "network": "Не вдалося зʼєднатися. Перевір підключення."
     }
   }
 }

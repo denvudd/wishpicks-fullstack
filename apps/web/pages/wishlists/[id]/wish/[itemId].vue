@@ -170,11 +170,12 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 const route = useRoute()
 
-const { current, isLoading: wishlistLoading, fetchOne } = useWishlists()
+const { current, isLoading: wishlistLoading, fetchOne: fetchWishlist } = useWishlists()
 const {
   items,
   isLoading: itemsLoading,
   fetchList,
+  fetchOne: fetchItem,
   updateItem,
   removeItem,
   clear,
@@ -186,25 +187,34 @@ const settingsOpen = ref(false)
 const entryOpen = ref(false)
 const formOpen = ref(false)
 const shareOpen = ref(false)
-const itemsLayout = ref<ItemsLayoutMode>('grid')
-const editingItem = ref<WishItemResponse | null>(null)
-const sharingItem = ref<WishItemResponse | null>(null)
 const detailOpen = ref(false)
 const detailItem = ref<WishItemResponse | null>(null)
 const deleteConfirmOpen = ref(false)
 const itemPendingDelete = ref<WishItemResponse | null>(null)
 const deleteInProgress = ref(false)
+const itemsLayout = ref<ItemsLayoutMode>('grid')
+const editingItem = ref<WishItemResponse | null>(null)
+const sharingItem = ref<WishItemResponse | null>(null)
 const entryResult = ref({ title: '', productUrl: null as string | null })
 
 const wishlistId = computed(() => route.params.id as string)
+const itemId = computed(() => route.params.itemId as string)
 
 onMounted(async () => {
-  const result = await fetchOne(wishlistId.value)
+  const result = await fetchWishlist(wishlistId.value)
   if (!result) {
     await navigateTo(localePath('/dashboard'))
     return
   }
+
+  const itemPromise = fetchItem(itemId.value)
   await fetchList(wishlistId.value)
+  const item = await itemPromise
+
+  if (item) {
+    detailItem.value = item
+    detailOpen.value = true
+  }
 })
 
 onUnmounted(() => {
@@ -251,6 +261,9 @@ async function confirmDeleteItem() {
     if (detailItem.value?.id === target.id) {
       detailOpen.value = false
       detailItem.value = null
+    }
+    if (target.id === itemId.value) {
+      await navigateTo(localePath(`/wishlists/${wishlistId.value}`))
     }
     closeDeleteConfirm()
   } finally {
