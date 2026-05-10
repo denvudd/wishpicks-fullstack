@@ -297,6 +297,18 @@
     "reserved": "Reserved",
     "add": "Add a wish",
     "card_open_detail": "Open wish details: {title}",
+    "filters": {
+      "title": "Filters",
+      "clear": "Clear",
+      "reservation_status": "Reservation status",
+      "not_reserved": "Not reserved",
+      "reserved": "Reserved",
+      "fulfillment_status": "Fulfillment status",
+      "not_fulfilled": "Not fulfilled",
+      "fulfilled": "Fulfilled",
+      "priority": "Priority",
+      "store": "Store"
+    },
     "errors": {
       "unknown": "Something went wrong. Please try again.",
       "network": "Could not connect. Check your connection."

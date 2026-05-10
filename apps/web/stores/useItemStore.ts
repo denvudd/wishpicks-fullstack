@@ -8,6 +8,7 @@ export const useItemStore = defineStore('item', {
     items: [] as WishItemResponse[],
     total: 0,
     status: 'idle' as ItemStatus,
+    availableStores: [] as string[],
   }),
   actions: {
     setItems(items: WishItemResponse[], total: number) {
@@ -30,10 +31,14 @@ export const useItemStore = defineStore('item', {
     setStatus(status: ItemStatus) {
       this.status = status
     },
+    setAvailableStores(stores: string[]) {
+      this.availableStores = stores
+    },
     clear() {
       this.items = []
       this.total = 0
       this.status = 'idle'
+      this.availableStores = []
     },
   },
 })

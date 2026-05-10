@@ -2,6 +2,7 @@ import type {
   WishItemResponse,
   WishItemCreateBody,
   WishItemUpdateBody,
+  ItemFilters,
 } from '~/types/api'
 import { useItemsApi } from './api/useItemsApi'
 
@@ -12,12 +13,17 @@ export const useItems = () => {
   const items = computed(() => store.items)
   const total = computed(() => store.total)
   const isLoading = computed(() => store.status === 'loading')
+  const availableStores = computed(() => store.availableStores)
 
-  async function fetchList(wishlistId: string): Promise<void> {
+  async function fetchList(
+    wishlistId: string,
+    filters?: Partial<ItemFilters>,
+  ): Promise<void> {
     store.setStatus('loading')
     try {
-      const { items, total } = await api.list(wishlistId)
+      const { items, total, availableStores } = await api.list(wishlistId, filters)
       store.setItems(items, total)
+      store.setAvailableStores(availableStores)
     } catch {
       store.setStatus('error')
     }
@@ -58,5 +64,5 @@ export const useItems = () => {
     store.clear()
   }
 
-  return { items, total, isLoading, fetchOne, fetchList, createItem, updateItem, removeItem, clear }
+  return { items, total, isLoading, availableStores, fetchOne, fetchList, createItem, updateItem, removeItem, clear }
 }

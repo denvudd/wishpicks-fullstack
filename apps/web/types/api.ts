@@ -87,8 +87,16 @@ export interface WishItemResponse {
   notes: string | null
   tags: string[] | null
   is_reserved: boolean
+  is_fulfilled: boolean
   created_at: string
   updated_at: string
+}
+
+export interface ItemFilters {
+  is_reserved: boolean | null
+  is_fulfilled: boolean | null
+  priority: number[]
+  store: string | null
 }
 
 export interface WishItemCreateBody {

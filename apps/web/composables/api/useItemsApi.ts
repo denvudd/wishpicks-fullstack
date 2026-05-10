@@ -4,6 +4,7 @@ import type {
   WishItemResponse,
   WishItemCreateBody,
   WishItemUpdateBody,
+  ItemFilters,
 } from '~/types/api'
 
 interface ItemListData {
@@ -11,6 +12,7 @@ interface ItemListData {
   total: number
   limit: number
   offset: number
+  available_stores: string[]
 }
 
 export const useItemsApi = () => {
@@ -21,14 +23,30 @@ export const useItemsApi = () => {
 
   async function list(
     wishlistId: string,
+    filters?: Partial<ItemFilters>,
     limit = 50,
     offset = 0,
-  ): Promise<{ items: WishItemResponse[]; total: number }> {
+  ): Promise<{ items: WishItemResponse[]; total: number; availableStores: string[] }> {
+    const query: Record<string, unknown> = { limit, offset }
+    if (filters) {
+      if (filters.is_reserved !== null && filters.is_reserved !== undefined)
+        query.is_reserved = filters.is_reserved
+      if (filters.is_fulfilled !== null && filters.is_fulfilled !== undefined)
+        query.is_fulfilled = filters.is_fulfilled
+      if (filters.priority && filters.priority.length > 0)
+        query.priority = filters.priority
+      if (filters.store !== null && filters.store !== undefined)
+        query.store = filters.store
+    }
     const res = await apiFetch<ApiResponse<ItemListData>>(
       `/api/wishlists/${wishlistId}/items`,
-      { query: { limit, offset } },
+      { query },
     )
-    return { items: res.data.items, total: res.data.total }
+    return {
+      items: res.data.items,
+      total: res.data.total,
+      availableStores: res.data.available_stores,
+    }
   }
 
   async function create(

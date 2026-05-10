@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <div class="mb-8 flex w-full items-center justify-between gap-4">
+      <div class="mb-4 flex w-full items-center gap-2">
         <UButton
           v-if="!itemsLoading && items.length"
           variant="outline"
@@ -58,44 +58,124 @@
           "
           @click="toggleItemsLayout"
         />
-      </div>
 
-      <div
-        v-if="itemsLoading"
-        class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
-      >
-        <USkeleton v-for="n in 4" :key="n" class="aspect-square rounded-xl" />
-      </div>
-
-      <ItemsItemEmptyState
-        v-else-if="!items.length"
-        @create="entryOpen = true"
-      />
-
-      <div v-else>
-        <div
-          v-if="itemsLayout === 'grid'"
-          class="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5"
+        <UChip
+          :text="activeFilterCount > 0 ? String(activeFilterCount) : undefined"
+          :show="activeFilterCount > 0"
+          color="neutral"
+          size="sm"
         >
-          <ItemsItemCard
-            v-for="item in items"
-            :key="item.id"
-            :item="item"
-            @select="openItemDetail"
-            @edit="onEditItem"
-            @delete="onDeleteItem"
-            @share="onShareItem"
-            @update-priority="onUpdatePriority"
+          <UButton
+            variant="outline"
+            color="neutral"
+            icon="i-heroicons-adjustments-horizontal"
+            :label="t('items.filters.title')"
+            @click="filterOpen = true"
           />
+        </UChip>
+
+        <UButton
+          v-if="activeFilterCount > 0"
+          variant="ghost"
+          color="neutral"
+          :label="t('items.filters.clear')"
+          @click="clearFilters"
+        />
+      </div>
+
+      <!-- Active filter chips -->
+      <Transition
+        enter-active-class="animate-in fade-in-0 slide-in-from-top-2 duration-200 ease-out"
+        leave-active-class="animate-out fade-out-0 slide-out-to-top-2 duration-150 ease-in"
+      >
+        <div v-if="activeFilterCount > 0" class="mb-6">
+          <TransitionGroup
+            tag="div"
+            class="flex flex-wrap gap-2"
+            enter-active-class="animate-in fade-in-0 zoom-in-95 duration-200 ease-out"
+            leave-active-class="animate-out fade-out-0 zoom-out-95 duration-150 ease-in"
+          >
+            <UBadge
+              v-if="filters.is_reserved !== null"
+              key="is_reserved"
+              color="neutral"
+              variant="subtle"
+              class="cursor-pointer"
+              @click="filters.is_reserved = null"
+            >
+              {{ filters.is_reserved ? t('items.filters.reserved') : t('items.filters.not_reserved') }}
+              <UIcon name="i-heroicons-x-mark" class="ml-1 h-3 w-3" />
+            </UBadge>
+
+            <UBadge
+              v-if="filters.is_fulfilled !== null"
+              key="is_fulfilled"
+              color="neutral"
+              variant="subtle"
+              class="cursor-pointer"
+              @click="filters.is_fulfilled = null"
+            >
+              {{ filters.is_fulfilled ? t('items.filters.fulfilled') : t('items.filters.not_fulfilled') }}
+              <UIcon name="i-heroicons-x-mark" class="ml-1 h-3 w-3" />
+            </UBadge>
+
+            <UBadge
+              v-for="p in filters.priority"
+              :key="`priority-${p}`"
+              color="neutral"
+              variant="solid"
+              class="cursor-pointer"
+              @click="filters.priority = filters.priority.filter((x) => x !== p)"
+            >
+              {{ priorityLabel(p) }}
+              <UIcon name="i-heroicons-x-mark" class="ml-1 h-3 w-3" />
+            </UBadge>
+
+            <UBadge
+              v-if="filters.store !== null"
+              key="store"
+              color="neutral"
+              variant="outline"
+              class="cursor-pointer"
+              @click="filters.store = null"
+            >
+              {{ filters.store }}
+              <UIcon name="i-heroicons-x-mark" class="ml-1 h-3 w-3" />
+            </UBadge>
+          </TransitionGroup>
         </div>
-        <div v-else class="columns-2 gap-x-4 sm:columns-4 lg:columns-5">
+      </Transition>
+
+      <Transition
+        mode="out-in"
+        enter-active-class="animate-in fade-in-0 duration-200 ease-out"
+        leave-active-class="animate-out fade-out-0 duration-150 ease-in"
+      >
+        <div
+          v-if="itemsLoading"
+          key="skeleton"
+          class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
+        >
+          <USkeleton v-for="n in 4" :key="n" class="aspect-square rounded-xl" />
+        </div>
+
+        <ItemsItemEmptyState
+          v-else-if="!items.length"
+          key="empty"
+          @create="entryOpen = true"
+        />
+
+        <div v-else :key="itemsLayout">
           <div
-            v-for="item in items"
-            :key="item.id"
-            class="mb-4 break-inside-avoid"
+            v-if="itemsLayout === 'grid'"
+            class="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5"
           >
             <ItemsItemCard
+              v-for="(item, i) in items"
+              :key="item.id"
               :item="item"
+              class="animate-in fade-in-0 zoom-in-95 fill-mode-both duration-300"
+              :style="{ animationDelay: `${Math.min(i * 40, 280)}ms` }"
               @select="openItemDetail"
               @edit="onEditItem"
               @delete="onDeleteItem"
@@ -103,8 +183,25 @@
               @update-priority="onUpdatePriority"
             />
           </div>
+          <div v-else class="columns-2 gap-x-4 sm:columns-4 lg:columns-5">
+            <div
+              v-for="(item, i) in items"
+              :key="item.id"
+              class="mb-4 break-inside-avoid animate-in fade-in-0 zoom-in-95 fill-mode-both duration-300"
+              :style="{ animationDelay: `${Math.min(i * 40, 280)}ms` }"
+            >
+              <ItemsItemCard
+                :item="item"
+                @select="openItemDetail"
+                @edit="onEditItem"
+                @delete="onDeleteItem"
+                @share="onShareItem"
+                @update-priority="onUpdatePriority"
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      </Transition>
 
       <WishlistSettingsModal
         v-model:open="settingsOpen"
@@ -136,6 +233,13 @@
         :item="detailItem"
       />
 
+      <ItemsItemFilterSlideover
+        v-model:open="filterOpen"
+        :model-value="filters"
+        :available-stores="availableStores"
+        @update:model-value="filters = $event"
+      />
+
       <UModal v-model:open="deleteConfirmOpen" :title="t('items.delete')">
         <template #body>
           <p class="text-body-gray dark:text-muted-gray text-sm">
@@ -162,7 +266,7 @@
 </template>
 
 <script setup lang="ts">
-import type { WishItemResponse } from '~/types/api'
+import type { WishItemResponse, ItemFilters } from '~/types/api'
 
 definePageMeta({ layout: 'app', middleware: 'auth' })
 
@@ -177,6 +281,7 @@ const {
   fetchList,
   updateItem,
   removeItem,
+  availableStores,
   clear,
 } = useItems()
 
@@ -186,6 +291,7 @@ const settingsOpen = ref(false)
 const entryOpen = ref(false)
 const formOpen = ref(false)
 const shareOpen = ref(false)
+const filterOpen = ref(false)
 const itemsLayout = ref<ItemsLayoutMode>('grid')
 const editingItem = ref<WishItemResponse | null>(null)
 const sharingItem = ref<WishItemResponse | null>(null)
@@ -196,7 +302,32 @@ const itemPendingDelete = ref<WishItemResponse | null>(null)
 const deleteInProgress = ref(false)
 const entryResult = ref({ title: '', productUrl: null as string | null })
 
+const filters = ref<ItemFilters>({
+  is_reserved: null,
+  is_fulfilled: null,
+  priority: [],
+  store: null,
+})
+
+const activeFilterCount = computed(
+  () =>
+    (filters.value.is_reserved !== null ? 1 : 0) +
+    (filters.value.is_fulfilled !== null ? 1 : 0) +
+    filters.value.priority.length +
+    (filters.value.store !== null ? 1 : 0),
+)
+
 const wishlistId = computed(() => route.params.id as string)
+
+const priorityEmojis: Record<number, string> = { 0: '✨', 1: '🔥', 2: '💎' }
+function priorityLabel(p: number): string {
+  const keys = ['normal', 'high', 'must_have'] as const
+  return `${priorityEmojis[p]} ${t(`items.priority.${keys[p]}`)}`
+}
+
+function clearFilters() {
+  filters.value = { is_reserved: null, is_fulfilled: null, priority: [], store: null }
+}
 
 onMounted(async () => {
   const result = await fetchOne(wishlistId.value)
@@ -204,8 +335,15 @@ onMounted(async () => {
     await navigateTo(localePath('/dashboard'))
     return
   }
-  await fetchList(wishlistId.value)
 })
+
+watch(
+  filters,
+  (val) => {
+    if (wishlistId.value) fetchList(wishlistId.value, val)
+  },
+  { deep: true, immediate: true },
+)
 
 onUnmounted(() => {
   clear()
