@@ -28,7 +28,8 @@ async def get_item(
 ) -> WishItemSingleResponse:
     item = await item_service.get_item_by_id(db, item_id)
     is_reserved = await item_service.get_is_reserved(db, item.id)
-    return WishItemSingleResponse(data=item_service.build_item_response(item, is_reserved))
+    is_fulfilled = await item_service.get_is_fulfilled(db, item.id)
+    return WishItemSingleResponse(data=item_service.build_item_response(item, is_reserved, is_fulfilled))
 
 
 @router.patch(
@@ -52,7 +53,8 @@ async def update_item(
     item = await item_service.get_item_for_owner(db, item_id, current_user)
     updated = await item_service.update_item(db, item, body)
     is_reserved = await item_service.get_is_reserved(db, updated.id)
-    return WishItemSingleResponse(data=item_service.build_item_response(updated, is_reserved))
+    is_fulfilled = await item_service.get_is_fulfilled(db, updated.id)
+    return WishItemSingleResponse(data=item_service.build_item_response(updated, is_reserved, is_fulfilled))
 
 
 @router.delete(
@@ -96,4 +98,5 @@ async def update_position(
     item = await item_service.get_item_for_owner(db, item_id, current_user)
     updated = await item_service.update_position(db, item, body.position)
     is_reserved = await item_service.get_is_reserved(db, updated.id)
-    return WishItemSingleResponse(data=item_service.build_item_response(updated, is_reserved))
+    is_fulfilled = await item_service.get_is_fulfilled(db, updated.id)
+    return WishItemSingleResponse(data=item_service.build_item_response(updated, is_reserved, is_fulfilled))

@@ -1,4 +1,5 @@
 import uuid
+from urllib.parse import urlparse
 
 from fastapi import HTTPException
 from sqlalchemy import func, select
@@ -15,31 +16,96 @@ from app.schemas.items import (
 )
 
 
+def _extract_store_domain(url: str | None) -> str | None:
+    if not url:
+        return None
+    host = urlparse(url).hostname or ""
+    return host.removeprefix("www.") or None
+
+
+async def get_is_fulfilled(db: AsyncSession, item_id: uuid.UUID) -> bool:
+    result = await db.execute(
+        select(func.count(Reservation.id))
+        .where(Reservation.item_id == item_id)
+        .where(Reservation.is_fulfilled == True)  # noqa: E712
+    )
+    return result.scalar_one() > 0
+
+
 async def list_items(
-    db: AsyncSession, wishlist: Wishlist, limit: int, offset: int
-) -> tuple[list, int]:
-    is_reserved_col = (
+    db: AsyncSession,
+    wishlist: Wishlist,
+    limit: int,
+    offset: int,
+    is_reserved: bool | None = None,
+    is_fulfilled: bool | None = None,
+    priority: list[int] | None = None,
+    store: str | None = None,
+) -> tuple[list, int, list[str]]:
+    res_count_subq = (
         select(func.count(Reservation.id))
         .where(Reservation.item_id == WishItem.id)
         .correlate(WishItem)
         .scalar_subquery()
-        .label("is_reserved")
     )
+    fulfilled_count_subq = (
+        select(func.count(Reservation.id))
+        .where(Reservation.item_id == WishItem.id)
+        .where(Reservation.is_fulfilled == True)  # noqa: E712
+        .correlate(WishItem)
+        .scalar_subquery()
+    )
+
     stmt = (
-        select(WishItem, is_reserved_col)
+        select(
+            WishItem,
+            res_count_subq.label("is_reserved"),
+            fulfilled_count_subq.label("is_fulfilled"),
+        )
         .where(WishItem.wishlist_id == wishlist.id)
-        .order_by(WishItem.position.asc())
-        .limit(limit)
-        .offset(offset)
     )
     count_stmt = (
         select(func.count())
         .select_from(WishItem)
         .where(WishItem.wishlist_id == wishlist.id)
     )
+
+    if is_reserved is True:
+        stmt = stmt.where(res_count_subq > 0)
+        count_stmt = count_stmt.where(res_count_subq > 0)
+    elif is_reserved is False:
+        stmt = stmt.where(res_count_subq == 0)
+        count_stmt = count_stmt.where(res_count_subq == 0)
+
+    if is_fulfilled is True:
+        stmt = stmt.where(fulfilled_count_subq > 0)
+        count_stmt = count_stmt.where(fulfilled_count_subq > 0)
+    elif is_fulfilled is False:
+        stmt = stmt.where(fulfilled_count_subq == 0)
+        count_stmt = count_stmt.where(fulfilled_count_subq == 0)
+
+    if priority:
+        stmt = stmt.where(WishItem.priority.in_(priority))
+        count_stmt = count_stmt.where(WishItem.priority.in_(priority))
+
+    if store:
+        stmt = stmt.where(WishItem.store_domain == store)
+        count_stmt = count_stmt.where(WishItem.store_domain == store)
+
+    stmt = stmt.order_by(WishItem.position.asc()).limit(limit).offset(offset)
+
     rows = (await db.execute(stmt)).all()
     total = (await db.execute(count_stmt)).scalar_one()
-    return rows, total
+
+    stores_stmt = (
+        select(WishItem.store_domain)
+        .where(WishItem.wishlist_id == wishlist.id)
+        .where(WishItem.store_domain.is_not(None))
+        .distinct()
+    )
+    available_stores = list((await db.execute(stores_stmt)).scalars().all())
+
+    return rows, total, available_stores
 
 
 async def create_item(db: AsyncSession, wishlist: Wishlist, data: WishItemCreate) -> WishItem:
@@ -55,6 +121,7 @@ async def create_item(db: AsyncSession, wishlist: Wishlist, data: WishItemCreate
         description=data.description,
         image_url=data.image_url,
         product_url=data.product_url,
+        store_domain=_extract_store_domain(data.product_url),
         price_min=data.price_min,
         price_max=data.price_max,
         currency=data.currency,
@@ -107,6 +174,8 @@ async def get_item_for_owner(
 async def update_item(db: AsyncSession, item: WishItem, data: WishItemUpdate) -> WishItem:
     for field in data.model_fields_set:
         setattr(item, field, getattr(data, field))
+    if "product_url" in data.model_fields_set:
+        item.store_domain = _extract_store_domain(data.product_url)
     await db.commit()
     await db.refresh(item)
     return item
@@ -131,7 +200,7 @@ async def get_is_reserved(db: AsyncSession, item_id: uuid.UUID) -> bool:
     return result.scalar_one() > 0
 
 
-def build_item_response(item: WishItem, is_reserved: bool) -> WishItemResponse:
+def build_item_response(item: WishItem, is_reserved: bool, is_fulfilled: bool) -> WishItemResponse:
     return WishItemResponse(
         id=item.id,
         wishlist_id=item.wishlist_id,
@@ -148,6 +217,7 @@ def build_item_response(item: WishItem, is_reserved: bool) -> WishItemResponse:
         notes=item.notes,
         tags=item.tags,
         is_reserved=is_reserved,
+        is_fulfilled=is_fulfilled,
         created_at=item.created_at,
         updated_at=item.updated_at,
     )

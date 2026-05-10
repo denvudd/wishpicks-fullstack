@@ -33,6 +33,7 @@ class WishItem(Base, UUIDMixin, TimestampMixin):
     price_max: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     currency: Mapped[str] = mapped_column(String(3), default="UAH", nullable=False)
     product_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    store_domain: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
     priority: Mapped[int] = mapped_column(SmallInteger, default=0, nullable=False)
     is_surprise: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     position: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

@@ -235,17 +235,29 @@ async def list_items(
     request: Request,
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
+    is_reserved: bool | None = Query(default=None),
+    is_fulfilled: bool | None = Query(default=None),
+    priority: list[int] | None = Query(default=None),
+    store: str | None = Query(default=None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> WishItemListResponse:
     wishlist = await wishlist_service.get_wishlist(db, wishlist_id, current_user)
-    rows, total = await item_service.list_items(db, wishlist, limit, offset)
+    rows, total, available_stores = await item_service.list_items(
+        db, wishlist, limit, offset, is_reserved, is_fulfilled, priority, store
+    )
     items = [
-        item_service.build_item_response(row.WishItem, bool(row.is_reserved))
+        item_service.build_item_response(row.WishItem, bool(row.is_reserved), bool(row.is_fulfilled))
         for row in rows
     ]
     return WishItemListResponse(
-        data={"items": items, "total": total, "limit": limit, "offset": offset}
+        data={
+            "items": items,
+            "total": total,
+            "limit": limit,
+            "offset": offset,
+            "available_stores": available_stores,
+        }
     )
 
 
@@ -270,4 +282,4 @@ async def create_item(
 ) -> WishItemSingleResponse:
     wishlist = await wishlist_service.get_wishlist(db, wishlist_id, current_user)
     item = await item_service.create_item(db, wishlist, body)
-    return WishItemSingleResponse(data=item_service.build_item_response(item, False))
+    return WishItemSingleResponse(data=item_service.build_item_response(item, False, False))

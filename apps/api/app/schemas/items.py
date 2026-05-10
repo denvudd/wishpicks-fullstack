@@ -100,6 +100,7 @@ class WishItemResponse(BaseModel):
     notes: str | None
     tags: list[str] | None
     is_reserved: bool
+    is_fulfilled: bool
     created_at: datetime
     updated_at: datetime
 
@@ -122,6 +123,7 @@ class WishItemResponse(BaseModel):
                 "notes": "Any colour is fine",
                 "tags": ["electronics", "audio"],
                 "is_reserved": False,
+                "is_fulfilled": False,
                 "created_at": "2026-05-08T10:00:00Z",
                 "updated_at": "2026-05-08T10:00:00Z",
             }
@@ -134,6 +136,7 @@ class WishItemListData(BaseModel):
     total: int
     limit: int
     offset: int
+    available_stores: list[str]
 
 
 class WishItemListResponse(BaseModel):
