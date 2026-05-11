@@ -64,15 +64,27 @@
           </UTooltip>
         </div>
 
-        <div class="absolute bottom-2 left-2" @click.stop>
-          <UButton
-            color="neutral"
-            variant="ghost"
-            :label="t('items.fulfill')"
-            class="bg-white/15 text-xs text-white hover:bg-white/30"
-            @click="$emit('fulfill', item)"
-          />
-        </div>
+        <Transition
+          enter-active-class="animate-in fade-in-0 slide-in-from-bottom-2 duration-200 ease-out"
+          leave-active-class="animate-out fade-out-0 slide-out-to-bottom-2 duration-150 ease-in"
+        >
+          <div v-if="item.is_reserved" class="absolute bottom-2 left-2" @click.stop>
+            <Transition
+              mode="out-in"
+              enter-active-class="animate-in fade-in-0 duration-150 ease-out"
+              leave-active-class="animate-out fade-out-0 duration-100 ease-in"
+            >
+              <UButton
+                :key="item.is_fulfilled ? 'unfulfill' : 'fulfill'"
+                color="neutral"
+                variant="ghost"
+                :label="item.is_fulfilled ? t('reservation.unfulfill') : t('items.fulfill')"
+                class="bg-white/15 text-xs text-white hover:bg-white/30"
+                @click="$emit('fulfill', item)"
+              />
+            </Transition>
+          </div>
+        </Transition>
       </div>
     </div>
 

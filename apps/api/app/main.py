@@ -8,7 +8,7 @@ from app.core.settings import settings
 from app.middleware.cors import add_cors_middleware
 from app.middleware.csrf import add_csrf_middleware
 from app.middleware.security_headers import add_security_headers_middleware
-from app.routers import auth, items, media, reservations, saved, users, wishlists
+from app.routers import auth, items, media, reservations, saved, shared, users, wishlists
 
 app = FastAPI(
     title="Wishpicks API",
@@ -43,6 +43,7 @@ app.include_router(items.router, prefix="/api/items", tags=["items"])
 app.include_router(reservations.router, prefix="/api", tags=["reservations"])
 app.include_router(saved.router, prefix="/api/saved", tags=["saved"])
 app.include_router(media.router, prefix="/api/media", tags=["media"])
+app.include_router(shared.router, prefix="/api/w", tags=["shared"])
 
 
 @app.get("/api/health", tags=["health"])

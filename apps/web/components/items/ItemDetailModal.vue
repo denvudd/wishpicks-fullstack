@@ -83,6 +83,14 @@
             <p v-else class="text-xs text-muted-gray">
               {{ t('items.fields.product_url_placeholder') }}
             </p>
+            <UButton
+              v-if="item.is_reserved"
+              variant="outline"
+              color="neutral"
+              size="sm"
+              :label="item.is_fulfilled ? t('reservation.unfulfill') : t('reservation.fulfill')"
+              @click="emit('fulfill', item)"
+            />
           </div>
         </div>
       </div>
@@ -95,6 +103,7 @@ import { resolveComponent } from 'vue'
 import type { WishItemResponse } from '~/types/api'
 
 const props = defineProps<{ item: WishItemResponse }>()
+const emit = defineEmits<{ fulfill: [item: WishItemResponse] }>()
 const open = defineModel<boolean>('open', { default: false })
 
 const { t } = useI18n()

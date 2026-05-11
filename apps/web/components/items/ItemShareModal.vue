@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import type { WishItemResponse } from '~/types/api'
 
-const props = defineProps<{ item: WishItemResponse }>()
+const props = defineProps<{ item: WishItemResponse; slug?: string }>()
 const open = defineModel<boolean>('open', { default: false })
 
 const { t } = useI18n()
@@ -65,9 +65,9 @@ const copied = ref(false)
 
 const shareUrl = computed(() => {
   if (import.meta.server) return ''
-  const path = localePath(
-    `/wishlists/${props.item.wishlist_id}/wish/${props.item.id}`
-  )
+  const path = props.slug
+    ? localePath(`/w/${props.slug}/wish/${props.item.id}`)
+    : localePath(`/wishlists/${props.item.wishlist_id}/wish/${props.item.id}`)
   return `${window.location.origin}${path}`
 })
 

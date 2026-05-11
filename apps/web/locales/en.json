@@ -313,5 +313,28 @@
       "unknown": "Something went wrong. Please try again.",
       "network": "Could not connect. Check your connection."
     }
+  },
+  "reservation": {
+    "reserve": "Reserve",
+    "cancel": "Cancel reservation",
+    "reserved_by_you": "You reserved this",
+    "name_label": "Your name",
+    "name_placeholder": "e.g. Anna",
+    "name_required": "Please enter your name",
+    "already_reserved": "Already reserved",
+    "fulfill": "Mark as fulfilled",
+    "unfulfill": "Unmark fulfillment",
+    "fulfilled_by_you": "You fulfilled this",
+    "registered_only_prompt": "Sign in to reserve this item",
+    "sign_in": "Sign in",
+    "confirm": "Confirm reservation",
+    "reserving": "Reserving…"
+  },
+  "shared": {
+    "no_items": "No items in this list yet",
+    "items_count": "{n} item | {n} items",
+    "reserved_badge": "Reserved",
+    "fulfilled_badge": "Fulfilled",
+    "anonymous_author": "Anonymous"
   }
 }

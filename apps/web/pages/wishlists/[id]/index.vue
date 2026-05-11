@@ -31,6 +31,18 @@
             @click="entryOpen = true"
           />
 
+          <UTooltip
+            v-if="current.visibility !== 'private'"
+            :text="shareLinkCopied ? t('wishlists.settings.link_copied') : t('wishlists.settings.copy_link')"
+          >
+            <UButton
+              variant="outline"
+              color="neutral"
+              :icon="shareLinkCopied ? 'i-heroicons-check' : 'i-heroicons-share'"
+              @click="copyShareLink"
+            />
+          </UTooltip>
+
           <UButton
             variant="outline"
             color="neutral"
@@ -181,6 +193,7 @@
               @delete="onDeleteItem"
               @share="onShareItem"
               @update-priority="onUpdatePriority"
+              @fulfill="onFulfillItem"
             />
           </div>
           <div v-else class="columns-2 gap-x-4 sm:columns-4 lg:columns-5">
@@ -197,6 +210,7 @@
                 @delete="onDeleteItem"
                 @share="onShareItem"
                 @update-priority="onUpdatePriority"
+                @fulfill="onFulfillItem"
               />
             </div>
           </div>
@@ -215,6 +229,7 @@
         v-if="sharingItem"
         v-model:open="shareOpen"
         :item="sharingItem"
+        :slug="current?.slug"
       />
 
       <ItemsItemFormModal
@@ -231,6 +246,7 @@
         v-if="detailItem"
         v-model:open="detailOpen"
         :item="detailItem"
+        @fulfill="onFulfillItem"
       />
 
       <ItemsItemFilterSlideover
@@ -267,6 +283,7 @@
 
 <script setup lang="ts">
 import type { WishItemResponse, ItemFilters } from '~/types/api'
+import { useReservationsApi } from '~/composables/api/useReservationsApi'
 
 definePageMeta({ layout: 'app', middleware: 'auth' })
 
@@ -284,6 +301,8 @@ const {
   availableStores,
   clear,
 } = useItems()
+const reservationsApi = useReservationsApi()
+const itemStore = useItemStore()
 
 type ItemsLayoutMode = 'grid' | 'masonry'
 
@@ -301,6 +320,7 @@ const deleteConfirmOpen = ref(false)
 const itemPendingDelete = ref<WishItemResponse | null>(null)
 const deleteInProgress = ref(false)
 const entryResult = ref({ title: '', productUrl: null as string | null })
+const shareLinkCopied = ref(false)
 
 const filters = ref<ItemFilters>({
   is_reserved: null,
@@ -351,6 +371,14 @@ onUnmounted(() => {
 
 function toggleItemsLayout() {
   itemsLayout.value = itemsLayout.value === 'grid' ? 'masonry' : 'grid'
+}
+
+async function copyShareLink() {
+  if (!current.value?.slug) return
+  const url = `${window.location.origin}/w/${current.value.slug}`
+  await navigator.clipboard.writeText(url)
+  shareLinkCopied.value = true
+  setTimeout(() => { shareLinkCopied.value = false }, 2000)
 }
 
 function onEntryProceed(payload: { title: string; productUrl: string | null }) {
@@ -411,5 +439,16 @@ function onItemSaved(_item: WishItemResponse) {
 
 function onItemDeleted() {
   // store updated via useItems composable
+}
+
+async function onFulfillItem(item: WishItemResponse) {
+  try {
+    await reservationsApi.fulfill(item.id, !item.is_fulfilled)
+    const updated = { ...item, is_fulfilled: !item.is_fulfilled }
+    itemStore.updateOne(updated)
+    if (detailItem.value?.id === item.id) {
+      detailItem.value = updated
+    }
+  } catch {}
 }
 </script>

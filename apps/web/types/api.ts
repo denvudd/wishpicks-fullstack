@@ -126,3 +126,69 @@ export interface WishItemUpdateBody {
   notes?: string | null
   tags?: string[] | null
 }
+
+// --- Shared wishlist (public guest view) ---
+
+export interface MyReservation {
+  anon_token: string | null
+}
+
+export interface SharedItemResponse {
+  id: string
+  title: string
+  description: string | null
+  image_url: string | null
+  product_url: string | null
+  price_min: string | null
+  price_max: string | null
+  currency: string
+  priority: ItemPriority
+  position: number
+  notes: string | null
+  tags: string[] | null
+  is_reserved: boolean
+  is_fulfilled: boolean
+  my_reservation: MyReservation | null
+}
+
+export interface SharedWishlistAuthor {
+  display_name: string | null
+  avatar_url: string | null
+}
+
+export interface SharedWishlistMeta {
+  id: string
+  title: string
+  description: string | null
+  cover_url: string | null
+  event_type: EventType | null
+  event_date: string | null
+  reservation_mode: ReservationMode
+  slug: string
+  created_at: string
+  author: SharedWishlistAuthor
+}
+
+export interface SharedWishlistData {
+  wishlist: SharedWishlistMeta
+  items: SharedItemResponse[]
+}
+
+export interface SharedWishlistResponse {
+  data: SharedWishlistData
+}
+
+// --- Reservations ---
+
+export interface ReservationResponse {
+  id: string
+  item_id: string
+  reserver_name: string | null
+  is_fulfilled: boolean
+  anon_token: string | null
+  created_at: string
+}
+
+export interface ReservationSingleResponse {
+  data: ReservationResponse
+}

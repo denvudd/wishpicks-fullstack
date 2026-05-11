@@ -24,6 +24,7 @@ class Reservation(Base, UUIDMixin):
     )
     reserver_name: Mapped[str | None] = mapped_column(String, nullable=True)
     is_fulfilled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    anon_token: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now(), nullable=False
     )

@@ -27,8 +27,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    apiBaseUrl: '', // NUXT_API_BASE_URL — internal Docker URL for SSR (e.g. http://api:8000)
     public: {
-      apiBaseUrl: '',
+      apiBaseUrl: '', // NUXT_PUBLIC_API_BASE_URL — browser-facing URL
       cloudinaryCloudName: '',
     },
   },
