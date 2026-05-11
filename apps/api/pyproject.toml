@@ -17,6 +17,7 @@ dependencies = [
     "slowapi>=0.1.9",
     "redis[asyncio]>=5.2.0",
     "cloudinary>=1.41.0",
+    "python-multipart>=0.0.12",
 ]
 
 [dependency-groups]
