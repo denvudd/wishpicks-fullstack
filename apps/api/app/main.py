@@ -1,3 +1,4 @@
+import cloudinary
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
@@ -5,6 +6,13 @@ from slowapi.errors import RateLimitExceeded
 
 from app.core.limiter import limiter
 from app.core.settings import settings
+
+cloudinary.config(
+    cloud_name=settings.CLOUDINARY_CLOUD_NAME,
+    api_key=settings.CLOUDINARY_API_KEY,
+    api_secret=settings.CLOUDINARY_API_SECRET,
+    secure=True,
+)
 from app.middleware.cors import add_cors_middleware
 from app.middleware.csrf import add_csrf_middleware
 from app.middleware.security_headers import add_security_headers_middleware
