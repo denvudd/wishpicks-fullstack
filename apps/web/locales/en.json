@@ -9,22 +9,54 @@
     "note": "Free to use · No credit card required",
     "steps_label": "How it works",
     "steps": [
-      { "n": "01", "title": "Create a wishlist", "body": "Add items by pasting a product URL or typing manually. Wishpicks pulls the title, image and price automatically." },
-      { "n": "02", "title": "Share your link", "body": "Copy your unique wishlist link and send it to anyone — via messenger, email or socials. No app required." },
-      { "n": "03", "title": "Friends reserve gifts", "body": "Guests open the link and mark items as reserved. You never see who picked what — the surprise stays intact." }
+      {
+        "n": "01",
+        "title": "Create a wishlist",
+        "body": "Add items by pasting a product URL or typing manually. Wishpicks pulls the title, image and price automatically."
+      },
+      {
+        "n": "02",
+        "title": "Share your link",
+        "body": "Copy your unique wishlist link and send it to anyone — via messenger, email or socials. No app required."
+      },
+      {
+        "n": "03",
+        "title": "Friends reserve gifts",
+        "body": "Guests open the link and mark items as reserved. You never see who picked what — the surprise stays intact."
+      }
     ],
     "features_label": "Built around the surprise",
     "features": [
-      { "icon": "🔒", "title": "Surprise stays safe", "body": "The wishlist owner never sees reservation status. Only guests can see what's been picked." },
-      { "icon": "🔗", "title": "Share without signing up", "body": "Anyone with the link can view and reserve. No account needed for guests." },
-      { "icon": "📎", "title": "URL auto-import", "body": "Paste any product link — Wishpicks fetches the name, photo and price for you." },
-      { "icon": "📌", "title": "Save others' lists", "body": "Authenticated users can bookmark a friend's wishlist or save individual items to their own collection." }
+      {
+        "icon": "🔒",
+        "title": "Surprise stays safe",
+        "body": "The wishlist owner never sees reservation status. Only guests can see what's been picked."
+      },
+      {
+        "icon": "🔗",
+        "title": "Share without signing up",
+        "body": "Anyone with the link can view and reserve. No account needed for guests."
+      },
+      {
+        "icon": "📎",
+        "title": "URL auto-import",
+        "body": "Paste any product link — Wishpicks fetches the name, photo and price for you."
+      },
+      {
+        "icon": "📌",
+        "title": "Save others' lists",
+        "body": "Authenticated users can bookmark a friend's wishlist or save individual items to their own collection."
+      }
     ],
     "privacy_label": "What your friends see",
     "privacy_heading_1": "Guests see everything.",
     "privacy_heading_2": "You see nothing.",
     "privacy_body": "Reservations are visible only to other guests — never to the list owner. The element of surprise is preserved by design, not by trust.",
-    "bullets": ["No login required for guests", "Real-time reservation sync", "Duplicate gifts are impossible"],
+    "bullets": [
+      "No login required for guests",
+      "Real-time reservation sync",
+      "Duplicate gifts are impossible"
+    ],
     "cta_title": "Ready to share your wishlist?",
     "cta_sub": "It takes less than two minutes.",
     "cta_btn": "Get started — it's free",
@@ -56,21 +88,34 @@
   },
   "auth": {
     "login": {
-      "title": "Sign in to Wishpicks", "subtitle": "Welcome back",
-      "email": "Email", "email_placeholder": "you@example.com",
-      "password": "Password", "password_placeholder": "••••••••",
-      "submit": "Sign in", "submitting": "Signing in…",
-      "no_account": "Don't have an account?", "register_link": "Create one",
-      "or": "or", "google": "Continue with Google"
+      "title": "Sign in to Wishpicks",
+      "subtitle": "Welcome back",
+      "email": "Email",
+      "email_placeholder": "you@example.com",
+      "password": "Password",
+      "password_placeholder": "••••••••",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "no_account": "Don't have an account?",
+      "register_link": "Create one",
+      "or": "or",
+      "google": "Continue with Google"
     },
     "register": {
-      "title": "Create your account", "subtitle": "Start building your wishlists",
-      "display_name": "Display name", "display_name_placeholder": "How should we call you?",
-      "email": "Email", "email_placeholder": "you@example.com",
-      "password": "Password", "password_placeholder": "At least 8 characters",
-      "submit": "Create account", "submitting": "Creating account…",
-      "have_account": "Already have an account?", "login_link": "Sign in",
-      "or": "or", "google": "Continue with Google"
+      "title": "Create your account",
+      "subtitle": "Start building your wishlists",
+      "display_name": "Display name",
+      "display_name_placeholder": "How should we call you?",
+      "email": "Email",
+      "email_placeholder": "you@example.com",
+      "password": "Password",
+      "password_placeholder": "At least 8 characters",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "have_account": "Already have an account?",
+      "login_link": "Sign in",
+      "or": "or",
+      "google": "Continue with Google"
     },
     "verify_email": {
       "title": "Verify your email",
@@ -121,6 +166,10 @@
     "empty_title": "No wishlists yet",
     "empty_body": "Create your first one and share it with friends",
     "items_count": "{n} item | {n} items",
+    "items_layout": {
+      "switch_to_masonry": "Masonry layout",
+      "switch_to_grid": "Fixed grid layout"
+    },
     "loading": "Loading…",
     "create": {
       "title": "New wishlist",
@@ -184,5 +233,108 @@
       "network": "Could not reach the server. Check your connection.",
       "unknown": "Something went wrong. Please try again."
     }
+  },
+  "items": {
+    "new": "New wish",
+    "entry_title": "Add a wish",
+    "entry_placeholder": "Item name or product link…",
+    "entry_url_note": "URL parsing is coming soon. Fill in the details manually.",
+    "entry_continue": "Continue",
+    "form_title_create": "Wish details",
+    "form_title_edit": "Edit wish",
+    "preview_label": "New wish",
+    "fields": {
+      "title": "Name",
+      "title_placeholder": "e.g. Sony WH-1000XM5",
+      "product_url": "Store link",
+      "product_url_placeholder": "https://…",
+      "price_exact": "Price",
+      "price_range": "Range",
+      "price_placeholder": "0.00",
+      "price_min_placeholder": "From",
+      "price_max_placeholder": "To",
+      "currency": "Currency",
+      "wishlist": "Wishlist",
+      "notes": "Notes for gift-givers",
+      "notes_placeholder": "Hints or preferences…"
+    },
+    "advanced": {
+      "title": "Advanced settings",
+      "priority": "Priority",
+      "tags": "Tags",
+      "tags_placeholder": "Add a tag and press Enter…",
+      "description": "Description",
+      "description_placeholder": "More about this wish…"
+    },
+    "priority": {
+      "normal": "Nice to have",
+      "high": "Really want it",
+      "must_have": "Top priority"
+    },
+    "submit_create": "Add wish",
+    "submit_edit": "Save changes",
+    "submitting": "Saving…",
+    "delete": "Delete wish",
+    "delete_confirm_body": "This action cannot be undone.",
+    "delete_confirm_yes": "Delete",
+    "delete_cancel": "Cancel",
+    "deleting": "Deleting…",
+    "edit": "Edit",
+    "copy": "Make a copy",
+    "share": "Share",
+    "fulfill": "Mark as fulfilled",
+    "show_more": "Show more",
+    "show_less": "Show less",
+    "fulfill_question": "Want to fulfill this wish?",
+    "open_store": "Go to store",
+    "share_title": "Share wish",
+    "share_copy_link": "Copy link",
+    "share_link_copied": "Copied!",
+    "share_via": "Share via:",
+    "empty_title": "No wishes yet",
+    "empty_body": "Add your first wish to this list",
+    "empty_action": "Add a wish",
+    "reserved": "Reserved",
+    "add": "Add a wish",
+    "card_open_detail": "Open wish details: {title}",
+    "filters": {
+      "title": "Filters",
+      "clear": "Clear",
+      "reservation_status": "Reservation status",
+      "not_reserved": "Not reserved",
+      "reserved": "Reserved",
+      "fulfillment_status": "Fulfillment status",
+      "not_fulfilled": "Not fulfilled",
+      "fulfilled": "Fulfilled",
+      "priority": "Priority",
+      "store": "Store"
+    },
+    "errors": {
+      "unknown": "Something went wrong. Please try again.",
+      "network": "Could not connect. Check your connection."
+    }
+  },
+  "reservation": {
+    "reserve": "Reserve",
+    "cancel": "Cancel reservation",
+    "reserved_by_you": "You reserved this",
+    "name_label": "Your name",
+    "name_placeholder": "e.g. Anna",
+    "name_required": "Please enter your name",
+    "already_reserved": "Already reserved",
+    "fulfill": "Mark as fulfilled",
+    "unfulfill": "Unmark fulfillment",
+    "fulfilled_by_you": "You fulfilled this",
+    "registered_only_prompt": "Sign in to reserve this item",
+    "sign_in": "Sign in",
+    "confirm": "Confirm reservation",
+    "reserving": "Reserving…"
+  },
+  "shared": {
+    "no_items": "No items in this list yet",
+    "items_count": "{n} item | {n} items",
+    "reserved_badge": "Reserved",
+    "fulfilled_badge": "Fulfilled",
+    "anonymous_author": "Anonymous"
   }
 }
