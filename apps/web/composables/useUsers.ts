@@ -7,6 +7,7 @@ export const useUsers = () => {
   async function updateProfile(body: {
     display_name?: string | null
     username?: string | null
+    avatar_url?: string | null
   }): Promise<void> {
     const updated = await usersApi.updateProfile(body)
     store.setUser(updated)

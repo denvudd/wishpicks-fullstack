@@ -160,6 +160,21 @@
     "board_section": "Дошка бажань",
     "coming_soon": "Скоро буде"
   },
+  "settings": {
+    "title": "Налаштування",
+    "avatar_label": "Фото профілю",
+    "avatar_change": "Змінити фото",
+    "display_name": "Імʼя",
+    "username": "Username",
+    "save": "Зберегти зміни",
+    "saving": "Збереження…",
+    "saved": "Зміни збережено",
+    "errors": {
+      "upload_failed": "Не вдалося завантажити фото",
+      "unknown": "Щось пішло не так",
+      "USERNAME_TAKEN": "Цей username вже зайнятий"
+    }
+  },
   "wishlists": {
     "title": "Мої вішлісти",
     "new": "Новий вішліст",

@@ -160,6 +160,21 @@
     "board_section": "Wish board",
     "coming_soon": "Coming soon"
   },
+  "settings": {
+    "title": "Settings",
+    "avatar_label": "Profile photo",
+    "avatar_change": "Change photo",
+    "display_name": "Name",
+    "username": "Username",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Changes saved",
+    "errors": {
+      "upload_failed": "Failed to upload photo",
+      "unknown": "Something went wrong",
+      "USERNAME_TAKEN": "This username is already taken"
+    }
+  },
   "wishlists": {
     "title": "My wishlists",
     "new": "New wishlist",
