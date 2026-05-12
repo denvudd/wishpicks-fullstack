@@ -280,7 +280,9 @@
       "tags": "Теги",
       "tags_placeholder": "Додати тег і натиснути Enter…",
       "description": "Опис",
-      "description_placeholder": "Докладніше про бажання…"
+      "description_placeholder": "Докладніше про бажання…",
+      "images": "Зображення",
+      "images_add": "Додати зображення"
     },
     "priority": {
       "normal": "Хочеться мати",

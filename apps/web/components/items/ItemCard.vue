@@ -9,15 +9,52 @@
     @keydown.space.prevent="emit('select', item)"
   >
     <div class="bg-chip-gray relative aspect-square dark:bg-neutral-800">
+      <!-- 0 images -->
+      <div v-if="cardImages.length === 0" class="flex h-full items-center justify-center">
+        <UIcon name="i-heroicons-gift" class="text-muted-gray h-10 w-10" />
+      </div>
+
+      <!-- 1 image -->
       <img
-        v-if="item.image_url"
-        :src="item.image_url"
+        v-else-if="cardImages.length === 1"
+        :src="cardImages[0]"
         :alt="item.title"
         class="h-full w-full object-cover"
         loading="lazy"
       />
-      <div v-else class="flex h-full items-center justify-center">
-        <UIcon name="i-heroicons-gift" class="text-muted-gray h-10 w-10" />
+
+      <!-- 2 images -->
+      <div v-else-if="cardImages.length === 2" class="grid h-full w-full grid-cols-2 gap-px">
+        <img
+          v-for="(src, i) in cardImages"
+          :key="i"
+          :src="src"
+          :alt="item.title"
+          class="h-full w-full object-cover"
+          loading="lazy"
+        />
+      </div>
+
+      <!-- 3 images -->
+      <div v-else class="grid h-full w-full grid-cols-2 gap-px">
+        <img
+          :src="cardImages[0]"
+          :alt="item.title"
+          class="row-span-2 h-full w-full object-cover"
+          loading="lazy"
+        />
+        <img
+          :src="cardImages[1]"
+          :alt="item.title"
+          class="h-full w-full object-cover"
+          loading="lazy"
+        />
+        <img
+          :src="cardImages[2]"
+          :alt="item.title"
+          class="h-full w-full object-cover"
+          loading="lazy"
+        />
       </div>
 
       <div
@@ -140,7 +177,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const PRIORITY_EMOJI: Record<number, string> = { 0: '✨', 1: '🔥', 2: '💎' }
+const PRIORITY_EMOJI: Record<number, string> = { 0: '🙂', 1: '🥰', 2: '😍' }
 
 const priorityEmoji = computed(
   () => PRIORITY_EMOJI[props.item.priority] ?? null
@@ -166,6 +203,14 @@ const storeDomain = computed(() => {
   }
 })
 
+const cardImages = computed(() => {
+  const all = [
+    ...(props.item.image_url ? [props.item.image_url] : []),
+    ...(props.item.images ?? []),
+  ]
+  return all.slice(0, 3)
+})
+
 const priceDisplay = computed(() => {
   const { price_min, price_max, currency } = props.item
 
@@ -181,15 +226,15 @@ const priceDisplay = computed(() => {
 const priorityMenuItems = computed(() => [
   [
     {
-      label: `✨ ${t('items.priority.normal')}`,
+      label: `🙂 ${t('items.priority.normal')}`,
       onSelect: () => emit('update-priority', props.item, 0),
     },
     {
-      label: `🔥 ${t('items.priority.high')}`,
+      label: `🥰 ${t('items.priority.high')}`,
       onSelect: () => emit('update-priority', props.item, 1),
     },
     {
-      label: `💎 ${t('items.priority.must_have')}`,
+      label: `😍 ${t('items.priority.must_have')}`,
       onSelect: () => emit('update-priority', props.item, 2),
     },
   ],

@@ -339,7 +339,7 @@ const activeFilterCount = computed(
 
 const wishlistId = computed(() => route.params.id as string)
 
-const priorityEmojis: Record<number, string> = { 0: '✨', 1: '🔥', 2: '💎' }
+const priorityEmojis: Record<number, string> = { 0: '🙂', 1: '🥰', 2: '😍' }
 function priorityLabel(p: number): string {
   const keys = ['normal', 'high', 'must_have'] as const
   return `${priorityEmojis[p]} ${t(`items.priority.${keys[p]}`)}`

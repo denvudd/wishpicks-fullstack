@@ -45,7 +45,7 @@ Implemented the full wish item frontend: types, store, API/business composables,
 6. Created `apps/web/components/items/ItemCard.vue`:
    - Image area with hover overlay (opacity-0 → opacity-100 on group-hover)
    - Overlay: `UDropdownMenu` (Edit / Copy / Share / Delete) + share button top-left; store link top-right; "Fulfill" button + priority dropdown bottom
-   - Priority shown as emoji: `{ 0: '✨', 1: '🔥', 2: '💎' }`
+   - Priority shown as emoji: `{ 0: '🙂', 1: '🥰', 2: '😍' }`
    - Inline priority change via `UDropdownMenu` — no modal needed
    - Body: title (line-clamp-2) + store domain link + price range row
    - Emits: `edit`, `delete`, `copy`, `share`, `fulfill`, `update-priority`

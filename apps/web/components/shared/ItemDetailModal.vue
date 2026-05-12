@@ -180,7 +180,7 @@ const dialogComponent = isMobile ? UDrawer : UModal
 
 const showFullDesc = ref(false)
 
-const PRIORITY_EMOJI: Record<number, string> = { 0: '✨', 1: '🔥', 2: '💎' }
+const PRIORITY_EMOJI: Record<number, string> = { 0: '🙂', 1: '🥰', 2: '😍' }
 const priorityEmoji = computed(() => PRIORITY_EMOJI[props.item.priority] ?? null)
 
 const isReservedByMe = computed(

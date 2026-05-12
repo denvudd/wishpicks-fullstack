@@ -25,7 +25,7 @@
           />
           <button
             type="button"
-            class="group relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-hover-gray dark:bg-neutral-700"
+            class="group relative h-14 w-14 cursor-pointer shrink-0 overflow-hidden rounded-lg bg-hover-gray dark:bg-neutral-700"
             :disabled="imageUploading"
             @click="fileInputRef?.click()"
           >
@@ -220,7 +220,7 @@
                     >
                       {{ tag }}
                       <button
-                        class="leading-none transition-colors hover:text-red-500"
+                        class="leading-none cursor-pointer transition-colors hover:text-red-500"
                         @click="removeTag(tag)"
                       >
                         <UIcon name="i-heroicons-x-mark" class="h-3 w-3" />
@@ -236,6 +236,60 @@
                   :placeholder="t('items.advanced.description_placeholder')"
                   :rows="3"
                 />
+              </UFormField>
+
+              <UFormField :label="t('items.advanced.images')">
+                <div class="space-y-2">
+                  <input
+                    ref="imageFilesInputRef"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    class="hidden"
+                    @change="onExtraImagePick"
+                  />
+                  <div class="flex flex-wrap gap-2">
+                    <VueDraggable
+                      v-model="form.images"
+                      class="contents"
+                      :animation="150"
+                    >
+                      <div
+                        v-for="(src, i) in form.images"
+                        :key="src + '-' + i"
+                        class="group relative aspect-square w-16 cursor-grab overflow-hidden rounded-lg transition-transform duration-200 active:cursor-grabbing"
+                      >
+                        <img :src="src" alt="" class="h-full w-full object-cover" />
+                        <div class="absolute inset-0 bg-black/0 transition-colors duration-200 group-hover:bg-black/20" />
+                        <button
+                          type="button"
+                          class="absolute cursor-pointer top-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-all duration-150 group-hover:opacity-100"
+                          @click.stop="form.images.splice(i, 1)"
+                        >
+                          <UIcon name="i-heroicons-x-mark" class="h-3 w-3" />
+                        </button>
+                      </div>
+                    </VueDraggable>
+
+                    <button
+                      v-if="form.images.length < 5"
+                      type="button"
+                      :disabled="imagesUploading"
+                      class="flex aspect-square w-16 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-50 transition-all duration-200 hover:border-neutral-400 hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-800/50 dark:hover:border-neutral-500 dark:hover:bg-neutral-700/50"
+                      @click="imageFilesInputRef?.click()"
+                    >
+                      <UIcon
+                        v-if="!imagesUploading"
+                        name="i-heroicons-plus"
+                        class="h-5 w-5 text-neutral-400 transition-transform duration-200 dark:text-neutral-500"
+                      />
+                      <UIcon
+                        v-else
+                        name="i-heroicons-arrow-path"
+                        class="h-5 w-5 animate-spin text-neutral-400 dark:text-neutral-500"
+                      />
+                    </button>
+                  </div>
+                </div>
               </UFormField>
             </div>
           </template>
@@ -296,6 +350,7 @@
 
 <script setup lang="ts">
 import { resolveComponent } from 'vue'
+import { VueDraggable } from 'vue-draggable-plus'
 import type { WishItemResponse } from '~/types/api'
 import { useMediaApi } from '~/composables/api/useMediaApi'
 
@@ -325,6 +380,8 @@ const { createItem, updateItem, removeItem } = useItems()
 const mediaApi = useMediaApi()
 const imageUploading = ref(false)
 const fileInputRef = ref<HTMLInputElement | null>(null)
+const imagesUploading = ref(false)
+const imageFilesInputRef = ref<HTMLInputElement | null>(null)
 
 const UModal = resolveComponent('UModal')
 const UDrawer = resolveComponent('UDrawer')
@@ -361,6 +418,7 @@ function resetFormForCreate() {
   form.priority = '0'
   form.tags = []
   form.description = ''
+  form.images = []
 }
 
 function applyFormFromItem(item: WishItemResponse) {
@@ -376,6 +434,7 @@ function applyFormFromItem(item: WishItemResponse) {
   form.priority = String(item.priority ?? 0)
   form.tags = [...(item.tags ?? [])]
   form.description = item.description ?? ''
+  form.images = [...(item.images ?? [])]
 }
 
 const form = reactive({
@@ -391,6 +450,7 @@ const form = reactive({
   priority: '0',
   tags: [] as string[],
   description: '',
+  images: [] as string[],
 })
 
 watch(open, (val) => {
@@ -415,9 +475,9 @@ const wishlistOptions = computed(() =>
 )
 
 const priorityChoices = computed(() => [
-  { value: '0', emoji: '✨', label: t('items.priority.normal') },
-  { value: '1', emoji: '🔥', label: t('items.priority.high') },
-  { value: '2', emoji: '💎', label: t('items.priority.must_have') },
+  { value: '0', emoji: '🙂', label: t('items.priority.normal') },
+  { value: '1', emoji: '🥰', label: t('items.priority.high') },
+  { value: '2', emoji: '😍', label: t('items.priority.must_have') },
 ])
 
 const pricePreview = computed(() => {
@@ -468,6 +528,7 @@ function buildBody() {
     priority: Number(form.priority),
     notes: form.notes.trim() || null,
     tags: form.tags.length ? form.tags : null,
+    images: form.images.length ? form.images : null,
   }
 }
 
@@ -483,6 +544,22 @@ async function onImagePick(event: Event) {
     useToast().add({ title: t('items.errors.image_upload_failed'), color: 'error' })
   } finally {
     imageUploading.value = false
+  }
+}
+
+async function onExtraImagePick(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (imageFilesInputRef.value) imageFilesInputRef.value.value = ''
+  if (!file || form.images.length >= 5) return
+
+  imagesUploading.value = true
+  try {
+    const url = await mediaApi.uploadImage(file, 'items')
+    form.images.push(url)
+  } catch {
+    useToast().add({ title: t('items.errors.image_upload_failed'), color: 'error' })
+  } finally {
+    imagesUploading.value = false
   }
 }
 

@@ -111,9 +111,9 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const priorityOptions = computed(() => [
-  { value: 0, emoji: '✨', label: t('items.priority.normal') },
-  { value: 1, emoji: '🔥', label: t('items.priority.high') },
-  { value: 2, emoji: '💎', label: t('items.priority.must_have') },
+  { value: 0, emoji: '🙂', label: t('items.priority.normal') },
+  { value: 1, emoji: '🥰', label: t('items.priority.high') },
+  { value: 2, emoji: '😍', label: t('items.priority.must_have') },
 ])
 
 function toggleReservation(value: boolean) {

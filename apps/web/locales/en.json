@@ -280,7 +280,9 @@
       "tags": "Tags",
       "tags_placeholder": "Add a tag and press Enter…",
       "description": "Description",
-      "description_placeholder": "More about this wish…"
+      "description_placeholder": "More about this wish…",
+      "images": "Images",
+      "images_add": "Add image"
     },
     "priority": {
       "normal": "Nice to have",

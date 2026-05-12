@@ -50,6 +50,7 @@ wishpicks/
 | Form validation | VeeValidate + Zod | Client-side schemas that mirror backend validation |
 | HTTP layer | Native `$fetch` / `useFetch` | Built into Nuxt, no extra dependencies |
 | Theme | Nuxt UI Theme component | Simple way to implement theme toggle |
+| Drag and drop | `vue-draggable-plus` | SortableJS wrapper for Vue 3; used for reordering wish item images |
 
 ### Backend — `apps/api`
 
@@ -212,12 +213,16 @@ User ──< RefreshToken
 | `wishlist_id` | FK → wishlists | Cascade delete |
 | `title` | text | |
 | `description` | text, nullable | |
-| `image_url` | text, nullable | |
-| `price` | decimal(12,2), nullable | |
+| `image_url` | text, nullable | Primary image (Cloudinary URL) |
+| `images` | JSON array of text, nullable | Up to 5 additional Cloudinary URLs; ordered (position matters) |
+| `price_min` | decimal(12,2), nullable | Exact price or range lower bound |
+| `price_max` | decimal(12,2), nullable | Range upper bound; equals `price_min` for exact prices |
 | `currency` | char(3) | ISO 4217, default `UAH` |
 | `product_url` | text, nullable | Link to original product page |
 | `priority` | smallint | `0` = normal, `1` = high, `2` = must-have |
 | `is_surprise` | boolean | If true, hidden from owner on shared view |
+| `notes` | text, nullable | Hints for gift-givers |
+| `tags` | JSON array of text, nullable | Free-form tags |
 | `position` | integer | Manual sort order within wishlist |
 | `created_at` / `updated_at` | timestamptz | |
 

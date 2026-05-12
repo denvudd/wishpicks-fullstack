@@ -86,6 +86,7 @@ export interface WishItemResponse {
   position: number
   notes: string | null
   tags: string[] | null
+  images: string[] | null
   is_reserved: boolean
   is_fulfilled: boolean
   created_at: string
@@ -111,6 +112,7 @@ export interface WishItemCreateBody {
   is_surprise?: boolean
   notes?: string | null
   tags?: string[] | null
+  images?: string[] | null
 }
 
 export interface WishItemUpdateBody {
@@ -125,6 +127,7 @@ export interface WishItemUpdateBody {
   is_surprise?: boolean | null
   notes?: string | null
   tags?: string[] | null
+  images?: string[] | null
 }
 
 // --- Shared wishlist (public guest view) ---

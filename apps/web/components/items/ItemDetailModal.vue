@@ -4,6 +4,7 @@
     v-model:open="open"
     :title="item.title"
     size="xl"
+    class="flex w-full overflow-y-auto text-left text-base transition transform-none sm:my-8 sm:max-w-3xl lg:max-w-5xl"
   >
     <template #body>
       <div
@@ -11,24 +12,69 @@
       >
         <!-- Left: image + priority badge -->
         <div class="sm:col-span-5">
-          <div class="relative aspect-square overflow-hidden rounded-2xl bg-chip-gray dark:bg-neutral-800">
-            <img
-              v-if="item.image_url"
-              :src="item.image_url"
-              :alt="item.title"
-              class="h-full w-full object-cover"
-              loading="lazy"
-            />
-            <div v-else class="flex h-full items-center justify-center">
-              <UIcon name="i-heroicons-gift" class="text-muted-gray h-16 w-16" />
+          <!-- Single image or placeholder -->
+          <template v-if="galleryImages.length <= 1">
+            <div class="relative aspect-square overflow-hidden rounded-2xl bg-chip-gray dark:bg-neutral-800">
+              <img
+                v-if="item.image_url"
+                :src="item.image_url"
+                :alt="item.title"
+                class="h-full w-full object-cover"
+                loading="lazy"
+              />
+              <div v-else class="flex h-full items-center justify-center">
+                <UIcon name="i-heroicons-gift" class="text-muted-gray h-16 w-16" />
+              </div>
+              <span
+                v-if="priorityEmoji"
+                class="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-lg backdrop-blur-sm dark:bg-black/50"
+              >
+                {{ priorityEmoji }}
+              </span>
             </div>
-            <span
-              v-if="priorityEmoji"
-              class="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-lg backdrop-blur-sm dark:bg-black/50"
-            >
-              {{ priorityEmoji }}
-            </span>
-          </div>
+          </template>
+
+          <!-- Gallery: main carousel + thumbnail strip -->
+          <template v-else>
+            <div class="space-y-2">
+              <div class="relative aspect-square overflow-hidden rounded-2xl">
+                <UCarousel
+                  ref="carouselRef"
+                  :items="galleryImages"
+                  class="h-full w-full"
+                  @select="(i: number) => (activeIndex = i)"
+                >
+                  <template #default="{ item: src }">
+                    <img
+                      :src="src"
+                      :alt="item.title"
+                      class="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </template>
+                </UCarousel>
+                <span
+                  v-if="priorityEmoji"
+                  class="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-lg backdrop-blur-sm dark:bg-black/50"
+                >
+                  {{ priorityEmoji }}
+                </span>
+              </div>
+              <!-- Thumbnail strip -->
+              <div class="flex gap-1.5 overflow-x-auto pb-0.5">
+                <button
+                  v-for="(src, i) in galleryImages"
+                  :key="src + '-' + i"
+                  type="button"
+                  class="relative aspect-square w-14 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200"
+                  :class="activeIndex === i ? 'scale-105 border-neutral-900 opacity-100 dark:border-white' : 'border-transparent opacity-50 hover:opacity-80 hover:scale-105'"
+                  @click="goToSlide(i)"
+                >
+                  <img :src="src" :alt="item.title" class="h-full w-full object-cover" />
+                </button>
+              </div>
+            </div>
+          </template>
         </div>
 
         <!-- Right: details -->
@@ -125,7 +171,7 @@ const dialogComponent = isMobile ? UDrawer : UModal
 
 const showFullDesc = ref(false)
 
-const PRIORITY_EMOJI: Record<number, string> = { 0: '✨', 1: '🔥', 2: '💎' }
+const PRIORITY_EMOJI: Record<number, string> = { 0: '🙂', 1: '🥰', 2: '😍' }
 const priorityEmoji = computed(() => PRIORITY_EMOJI[props.item.priority] ?? null)
 
 const priceDisplay = computed(() => {
@@ -158,4 +204,21 @@ const addedAgo = computed(() => {
   if (diffMin >= 1) return rtf.format(-diffMin, 'minute')
   return rtf.format(-diffSec, 'second')
 })
+
+const carouselRef = ref()
+const activeIndex = ref(0)
+
+const galleryImages = computed(() => [
+  ...(props.item.image_url ? [props.item.image_url] : []),
+  ...(props.item.images ?? []),
+])
+
+watch(open, (val) => {
+  if (val) activeIndex.value = 0
+})
+
+function goToSlide(index: number) {
+  activeIndex.value = index
+  carouselRef.value?.emblaApi?.scrollTo(index)
+}
 </script>
