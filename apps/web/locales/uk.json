@@ -258,6 +258,7 @@
     "form_title_create": "Деталі бажання",
     "form_title_edit": "Редагувати бажання",
     "preview_label": "Нове бажання",
+    "image_uploading": "Завантаження…",
     "fields": {
       "title": "Назва",
       "title_placeholder": "Наприклад: Sony WH-1000XM5",
@@ -326,7 +327,8 @@
     },
     "errors": {
       "unknown": "Щось пішло не так. Спробуй ще раз.",
-      "network": "Не вдалося зʼєднатися. Перевір підключення."
+      "network": "Не вдалося зʼєднатися. Перевір підключення.",
+      "image_upload_failed": "Не вдалося завантажити зображення"
     }
   },
   "reservation": {

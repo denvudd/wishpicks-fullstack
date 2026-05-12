@@ -9,7 +9,14 @@
     @keydown.space.prevent="emit('select', item)"
   >
     <div class="bg-chip-gray relative aspect-square dark:bg-neutral-800">
-      <div class="flex h-full items-center justify-center">
+      <img
+        v-if="item.image_url"
+        :src="item.image_url"
+        :alt="item.title"
+        class="h-full w-full object-cover"
+        loading="lazy"
+      />
+      <div v-else class="flex h-full items-center justify-center">
         <UIcon name="i-heroicons-gift" class="text-muted-gray h-10 w-10" />
       </div>
 

@@ -16,11 +16,47 @@
         <div
           class="bg-chip-gray flex items-center gap-3 rounded-xl p-3 dark:bg-neutral-800"
         >
-          <div
-            class="bg-hover-gray flex h-14 w-14 shrink-0 items-center justify-center rounded-lg dark:bg-neutral-700"
+          <input
+            ref="fileInputRef"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            class="hidden"
+            @change="onImagePick"
+          />
+          <button
+            type="button"
+            class="group relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-hover-gray dark:bg-neutral-700"
+            :disabled="imageUploading"
+            @click="fileInputRef?.click()"
           >
-            <UIcon name="i-heroicons-gift" class="text-muted-gray h-7 w-7" />
-          </div>
+            <!-- Uploading -->
+            <div v-if="imageUploading" class="flex h-full items-center justify-center">
+              <UIcon name="i-heroicons-arrow-path" class="text-muted-gray h-6 w-6 animate-spin" />
+            </div>
+
+            <!-- Filled -->
+            <template v-else-if="form.image_url">
+              <img :src="form.image_url" alt="" class="h-full w-full object-cover" />
+              <div
+                class="absolute inset-0 flex items-center justify-center bg-black/45 opacity-0 transition-opacity group-hover:opacity-100"
+                @click.stop="form.image_url = null"
+              >
+                <UIcon name="i-heroicons-x-mark" class="h-5 w-5 text-white" />
+              </div>
+            </template>
+
+            <!-- Empty -->
+            <div v-else class="relative flex h-full items-center justify-center">
+              <UIcon
+                name="i-heroicons-gift"
+                class="text-muted-gray h-7 w-7 transition-opacity group-hover:opacity-0"
+              />
+              <UIcon
+                name="i-heroicons-camera"
+                class="text-muted-gray absolute h-7 w-7 opacity-0 transition-opacity group-hover:opacity-100"
+              />
+            </div>
+          </button>
           <div class="min-w-0 space-y-0.5">
             <p class="text-muted-gray text-xs">
               {{ t('items.preview_label') }}
@@ -261,6 +297,7 @@
 <script setup lang="ts">
 import { resolveComponent } from 'vue'
 import type { WishItemResponse } from '~/types/api'
+import { useMediaApi } from '~/composables/api/useMediaApi'
 
 interface Props {
   initialTitle?: string
@@ -285,6 +322,9 @@ const open = defineModel<boolean>('open', { default: false })
 const { t } = useI18n()
 const { wishlists, fetchList: fetchWishlists } = useWishlists()
 const { createItem, updateItem, removeItem } = useItems()
+const mediaApi = useMediaApi()
+const imageUploading = ref(false)
+const fileInputRef = ref<HTMLInputElement | null>(null)
 
 const UModal = resolveComponent('UModal')
 const UDrawer = resolveComponent('UDrawer')
@@ -309,6 +349,7 @@ function priceModeFromItem(item: WishItemResponse): 'exact' | 'range' {
 }
 
 function resetFormForCreate() {
+  form.image_url = null
   form.title = props.initialTitle || ''
   form.product_url = props.initialProductUrl || ''
   form.price_mode = 'exact'
@@ -323,6 +364,7 @@ function resetFormForCreate() {
 }
 
 function applyFormFromItem(item: WishItemResponse) {
+  form.image_url = item.image_url ?? null
   form.title = item.title ?? ''
   form.product_url = item.product_url ?? ''
   form.price_mode = priceModeFromItem(item)
@@ -337,6 +379,7 @@ function applyFormFromItem(item: WishItemResponse) {
 }
 
 const form = reactive({
+  image_url: null as string | null,
   title: '',
   product_url: '',
   price_mode: 'exact' as 'exact' | 'range',
@@ -417,6 +460,7 @@ function buildBody() {
   return {
     title: form.title.trim(),
     description: form.description.trim() || null,
+    image_url: form.image_url,
     product_url: form.product_url.trim() || null,
     price_min: priceMin,
     price_max: priceMax,
@@ -424,6 +468,21 @@ function buildBody() {
     priority: Number(form.priority),
     notes: form.notes.trim() || null,
     tags: form.tags.length ? form.tags : null,
+  }
+}
+
+async function onImagePick(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (fileInputRef.value) fileInputRef.value.value = ''
+  if (!file) return
+
+  imageUploading.value = true
+  try {
+    form.image_url = await mediaApi.uploadImage(file, 'items')
+  } catch {
+    useToast().add({ title: t('items.errors.image_upload_failed'), color: 'error' })
+  } finally {
+    imageUploading.value = false
   }
 }
 
