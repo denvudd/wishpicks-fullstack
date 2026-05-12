@@ -2,9 +2,11 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator
 
 from app.models.enums import ItemPriority
+
+_url_adapter = TypeAdapter(AnyHttpUrl)
 
 
 class WishItemCreate(BaseModel):
@@ -26,6 +28,14 @@ class WishItemCreate(BaseModel):
             if self.price_max < self.price_min:
                 raise ValueError("price_max must be >= price_min")
         return self
+
+    @field_validator("image_url", mode="before")
+    @classmethod
+    def image_url_is_http(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        _url_adapter.validate_python(v)
+        return str(v)
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -64,6 +74,14 @@ class WishItemUpdate(BaseModel):
             if self.price_max < self.price_min:
                 raise ValueError("price_max must be >= price_min")
         return self
+
+    @field_validator("image_url", mode="before")
+    @classmethod
+    def image_url_is_http(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        _url_adapter.validate_python(v)
+        return str(v)
 
     model_config = ConfigDict(
         json_schema_extra={
