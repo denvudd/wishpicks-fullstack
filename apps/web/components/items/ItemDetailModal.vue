@@ -2,19 +2,22 @@
   <component
     :is="dialogComponent"
     v-model:open="open"
-    :title="item.title"
     size="xl"
-    class="flex w-full overflow-y-auto text-left text-base transition transform-none sm:my-8 sm:max-w-3xl lg:max-w-5xl"
+    class="flex w-full transform-none overflow-y-auto text-left text-base transition sm:my-8 sm:max-w-3xl lg:max-w-5xl"
+    :ui="{
+      header: 'hidden',
+    }"
   >
     <template #body>
       <div
         class="space-y-5 gap-x-6 gap-y-8 sm:grid sm:min-h-0 sm:grid-cols-12 sm:space-y-0 lg:gap-x-8"
       >
-        <!-- Left: image + priority badge -->
         <div class="sm:col-span-5">
           <!-- Single image or placeholder -->
           <template v-if="galleryImages.length <= 1">
-            <div class="relative aspect-square overflow-hidden rounded-2xl bg-chip-gray dark:bg-neutral-800">
+            <div
+              class="bg-chip-gray relative aspect-square overflow-hidden rounded-2xl dark:bg-neutral-800"
+            >
               <img
                 v-if="item.image_url"
                 :src="item.image_url"
@@ -23,14 +26,19 @@
                 loading="lazy"
               />
               <div v-else class="flex h-full items-center justify-center">
-                <UIcon name="i-heroicons-gift" class="text-muted-gray h-16 w-16" />
+                <UIcon
+                  name="i-heroicons-gift"
+                  class="text-muted-gray h-16 w-16"
+                />
               </div>
-              <span
-                v-if="priorityEmoji"
-                class="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-lg backdrop-blur-sm dark:bg-black/50"
-              >
-                {{ priorityEmoji }}
-              </span>
+              <UTooltip :text="priorityLabel">
+                <span
+                  v-if="priorityEmoji"
+                  class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-lg backdrop-blur-sm dark:bg-black/50"
+                >
+                  {{ priorityEmoji }}
+                </span>
+              </UTooltip>
             </div>
           </template>
 
@@ -53,12 +61,14 @@
                     />
                   </template>
                 </UCarousel>
-                <span
-                  v-if="priorityEmoji"
-                  class="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-lg backdrop-blur-sm dark:bg-black/50"
-                >
-                  {{ priorityEmoji }}
-                </span>
+                <UTooltip :text="priorityLabel">
+                  <span
+                    v-if="priorityEmoji"
+                    class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-lg backdrop-blur-sm dark:bg-black/50"
+                  >
+                    {{ priorityEmoji }}
+                  </span>
+                </UTooltip>
               </div>
               <!-- Thumbnail strip -->
               <div class="flex gap-1.5 overflow-x-auto pb-0.5">
@@ -66,11 +76,19 @@
                   v-for="(src, i) in galleryImages"
                   :key="src + '-' + i"
                   type="button"
-                  class="relative aspect-square w-14 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200"
-                  :class="activeIndex === i ? 'scale-105 border-neutral-900 opacity-100 dark:border-white' : 'border-transparent opacity-50 hover:opacity-80 hover:scale-105'"
+                  class="relative aspect-square w-14 shrink-0 overflow-hidden rounded-lg border transition-all duration-200"
+                  :class="
+                    activeIndex === i
+                      ? 'border-neutral-900 opacity-100 dark:border-white'
+                      : 'border-transparent opacity-50 hover:opacity-80'
+                  "
                   @click="goToSlide(i)"
                 >
-                  <img :src="src" :alt="item.title" class="h-full w-full object-cover" />
+                  <img
+                    :src="src"
+                    :alt="item.title"
+                    class="h-full w-full object-cover"
+                  />
                 </button>
               </div>
             </div>
@@ -78,24 +96,32 @@
         </div>
 
         <!-- Right: details -->
-        <div class="sm:col-span-7 flex flex-col gap-4">
+        <div class="flex flex-col gap-4 sm:col-span-7">
           <!-- Title + time -->
           <div class="space-y-0.5">
-            <h2 class="text-xl font-bold leading-snug text-black dark:text-white">
+            <h2
+              class="text-xl leading-snug font-bold text-black dark:text-white"
+            >
               {{ item.title }}
             </h2>
-            <p class="text-xs text-muted-gray">{{ addedAgo }}</p>
+            <p class="text-muted-gray text-xs">{{ addedAgo }}</p>
           </div>
 
           <!-- Price -->
-          <p v-if="priceDisplay" class="text-lg font-semibold text-black dark:text-white">
+          <p
+            v-if="priceDisplay"
+            class="text-lg font-semibold text-black dark:text-white"
+          >
             {{ priceDisplay }}
           </p>
 
           <!-- Description -->
           <div v-if="item.description" class="space-y-1">
             <p
-              :class="['text-sm text-body-gray dark:text-muted-gray', showFullDesc ? '' : 'line-clamp-2']"
+              :class="[
+                'text-body-gray dark:text-muted-gray text-sm',
+                showFullDesc ? '' : 'line-clamp-2',
+              ]"
             >
               {{ item.description }}
             </p>
@@ -133,7 +159,7 @@
               icon="i-heroicons-arrow-top-right-on-square"
               :label="t('items.open_store')"
             />
-            <p v-else class="text-xs text-muted-gray">
+            <p v-else class="text-muted-gray text-xs">
               {{ t('items.fields.product_url_placeholder') }}
             </p>
             <UButton
@@ -141,7 +167,11 @@
               variant="outline"
               color="neutral"
               size="sm"
-              :label="item.is_fulfilled ? t('reservation.unfulfill') : t('reservation.fulfill')"
+              :label="
+                item.is_fulfilled
+                  ? t('reservation.unfulfill')
+                  : t('reservation.fulfill')
+              "
               @click="emit('fulfill', item)"
             />
           </div>
@@ -166,20 +196,37 @@ const UDrawer = resolveComponent('UDrawer')
 
 // Resolved synchronously so dialogComponent never changes after the modal first renders,
 // preventing UModal→UDrawer swap from emitting update:open=false and triggering a redirect.
-const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
+const isMobile =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(max-width: 767px)').matches
 const dialogComponent = isMobile ? UDrawer : UModal
 
 const showFullDesc = ref(false)
 
 const PRIORITY_EMOJI: Record<number, string> = { 0: '🙂', 1: '🥰', 2: '😍' }
-const priorityEmoji = computed(() => PRIORITY_EMOJI[props.item.priority] ?? null)
+const priorityEmoji = computed(
+  () => PRIORITY_EMOJI[props.item.priority] ?? null
+)
+
+const priorityLabel = computed(() => {
+  const map: Record<number, string> = {
+    0: t('items.priority.normal'),
+    1: t('items.priority.high'),
+    2: t('items.priority.must_have'),
+  }
+
+  return map[props.item.priority] ?? ''
+})
 
 const priceDisplay = computed(() => {
   const { price_min, price_max, currency } = props.item
+
   if (!price_min && !price_max) return null
+
   if (price_min && price_max && price_min !== price_max) {
     return `${price_min}–${price_max} ${currency}`
   }
+
   return `${price_min || price_max} ${currency}`
 })
 
@@ -202,6 +249,7 @@ const addedAgo = computed(() => {
   if (diffDay >= 1) return rtf.format(-diffDay, 'day')
   if (diffHr >= 1) return rtf.format(-diffHr, 'hour')
   if (diffMin >= 1) return rtf.format(-diffMin, 'minute')
+
   return rtf.format(-diffSec, 'second')
 })
 

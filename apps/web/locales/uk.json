@@ -156,24 +156,23 @@
     "share_copied": "Посилання скопійовано",
     "save": "Зберегти",
     "saving": "Збереження…",
+    "avatar_change": "Змінити фото",
     "wishlists_section": "Мої вішлісти",
     "board_section": "Дошка бажань",
-    "coming_soon": "Скоро буде"
+    "coming_soon": "Скоро буде",
+    "errors": {
+      "upload_failed": "Не вдалося завантажити фото",
+      "username_taken": "Цей username вже зайнятий",
+      "unknown": "Щось пішло не так"
+    }
   },
   "settings": {
     "title": "Налаштування",
-    "avatar_label": "Фото профілю",
-    "avatar_change": "Змінити фото",
-    "display_name": "Імʼя",
-    "username": "Username",
-    "save": "Зберегти зміни",
-    "saving": "Збереження…",
-    "saved": "Зміни збережено",
-    "errors": {
-      "upload_failed": "Не вдалося завантажити фото",
-      "unknown": "Щось пішло не так",
-      "USERNAME_TAKEN": "Цей username вже зайнятий"
-    }
+    "appearance": "Зовнішній вигляд",
+    "theme_label": "Тема",
+    "theme_light": "Світла",
+    "theme_dark": "Темна",
+    "language_label": "Мова"
   },
   "wishlists": {
     "title": "Мої вішлісти",

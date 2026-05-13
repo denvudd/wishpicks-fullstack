@@ -24,24 +24,29 @@
         </div>
 
         <div class="flex items-center gap-2">
+          <UTooltip
+            v-if="current.visibility !== 'private'"
+            :text="
+              shareLinkCopied
+                ? t('wishlists.settings.link_copied')
+                : t('wishlists.settings.copy_link')
+            "
+          >
+            <UButton
+              variant="outline"
+              color="neutral"
+              :icon="
+                shareLinkCopied ? 'i-heroicons-check' : 'i-heroicons-share'
+              "
+              @click="copyShareLink"
+            />
+          </UTooltip>
           <UButton
             color="neutral"
             icon="i-heroicons-plus"
             :label="t('items.add')"
             @click="entryOpen = true"
           />
-
-          <UTooltip
-            v-if="current.visibility !== 'private'"
-            :text="shareLinkCopied ? t('wishlists.settings.link_copied') : t('wishlists.settings.copy_link')"
-          >
-            <UButton
-              variant="outline"
-              color="neutral"
-              :icon="shareLinkCopied ? 'i-heroicons-check' : 'i-heroicons-share'"
-              @click="copyShareLink"
-            />
-          </UTooltip>
 
           <UButton
             variant="outline"
@@ -53,46 +58,59 @@
         </div>
       </div>
 
-      <div class="mb-4 flex w-full items-center gap-2">
-        <UButton
-          v-if="!itemsLoading && items.length"
-          variant="outline"
-          color="neutral"
-          :icon="
-            itemsLayout === 'grid'
-              ? 'i-heroicons-view-columns'
-              : 'i-heroicons-squares-2x2'
-          "
-          :aria-label="
+      <div class="mb-4 flex w-full items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <UTooltip :text="t('items.filters.title')">
+            <UChip
+              :text="
+                activeFilterCount > 0 ? String(activeFilterCount) : undefined
+              "
+              :show="activeFilterCount > 0"
+              color="neutral"
+              size="2xl"
+            >
+              <UButton
+                variant="outline"
+                color="neutral"
+                icon="i-heroicons-adjustments-horizontal"
+                @click="filterOpen = true"
+              />
+            </UChip>
+          </UTooltip>
+
+          <UButton
+            v-if="activeFilterCount > 0"
+            variant="ghost"
+            color="neutral"
+            :label="t('items.filters.clear')"
+            @click="clearFilters"
+          />
+        </div>
+
+        <UTooltip
+          :text="
             itemsLayout === 'grid'
               ? t('wishlists.items_layout.switch_to_masonry')
               : t('wishlists.items_layout.switch_to_grid')
           "
-          @click="toggleItemsLayout"
-        />
-
-        <UChip
-          :text="activeFilterCount > 0 ? String(activeFilterCount) : undefined"
-          :show="activeFilterCount > 0"
-          color="neutral"
-          size="sm"
         >
           <UButton
+            v-if="!itemsLoading"
             variant="outline"
             color="neutral"
-            icon="i-heroicons-adjustments-horizontal"
-            :label="t('items.filters.title')"
-            @click="filterOpen = true"
+            :icon="
+              itemsLayout === 'grid'
+                ? 'i-heroicons-view-columns'
+                : 'i-heroicons-squares-2x2'
+            "
+            :aria-label="
+              itemsLayout === 'grid'
+                ? t('wishlists.items_layout.switch_to_masonry')
+                : t('wishlists.items_layout.switch_to_grid')
+            "
+            @click="toggleItemsLayout"
           />
-        </UChip>
-
-        <UButton
-          v-if="activeFilterCount > 0"
-          variant="ghost"
-          color="neutral"
-          :label="t('items.filters.clear')"
-          @click="clearFilters"
-        />
+        </UTooltip>
       </div>
 
       <!-- Active filter chips -->
@@ -115,7 +133,11 @@
               class="cursor-pointer"
               @click="filters.is_reserved = null"
             >
-              {{ filters.is_reserved ? t('items.filters.reserved') : t('items.filters.not_reserved') }}
+              {{
+                filters.is_reserved
+                  ? t('items.filters.reserved')
+                  : t('items.filters.not_reserved')
+              }}
               <UIcon name="i-heroicons-x-mark" class="ml-1 h-3 w-3" />
             </UBadge>
 
@@ -127,7 +149,11 @@
               class="cursor-pointer"
               @click="filters.is_fulfilled = null"
             >
-              {{ filters.is_fulfilled ? t('items.filters.fulfilled') : t('items.filters.not_fulfilled') }}
+              {{
+                filters.is_fulfilled
+                  ? t('items.filters.fulfilled')
+                  : t('items.filters.not_fulfilled')
+              }}
               <UIcon name="i-heroicons-x-mark" class="ml-1 h-3 w-3" />
             </UBadge>
 
@@ -137,7 +163,9 @@
               color="neutral"
               variant="solid"
               class="cursor-pointer"
-              @click="filters.priority = filters.priority.filter((x) => x !== p)"
+              @click="
+                filters.priority = filters.priority.filter((x) => x !== p)
+              "
             >
               {{ priorityLabel(p) }}
               <UIcon name="i-heroicons-x-mark" class="ml-1 h-3 w-3" />
@@ -200,7 +228,7 @@
             <div
               v-for="(item, i) in items"
               :key="item.id"
-              class="mb-4 break-inside-avoid animate-in fade-in-0 zoom-in-95 fill-mode-both duration-300"
+              class="animate-in fade-in-0 zoom-in-95 fill-mode-both mb-4 break-inside-avoid duration-300"
               :style="{ animationDelay: `${Math.min(i * 40, 280)}ms` }"
             >
               <ItemsItemCard
@@ -334,7 +362,7 @@ const activeFilterCount = computed(
     (filters.value.is_reserved !== null ? 1 : 0) +
     (filters.value.is_fulfilled !== null ? 1 : 0) +
     filters.value.priority.length +
-    (filters.value.store !== null ? 1 : 0),
+    (filters.value.store !== null ? 1 : 0)
 )
 
 const wishlistId = computed(() => route.params.id as string)
@@ -346,7 +374,12 @@ function priorityLabel(p: number): string {
 }
 
 function clearFilters() {
-  filters.value = { is_reserved: null, is_fulfilled: null, priority: [], store: null }
+  filters.value = {
+    is_reserved: null,
+    is_fulfilled: null,
+    priority: [],
+    store: null,
+  }
 }
 
 onMounted(async () => {
@@ -362,7 +395,7 @@ watch(
   (val) => {
     if (wishlistId.value) fetchList(wishlistId.value, val)
   },
-  { deep: true, immediate: true },
+  { deep: true, immediate: true }
 )
 
 onUnmounted(() => {
@@ -378,7 +411,9 @@ async function copyShareLink() {
   const url = `${window.location.origin}/w/${current.value.slug}`
   await navigator.clipboard.writeText(url)
   shareLinkCopied.value = true
-  setTimeout(() => { shareLinkCopied.value = false }, 2000)
+  setTimeout(() => {
+    shareLinkCopied.value = false
+  }, 2000)
 }
 
 function onEntryProceed(payload: { title: string; productUrl: string | null }) {
