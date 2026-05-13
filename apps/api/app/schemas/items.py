@@ -198,3 +198,37 @@ class WishItemListResponse(BaseModel):
 
 class WishItemSingleResponse(BaseModel):
     data: WishItemResponse
+
+
+class ParseUrlRequest(BaseModel):
+    url: str = Field(..., min_length=1)
+
+    model_config = ConfigDict(
+        json_schema_extra={"example": {"url": "https://rozetka.com.ua/sony_wh1000xm5/p289749744/"}}
+    )
+
+
+class ParseUrlData(BaseModel):
+    title: str | None
+    description: str | None
+    image_url: str | None
+    price: Decimal | None
+    currency: str | None
+    product_url: str
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "title": "Sony WH-1000XM5",
+                "description": "Noise-cancelling headphones",
+                "image_url": "https://res.cloudinary.com/wishpicks/items/abc123.jpg",
+                "price": "5500.00",
+                "currency": "UAH",
+                "product_url": "https://rozetka.com.ua/sony_wh1000xm5/p289749744/",
+            }
+        }
+    )
+
+
+class ParseUrlResponse(BaseModel):
+    data: ParseUrlData

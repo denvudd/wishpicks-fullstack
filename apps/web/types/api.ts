@@ -195,3 +195,14 @@ export interface ReservationResponse {
 export interface ReservationSingleResponse {
   data: ReservationResponse
 }
+
+// --- URL Parser ---
+
+export interface ParseUrlData {
+  title: string | null
+  description: string | null
+  image_url: string | null
+  price: string | null       // Decimal serialised as string by the API
+  currency: string | null
+  product_url: string
+}

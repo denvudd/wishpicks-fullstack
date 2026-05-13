@@ -302,7 +302,6 @@ DELETE /api/items/:id
 PATCH  /api/items/:id/position            # update sort order
 
 POST   /api/items/parse-url               # { url } → scraped fields preview
-POST   /api/wishlists/:id/items/from-url  # parse + create in one step
 ```
 
 ### Reservations

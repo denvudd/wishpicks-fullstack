@@ -251,7 +251,11 @@
         @deleted="navigateTo(localePath('/dashboard'))"
       />
 
-      <ItemsItemEntryModal v-model:open="entryOpen" @proceed="onEntryProceed" />
+      <ItemsItemEntryModal
+        v-model:open="entryOpen"
+        :parse-url-fn="itemsApi.parseUrl"
+        @proceed="onEntryProceed"
+      />
 
       <ItemsItemShareModal
         v-if="sharingItem"
@@ -264,6 +268,7 @@
         v-model:open="formOpen"
         :initial-title="entryResult.title"
         :initial-product-url="entryResult.productUrl"
+        :initial-parsed-data="parsedData"
         :wishlist-id="current.id"
         :item="editingItem"
         @saved="onItemSaved"
@@ -310,7 +315,8 @@
 </template>
 
 <script setup lang="ts">
-import type { WishItemResponse, ItemFilters } from '~/types/api'
+import type { ParseUrlData, WishItemResponse, ItemFilters } from '~/types/api'
+import { useItemsApi } from '~/composables/api/useItemsApi'
 import { useReservationsApi } from '~/composables/api/useReservationsApi'
 
 definePageMeta({ layout: 'app', middleware: 'auth' })
@@ -330,6 +336,7 @@ const {
   clear,
 } = useItems()
 const reservationsApi = useReservationsApi()
+const itemsApi = useItemsApi()
 const itemStore = useItemStore()
 
 type ItemsLayoutMode = 'grid' | 'masonry'
@@ -348,6 +355,7 @@ const deleteConfirmOpen = ref(false)
 const itemPendingDelete = ref<WishItemResponse | null>(null)
 const deleteInProgress = ref(false)
 const entryResult = ref({ title: '', productUrl: null as string | null })
+const parsedData = ref<ParseUrlData | null>(null)
 const shareLinkCopied = ref(false)
 
 const filters = ref<ItemFilters>({
@@ -408,23 +416,32 @@ function toggleItemsLayout() {
 
 async function copyShareLink() {
   if (!current.value?.slug) return
+
   const url = `${window.location.origin}/w/${current.value.slug}`
   await navigator.clipboard.writeText(url)
+
   shareLinkCopied.value = true
+
   setTimeout(() => {
     shareLinkCopied.value = false
   }, 2000)
 }
 
-function onEntryProceed(payload: { title: string; productUrl: string | null }) {
-  entryResult.value = payload
+function onEntryProceed(payload: {
+  title: string
+  productUrl: string | null
+  parsedData?: ParseUrlData | null
+}) {
+  entryResult.value = { title: payload.title, productUrl: payload.productUrl }
   editingItem.value = null
+  parsedData.value = payload.parsedData ?? null
   formOpen.value = true
 }
 
 function onEditItem(item: WishItemResponse) {
   editingItem.value = item
   entryResult.value = { title: '', productUrl: null }
+  parsedData.value = null
   formOpen.value = true
 }
 
@@ -446,13 +463,17 @@ function closeDeleteConfirm() {
 async function confirmDeleteItem() {
   const target = itemPendingDelete.value
   if (!target) return
+
   deleteInProgress.value = true
+
   try {
     await removeItem(target.id)
+
     if (detailItem.value?.id === target.id) {
       detailOpen.value = false
       detailItem.value = null
     }
+
     closeDeleteConfirm()
   } finally {
     deleteInProgress.value = false
@@ -468,22 +489,22 @@ async function onUpdatePriority(item: WishItemResponse, priority: number) {
   await updateItem(item.id, { priority })
 }
 
-function onItemSaved(_item: WishItemResponse) {
-  // store updated via useItems composable
-}
+function onItemSaved(_item: WishItemResponse) {}
 
-function onItemDeleted() {
-  // store updated via useItems composable
-}
+function onItemDeleted() {}
 
 async function onFulfillItem(item: WishItemResponse) {
   try {
     await reservationsApi.fulfill(item.id, !item.is_fulfilled)
+
     const updated = { ...item, is_fulfilled: !item.is_fulfilled }
     itemStore.updateOne(updated)
+
     if (detailItem.value?.id === item.id) {
       detailItem.value = updated
     }
-  } catch {}
+  } catch (error) {
+    console.error(error)
+  }
 }
 </script>

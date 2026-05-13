@@ -252,8 +252,14 @@
     "new": "New wish",
     "entry_title": "Add a wish",
     "entry_placeholder": "Item name or product link…",
-    "entry_url_note": "URL parsing is coming soon. Fill in the details manually.",
     "entry_continue": "Continue",
+    "scanning": {
+      "title": "Scanning page…",
+      "success": "Done!",
+      "error": "Could not fetch page data",
+      "error_body": "Fill in the details manually",
+      "proceed": "Continue"
+    },
     "form_title_create": "Wish details",
     "form_title_edit": "Edit wish",
     "preview_label": "New wish",
