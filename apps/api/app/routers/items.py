@@ -3,13 +3,53 @@ import uuid
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.limiter import limiter
 from app.dependencies.get_current_user import get_current_user
 from app.dependencies.get_db import get_db
+from app.dependencies.get_redis import get_redis
 from app.models.user import User
-from app.schemas.items import WishItemPositionUpdate, WishItemSingleResponse, WishItemUpdate
+from app.schemas.items import (
+    ParseUrlData,
+    ParseUrlRequest,
+    ParseUrlResponse,
+    WishItemPositionUpdate,
+    WishItemSingleResponse,
+    WishItemUpdate,
+)
 from app.services import items as item_service
+from app.services import url_parser as url_parser_service
 
 router = APIRouter()
+
+
+@router.post(
+    "/parse-url",
+    summary="Parse a product URL and extract wish item fields",
+    response_model=ParseUrlResponse,
+    responses={
+        400: {"description": "Invalid URL scheme"},
+        401: {"description": "Not authenticated"},
+        422: {"description": "Failed to fetch or parse the URL"},
+    },
+)
+@limiter.limit("10/minute")
+async def parse_product_url(
+    body: ParseUrlRequest,
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    redis=Depends(get_redis),
+) -> ParseUrlResponse:
+    result = await url_parser_service.parse_url(body.url, redis)
+    return ParseUrlResponse(
+        data=ParseUrlData(
+            title=result.title,
+            description=result.description,
+            image_url=result.image_url,
+            price=result.price,
+            currency=result.currency,
+            product_url=result.product_url,
+        )
+    )
 
 
 @router.get(
