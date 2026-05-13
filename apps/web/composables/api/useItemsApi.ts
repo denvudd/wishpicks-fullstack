@@ -1,6 +1,7 @@
 import { apiFetch } from '~/composables/useApiFetch'
 import type {
   ApiResponse,
+  ParseUrlData,
   WishItemResponse,
   WishItemCreateBody,
   WishItemUpdateBody,
@@ -18,6 +19,7 @@ interface ItemListData {
 export const useItemsApi = () => {
   async function getOne(itemId: string): Promise<WishItemResponse> {
     const res = await apiFetch<ApiResponse<WishItemResponse>>(`/api/items/${itemId}`)
+
     return res.data
   }
 
@@ -28,13 +30,17 @@ export const useItemsApi = () => {
     offset = 0,
   ): Promise<{ items: WishItemResponse[]; total: number; availableStores: string[] }> {
     const query: Record<string, unknown> = { limit, offset }
+
     if (filters) {
       if (filters.is_reserved !== null && filters.is_reserved !== undefined)
         query.is_reserved = filters.is_reserved
+
       if (filters.is_fulfilled !== null && filters.is_fulfilled !== undefined)
         query.is_fulfilled = filters.is_fulfilled
+
       if (filters.priority && filters.priority.length > 0)
         query.priority = filters.priority
+
       if (filters.store !== null && filters.store !== undefined)
         query.store = filters.store
     }
@@ -42,6 +48,7 @@ export const useItemsApi = () => {
       `/api/wishlists/${wishlistId}/items`,
       { query },
     )
+
     return {
       items: res.data.items,
       total: res.data.total,
@@ -57,6 +64,7 @@ export const useItemsApi = () => {
       `/api/wishlists/${wishlistId}/items`,
       { method: 'POST', body },
     )
+
     return res.data
   }
 
@@ -68,6 +76,7 @@ export const useItemsApi = () => {
       `/api/items/${itemId}`,
       { method: 'PATCH', body },
     )
+
     return res.data
   }
 
@@ -83,8 +92,17 @@ export const useItemsApi = () => {
       `/api/items/${itemId}/position`,
       { method: 'PATCH', body: { position } },
     )
+    
     return res.data
   }
 
-  return { getOne, list, create, update, remove, updatePosition }
+  async function parseUrl(url: string): Promise<ParseUrlData> {
+    const res = await apiFetch<ApiResponse<ParseUrlData>>('/api/items/parse-url', {
+      method: 'POST',
+      body: { url },
+    })
+    return res.data
+  }
+
+  return { getOne, list, create, update, remove, updatePosition, parseUrl }
 }

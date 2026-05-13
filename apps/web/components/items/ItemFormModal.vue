@@ -25,18 +25,28 @@
           />
           <button
             type="button"
-            class="group relative h-14 w-14 cursor-pointer shrink-0 overflow-hidden rounded-lg bg-hover-gray dark:bg-neutral-700"
+            class="group bg-hover-gray relative h-14 w-14 shrink-0 cursor-pointer overflow-hidden rounded-lg dark:bg-neutral-700"
             :disabled="imageUploading"
             @click="fileInputRef?.click()"
           >
             <!-- Uploading -->
-            <div v-if="imageUploading" class="flex h-full items-center justify-center">
-              <UIcon name="i-heroicons-arrow-path" class="text-muted-gray h-6 w-6 animate-spin" />
+            <div
+              v-if="imageUploading"
+              class="flex h-full items-center justify-center"
+            >
+              <UIcon
+                name="i-heroicons-arrow-path"
+                class="text-muted-gray h-6 w-6 animate-spin"
+              />
             </div>
 
             <!-- Filled -->
             <template v-else-if="form.image_url">
-              <img :src="form.image_url" alt="" class="h-full w-full object-cover" />
+              <img
+                :src="form.image_url"
+                alt=""
+                class="h-full w-full object-cover"
+              />
               <div
                 class="absolute inset-0 flex items-center justify-center bg-black/45 opacity-0 transition-opacity group-hover:opacity-100"
                 @click.stop="form.image_url = null"
@@ -46,7 +56,10 @@
             </template>
 
             <!-- Empty -->
-            <div v-else class="relative flex h-full items-center justify-center">
+            <div
+              v-else
+              class="relative flex h-full items-center justify-center"
+            >
               <UIcon
                 name="i-heroicons-gift"
                 class="text-muted-gray h-7 w-7 transition-opacity group-hover:opacity-0"
@@ -220,7 +233,7 @@
                     >
                       {{ tag }}
                       <button
-                        class="leading-none cursor-pointer transition-colors hover:text-red-500"
+                        class="cursor-pointer leading-none transition-colors hover:text-red-500"
                         @click="removeTag(tag)"
                       >
                         <UIcon name="i-heroicons-x-mark" class="h-3 w-3" />
@@ -258,11 +271,17 @@
                         :key="src + '-' + i"
                         class="group relative aspect-square w-16 cursor-grab overflow-hidden rounded-lg transition-transform duration-200 active:cursor-grabbing"
                       >
-                        <img :src="src" alt="" class="h-full w-full object-cover" />
-                        <div class="absolute inset-0 bg-black/0 transition-colors duration-200 group-hover:bg-black/20" />
+                        <img
+                          :src="src"
+                          alt=""
+                          class="h-full w-full object-cover"
+                        />
+                        <div
+                          class="absolute inset-0 bg-black/0 transition-colors duration-200 group-hover:bg-black/20"
+                        />
                         <button
                           type="button"
-                          class="absolute cursor-pointer top-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-all duration-150 group-hover:opacity-100"
+                          class="absolute top-0.5 right-0.5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-all duration-150 group-hover:opacity-100"
                           @click.stop="form.images.splice(i, 1)"
                         >
                           <UIcon name="i-heroicons-x-mark" class="h-3 w-3" />
@@ -351,12 +370,13 @@
 <script setup lang="ts">
 import { resolveComponent } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
-import type { WishItemResponse } from '~/types/api'
+import type { ParseUrlData, WishItemResponse } from '~/types/api'
 import { useMediaApi } from '~/composables/api/useMediaApi'
 
 interface Props {
   initialTitle?: string
   initialProductUrl?: string | null
+  initialParsedData?: ParseUrlData | null
   wishlistId: string
   item?: WishItemResponse | null
 }
@@ -364,6 +384,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   initialTitle: '',
   initialProductUrl: null,
+  initialParsedData: null,
   item: null,
 })
 
@@ -378,14 +399,15 @@ const { t } = useI18n()
 const { wishlists, fetchList: fetchWishlists } = useWishlists()
 const { createItem, updateItem, removeItem } = useItems()
 const mediaApi = useMediaApi()
+
 const imageUploading = ref(false)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const imagesUploading = ref(false)
 const imageFilesInputRef = ref<HTMLInputElement | null>(null)
+const isMobile = ref(false)
 
 const UModal = resolveComponent('UModal')
 const UDrawer = resolveComponent('UDrawer')
-const isMobile = ref(false)
 
 onMounted(async () => {
   isMobile.value = window.matchMedia('(max-width: 767px)').matches
@@ -398,10 +420,14 @@ const isEdit = computed(() => !!props.item)
 function priceModeFromItem(item: WishItemResponse): 'exact' | 'range' {
   const min = item.price_min
   const max = item.price_max
+
   if (min == null || max == null || min === '' || max === '') return 'exact'
+
   const minN = parseFloat(String(min))
   const maxN = parseFloat(String(max))
+
   if (Number.isNaN(minN) || Number.isNaN(maxN)) return 'exact'
+
   return minN !== maxN ? 'range' : 'exact'
 }
 
@@ -419,6 +445,21 @@ function resetFormForCreate() {
   form.tags = []
   form.description = ''
   form.images = []
+
+  if (props.initialParsedData) {
+    const p = props.initialParsedData
+
+    if (p.title) form.title = p.title
+    if (p.description) form.description = p.description
+    if (p.image_url) form.image_url = p.image_url
+
+    if (p.price) {
+      form.price_min = p.price
+      form.price_max = p.price
+    }
+
+    if (p.currency) form.currency = p.currency
+  }
 }
 
 function applyFormFromItem(item: WishItemResponse) {
@@ -457,6 +498,7 @@ watch(open, (val) => {
   if (!val) return
   if (props.item) applyFormFromItem(props.item)
   else resetFormForCreate()
+
   tagInput.value = ''
   showDeleteConfirm.value = false
   error.value = null
@@ -483,10 +525,13 @@ const priorityChoices = computed(() => [
 const pricePreview = computed(() => {
   const min = form.price_min
   const max = form.price_max
+
   if (!min && !max) return null
+
   if (form.price_mode === 'range' && min && max && min !== max) {
     return `${min}–${max} ${form.currency}`
   }
+
   return min ? `${min} ${form.currency}` : null
 })
 
@@ -499,9 +544,11 @@ function onTagKeydown(e: KeyboardEvent) {
 
 function addTag() {
   const tag = tagInput.value.trim().replace(/,$/, '')
+
   if (tag && !form.tags.includes(tag)) {
     form.tags.push(tag)
   }
+
   tagInput.value = ''
 }
 
@@ -517,6 +564,7 @@ function buildBody() {
       : form.price_max
         ? parseFloat(String(form.price_max))
         : null
+
   return {
     title: form.title.trim(),
     description: form.description.trim() || null,
@@ -534,14 +582,19 @@ function buildBody() {
 
 async function onImagePick(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0]
+
   if (fileInputRef.value) fileInputRef.value.value = ''
   if (!file) return
 
   imageUploading.value = true
+
   try {
     form.image_url = await mediaApi.uploadImage(file, 'items')
   } catch {
-    useToast().add({ title: t('items.errors.image_upload_failed'), color: 'error' })
+    useToast().add({
+      title: t('items.errors.image_upload_failed'),
+      color: 'error',
+    })
   } finally {
     imageUploading.value = false
   }
@@ -549,15 +602,20 @@ async function onImagePick(event: Event) {
 
 async function onExtraImagePick(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0]
+
   if (imageFilesInputRef.value) imageFilesInputRef.value.value = ''
   if (!file || form.images.length >= 5) return
 
   imagesUploading.value = true
+
   try {
     const url = await mediaApi.uploadImage(file, 'items')
     form.images.push(url)
   } catch {
-    useToast().add({ title: t('items.errors.image_upload_failed'), color: 'error' })
+    useToast().add({
+      title: t('items.errors.image_upload_failed'),
+      color: 'error',
+    })
   } finally {
     imagesUploading.value = false
   }
@@ -565,15 +623,19 @@ async function onExtraImagePick(event: Event) {
 
 async function submit() {
   if (!form.title.trim()) return
+
   submitting.value = true
   error.value = null
+
   try {
     let saved: WishItemResponse
+
     if (isEdit.value && props.item) {
       saved = await updateItem(props.item.id, buildBody())
     } else {
       saved = await createItem(form.wishlist_id, buildBody())
     }
+
     emit('saved', saved)
     open.value = false
   } catch {
@@ -585,8 +647,10 @@ async function submit() {
 
 async function doDelete() {
   if (!props.item) return
+
   deleting.value = true
   error.value = null
+
   try {
     await removeItem(props.item.id)
     emit('deleted')
