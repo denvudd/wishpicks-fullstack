@@ -1,6 +1,7 @@
 <template>
   <div class="min-h-screen bg-brand-white dark:bg-brand-black">
     <header
+      v-if="showLayoutHeader"
       class="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-black/10 bg-brand-white px-4 dark:border-white/10 dark:bg-brand-black lg:px-6"
     >
       <NuxtLink
@@ -24,4 +25,7 @@
 
 <script setup lang="ts">
 const localePath = useLocalePath()
+const route = useRoute()
+
+const showLayoutHeader = computed(() => route.meta.hideHeader !== true)
 </script>

@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'guest' })
+definePageMeta({ middleware: 'guest', hideHeader: true })
 
 const localePath = useLocalePath()
 const { t } = useI18n()

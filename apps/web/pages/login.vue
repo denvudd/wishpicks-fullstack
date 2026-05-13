@@ -14,12 +14,6 @@
       </div>
 
       <UCard>
-        <template #header>
-          <h1 class="text-base font-semibold text-black dark:text-white">
-            {{ $t('auth.login.title') }}
-          </h1>
-        </template>
-
         <div class="space-y-4">
           <UiAlert
             :show="!!errorKey"
@@ -92,7 +86,7 @@
 <script setup lang="ts">
 import type { ApiFetchError } from '~/types/api'
 
-definePageMeta({ middleware: 'guest' })
+definePageMeta({ middleware: 'guest', hideHeader: true })
 
 const localePath = useLocalePath()
 const route = useRoute()

@@ -9,8 +9,58 @@
     @keydown.space.prevent="emit('select', item)"
   >
     <div class="bg-chip-gray relative aspect-square dark:bg-neutral-800">
-      <div class="flex h-full items-center justify-center">
+      <!-- 0 images -->
+      <div
+        v-if="cardImages.length === 0"
+        class="flex h-full items-center justify-center"
+      >
         <UIcon name="i-heroicons-gift" class="text-muted-gray h-10 w-10" />
+      </div>
+
+      <!-- 1 image -->
+      <img
+        v-else-if="cardImages.length === 1"
+        :src="cardImages[0]"
+        :alt="item.title"
+        class="h-full w-full object-cover"
+        loading="lazy"
+      />
+
+      <!-- 2 images -->
+      <div
+        v-else-if="cardImages.length === 2"
+        class="grid h-full w-full grid-cols-2 gap-px"
+      >
+        <img
+          v-for="(src, i) in cardImages"
+          :key="i"
+          :src="src"
+          :alt="item.title"
+          class="h-full w-full object-cover"
+          loading="lazy"
+        />
+      </div>
+
+      <!-- 3 images -->
+      <div v-else class="grid h-full w-full grid-cols-2 gap-px">
+        <img
+          :src="cardImages[0]"
+          :alt="item.title"
+          class="row-span-2 h-full w-full object-cover"
+          loading="lazy"
+        />
+        <img
+          :src="cardImages[1]"
+          :alt="item.title"
+          class="h-full w-full object-cover"
+          loading="lazy"
+        />
+        <img
+          :src="cardImages[2]"
+          :alt="item.title"
+          class="h-full w-full object-cover"
+          loading="lazy"
+        />
       </div>
 
       <div
@@ -19,13 +69,14 @@
         @click.stop
       >
         <UDropdownMenu :items="priorityMenuItems">
-          <button
-            type="button"
-            class="flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-base leading-none shadow-sm ring-1 ring-neutral-200/80 transition-colors hover:bg-white dark:bg-neutral-900/95 dark:ring-neutral-700"
-            :title="priorityLabel"
-          >
-            {{ priorityEmoji }}
-          </button>
+          <UTooltip :text="priorityLabel">
+            <button
+              type="button"
+              class="flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-base leading-none shadow-sm ring-1 ring-neutral-200/80 transition-colors hover:bg-white dark:bg-neutral-900/95 dark:ring-neutral-700"
+            >
+              {{ priorityEmoji }}
+            </button>
+          </UTooltip>
         </UDropdownMenu>
       </div>
 
@@ -68,7 +119,11 @@
           enter-active-class="animate-in fade-in-0 slide-in-from-bottom-2 duration-200 ease-out"
           leave-active-class="animate-out fade-out-0 slide-out-to-bottom-2 duration-150 ease-in"
         >
-          <div v-if="item.is_reserved" class="absolute bottom-2 left-2" @click.stop>
+          <div
+            v-if="item.is_reserved"
+            class="absolute bottom-2 left-2"
+            @click.stop
+          >
             <Transition
               mode="out-in"
               enter-active-class="animate-in fade-in-0 duration-150 ease-out"
@@ -78,7 +133,11 @@
                 :key="item.is_fulfilled ? 'unfulfill' : 'fulfill'"
                 color="neutral"
                 variant="ghost"
-                :label="item.is_fulfilled ? t('reservation.unfulfill') : t('items.fulfill')"
+                :label="
+                  item.is_fulfilled
+                    ? t('reservation.unfulfill')
+                    : t('items.fulfill')
+                "
                 class="bg-white/15 text-xs text-white hover:bg-white/30"
                 @click="$emit('fulfill', item)"
               />
@@ -118,6 +177,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDebounceFn } from '@vueuse/core'
 import type { WishItemResponse } from '~/types/api'
 
 const props = defineProps<{ item: WishItemResponse }>()
@@ -133,7 +193,11 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const PRIORITY_EMOJI: Record<number, string> = { 0: '✨', 1: '🔥', 2: '💎' }
+const schedulePriorityEmit = useDebounceFn((priority: number) => {
+  emit('update-priority', props.item, priority)
+}, 150)
+
+const PRIORITY_EMOJI: Record<number, string> = { 0: '🙂', 1: '🥰', 2: '😍' }
 
 const priorityEmoji = computed(
   () => PRIORITY_EMOJI[props.item.priority] ?? null
@@ -159,6 +223,14 @@ const storeDomain = computed(() => {
   }
 })
 
+const cardImages = computed(() => {
+  const all = [
+    ...(props.item.image_url ? [props.item.image_url] : []),
+    ...(props.item.images ?? []),
+  ]
+  return all.slice(0, 3)
+})
+
 const priceDisplay = computed(() => {
   const { price_min, price_max, currency } = props.item
 
@@ -174,16 +246,16 @@ const priceDisplay = computed(() => {
 const priorityMenuItems = computed(() => [
   [
     {
-      label: `✨ ${t('items.priority.normal')}`,
-      onSelect: () => emit('update-priority', props.item, 0),
+      label: `🙂 ${t('items.priority.normal')}`,
+      onSelect: () => schedulePriorityEmit(0),
     },
     {
-      label: `🔥 ${t('items.priority.high')}`,
-      onSelect: () => emit('update-priority', props.item, 1),
+      label: `🥰 ${t('items.priority.high')}`,
+      onSelect: () => schedulePriorityEmit(1),
     },
     {
-      label: `💎 ${t('items.priority.must_have')}`,
-      onSelect: () => emit('update-priority', props.item, 2),
+      label: `😍 ${t('items.priority.must_have')}`,
+      onSelect: () => schedulePriorityEmit(2),
     },
   ],
 ])

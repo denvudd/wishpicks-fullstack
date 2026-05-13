@@ -156,24 +156,23 @@
     "share_copied": "Посилання скопійовано",
     "save": "Зберегти",
     "saving": "Збереження…",
+    "avatar_change": "Змінити фото",
     "wishlists_section": "Мої вішлісти",
     "board_section": "Дошка бажань",
-    "coming_soon": "Скоро буде"
+    "coming_soon": "Скоро буде",
+    "errors": {
+      "upload_failed": "Не вдалося завантажити фото",
+      "username_taken": "Цей username вже зайнятий",
+      "unknown": "Щось пішло не так"
+    }
   },
   "settings": {
     "title": "Налаштування",
-    "avatar_label": "Фото профілю",
-    "avatar_change": "Змінити фото",
-    "display_name": "Імʼя",
-    "username": "Username",
-    "save": "Зберегти зміни",
-    "saving": "Збереження…",
-    "saved": "Зміни збережено",
-    "errors": {
-      "upload_failed": "Не вдалося завантажити фото",
-      "unknown": "Щось пішло не так",
-      "USERNAME_TAKEN": "Цей username вже зайнятий"
-    }
+    "appearance": "Зовнішній вигляд",
+    "theme_label": "Тема",
+    "theme_light": "Світла",
+    "theme_dark": "Темна",
+    "language_label": "Мова"
   },
   "wishlists": {
     "title": "Мої вішлісти",
@@ -258,6 +257,7 @@
     "form_title_create": "Деталі бажання",
     "form_title_edit": "Редагувати бажання",
     "preview_label": "Нове бажання",
+    "image_uploading": "Завантаження…",
     "fields": {
       "title": "Назва",
       "title_placeholder": "Наприклад: Sony WH-1000XM5",
@@ -279,7 +279,9 @@
       "tags": "Теги",
       "tags_placeholder": "Додати тег і натиснути Enter…",
       "description": "Опис",
-      "description_placeholder": "Докладніше про бажання…"
+      "description_placeholder": "Докладніше про бажання…",
+      "images": "Зображення",
+      "images_add": "Додати зображення"
     },
     "priority": {
       "normal": "Хочеться мати",
@@ -326,7 +328,8 @@
     },
     "errors": {
       "unknown": "Щось пішло не так. Спробуй ще раз.",
-      "network": "Не вдалося зʼєднатися. Перевір підключення."
+      "network": "Не вдалося зʼєднатися. Перевір підключення.",
+      "image_upload_failed": "Не вдалося завантажити зображення"
     }
   },
   "reservation": {

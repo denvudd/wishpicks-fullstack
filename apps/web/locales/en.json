@@ -156,24 +156,23 @@
     "share_copied": "Link copied",
     "save": "Save",
     "saving": "Saving…",
+    "avatar_change": "Change photo",
     "wishlists_section": "My wishlists",
     "board_section": "Wish board",
-    "coming_soon": "Coming soon"
+    "coming_soon": "Coming soon",
+    "errors": {
+      "upload_failed": "Failed to upload photo",
+      "username_taken": "This username is already taken",
+      "unknown": "Something went wrong"
+    }
   },
   "settings": {
     "title": "Settings",
-    "avatar_label": "Profile photo",
-    "avatar_change": "Change photo",
-    "display_name": "Name",
-    "username": "Username",
-    "save": "Save changes",
-    "saving": "Saving…",
-    "saved": "Changes saved",
-    "errors": {
-      "upload_failed": "Failed to upload photo",
-      "unknown": "Something went wrong",
-      "USERNAME_TAKEN": "This username is already taken"
-    }
+    "appearance": "Appearance",
+    "theme_label": "Theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "language_label": "Language"
   },
   "wishlists": {
     "title": "My wishlists",
@@ -258,6 +257,7 @@
     "form_title_create": "Wish details",
     "form_title_edit": "Edit wish",
     "preview_label": "New wish",
+    "image_uploading": "Uploading…",
     "fields": {
       "title": "Name",
       "title_placeholder": "e.g. Sony WH-1000XM5",
@@ -279,7 +279,9 @@
       "tags": "Tags",
       "tags_placeholder": "Add a tag and press Enter…",
       "description": "Description",
-      "description_placeholder": "More about this wish…"
+      "description_placeholder": "More about this wish…",
+      "images": "Images",
+      "images_add": "Add image"
     },
     "priority": {
       "normal": "Nice to have",
@@ -326,7 +328,8 @@
     },
     "errors": {
       "unknown": "Something went wrong. Please try again.",
-      "network": "Could not connect. Check your connection."
+      "network": "Could not connect. Check your connection.",
+      "image_upload_failed": "Failed to upload image"
     }
   },
   "reservation": {

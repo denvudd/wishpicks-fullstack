@@ -2,9 +2,11 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator
 
 from app.models.enums import ItemPriority
+
+_url_adapter = TypeAdapter(AnyHttpUrl)
 
 
 class WishItemCreate(BaseModel):
@@ -19,6 +21,7 @@ class WishItemCreate(BaseModel):
     is_surprise: bool = False
     notes: str | None = None
     tags: list[str] | None = None
+    images: list[str] | None = None
 
     @model_validator(mode="after")
     def validate_price_range(self) -> "WishItemCreate":
@@ -26,6 +29,30 @@ class WishItemCreate(BaseModel):
             if self.price_max < self.price_min:
                 raise ValueError("price_max must be >= price_min")
         return self
+
+    @field_validator("image_url", mode="before")
+    @classmethod
+    def image_url_is_http(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        _url_adapter.validate_python(v)
+        return str(v)
+
+    @field_validator("images", mode="before")
+    @classmethod
+    def images_are_http(cls, v: list | None) -> list[str] | None:
+        if v is None:
+            return v
+        for url in v:
+            _url_adapter.validate_python(url)
+        return [str(u) for u in v]
+
+    @field_validator("images", mode="after")
+    @classmethod
+    def images_max_five(cls, v: list[str] | None) -> list[str] | None:
+        if v and len(v) > 5:
+            raise ValueError("images: max 5 allowed")
+        return v
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -57,6 +84,7 @@ class WishItemUpdate(BaseModel):
     is_surprise: bool | None = None
     notes: str | None = None
     tags: list[str] | None = None
+    images: list[str] | None = None
 
     @model_validator(mode="after")
     def validate_price_range(self) -> "WishItemUpdate":
@@ -64,6 +92,30 @@ class WishItemUpdate(BaseModel):
             if self.price_max < self.price_min:
                 raise ValueError("price_max must be >= price_min")
         return self
+
+    @field_validator("image_url", mode="before")
+    @classmethod
+    def image_url_is_http(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        _url_adapter.validate_python(v)
+        return str(v)
+
+    @field_validator("images", mode="before")
+    @classmethod
+    def images_are_http(cls, v: list | None) -> list[str] | None:
+        if v is None:
+            return v
+        for url in v:
+            _url_adapter.validate_python(url)
+        return [str(u) for u in v]
+
+    @field_validator("images", mode="after")
+    @classmethod
+    def images_max_five(cls, v: list[str] | None) -> list[str] | None:
+        if v and len(v) > 5:
+            raise ValueError("images: max 5 allowed")
+        return v
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -99,6 +151,7 @@ class WishItemResponse(BaseModel):
     position: int
     notes: str | None
     tags: list[str] | None
+    images: list[str] | None
     is_reserved: bool
     is_fulfilled: bool
     created_at: datetime
