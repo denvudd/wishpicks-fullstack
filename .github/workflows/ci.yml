@@ -48,6 +48,10 @@ jobs:
         env:
           HUSKY: 0
 
+      - name: Prepare Nuxt
+        working-directory: apps/web
+        run: npx nuxt prepare
+
       - name: ESLint
         working-directory: apps/web
         run: npm run lint

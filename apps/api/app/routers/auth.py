@@ -2,45 +2,31 @@ from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cookies import clear_auth_cookies, set_auth_cookies
 from app.core.limiter import limiter
 from app.dependencies.get_current_user import get_current_user
 from app.dependencies.get_db import get_db
 from app.dependencies.get_redis import get_redis
 from app.models.user import User
-from app.schemas.auth import AuthResponse, LoginRequest, RegisterRequest, UserResponse
+from app.schemas.auth import (
+    AuthResponse,
+    LoginRequest,
+    RegisterRequest,
+    UserResponse,
+    VerifyEmailRequest,
+)
 from app.services import auth as auth_service
+from app.services.email import send_verification_email
+from app.services.otp import (
+    OTPCooldownError,
+    OTPInvalidError,
+    OTPMaxAttemptsError,
+    check_and_set_cooldown,
+    generate_and_store_otp,
+    verify_otp,
+)
 
 router = APIRouter()
-
-
-def _set_auth_cookies(
-    response: Response, access_token: str, refresh_token: str
-) -> None:
-    from app.core.settings import settings
-
-    secure = settings.ENVIRONMENT == "production"
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        secure=secure,
-        samesite="lax",
-        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-    )
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        httponly=True,
-        secure=secure,
-        samesite="lax",
-        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
-        path="/api/auth/refresh",
-    )
-
-
-def _clear_auth_cookies(response: Response) -> None:
-    response.delete_cookie("access_token")
-    response.delete_cookie("refresh_token", path="/api/auth/refresh")
 
 
 @router.post(
@@ -59,9 +45,10 @@ async def register(
     data: RegisterRequest,
     response: Response,
     db: AsyncSession = Depends(get_db),
+    redis=Depends(get_redis),
 ):
-    user, access_token, refresh_token = await auth_service.register(db, data)
-    _set_auth_cookies(response, access_token, refresh_token)
+    user, access_token, refresh_token = await auth_service.register(db, redis, data)
+    set_auth_cookies(response, access_token, refresh_token)
     return AuthResponse(data=UserResponse.model_validate(user))
 
 
@@ -79,7 +66,7 @@ async def login(
     db: AsyncSession = Depends(get_db),
 ):
     user, access_token, refresh_token = await auth_service.login(db, data)
-    _set_auth_cookies(response, access_token, refresh_token)
+    set_auth_cookies(response, access_token, refresh_token)
     return AuthResponse(data=UserResponse.model_validate(user))
 
 
@@ -107,7 +94,7 @@ async def logout(
         except JWTError:
             pass
     await auth_service.logout(db, jti_str)
-    _clear_auth_cookies(response)
+    clear_auth_cookies(response)
 
 
 @router.post(
@@ -134,10 +121,8 @@ async def refresh(
                 }
             },
         )
-    user, access_token, new_refresh_token = await auth_service.refresh_tokens(
-        db, redis, refresh_token
-    )
-    _set_auth_cookies(response, access_token, new_refresh_token)
+    user, access_token, new_refresh_token = await auth_service.refresh_tokens(db, redis, refresh_token)
+    set_auth_cookies(response, access_token, new_refresh_token)
     return AuthResponse(data=UserResponse.model_validate(user))
 
 
@@ -200,5 +185,107 @@ async def google_callback(
         url=f"{settings.FRONTEND_URL}/dashboard",
         status_code=302,
     )
-    _set_auth_cookies(success_redirect, access_token, refresh_token)
+    set_auth_cookies(success_redirect, access_token, refresh_token)
     return success_redirect
+
+
+@router.post(
+    "/verify-email",
+    response_model=AuthResponse,
+    summary="Verify email address with OTP code",
+    responses={
+        400: {"description": "Invalid or expired OTP, or max attempts exceeded"},
+        401: {"description": "Not authenticated"},
+        409: {"description": "Email already verified"},
+    },
+)
+@limiter.limit("10/minute")
+async def verify_email(
+    request: Request,
+    data: VerifyEmailRequest,
+    db: AsyncSession = Depends(get_db),
+    redis=Depends(get_redis),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.is_email_verified:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "error": {
+                    "code": "EMAIL_ALREADY_VERIFIED",
+                    "message": "Email is already verified.",
+                }
+            },
+        )
+
+    try:
+        await verify_otp(redis, current_user.id, data.code)
+    except OTPMaxAttemptsError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": {
+                    "code": "OTP_MAX_ATTEMPTS",
+                    "message": "Too many failed attempts. Request a new code.",
+                }
+            },
+        )
+    except OTPInvalidError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": {
+                    "code": "OTP_INVALID",
+                    "message": "Invalid or expired verification code.",
+                }
+            },
+        )
+
+    current_user.is_email_verified = True
+    await db.commit()
+    await db.refresh(current_user)
+    return AuthResponse(data=UserResponse.model_validate(current_user))
+
+
+@router.post(
+    "/resend-verification",
+    status_code=204,
+    summary="Resend email verification OTP",
+    responses={
+        401: {"description": "Not authenticated"},
+        409: {"description": "Email already verified"},
+        429: {"description": "Resend cooldown active"},
+    },
+)
+@limiter.limit("5/minute")
+async def resend_verification(
+    request: Request,
+    redis=Depends(get_redis),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.is_email_verified:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "error": {
+                    "code": "EMAIL_ALREADY_VERIFIED",
+                    "message": "Email is already verified.",
+                }
+            },
+        )
+
+    try:
+        await check_and_set_cooldown(redis, current_user.id)
+    except OTPCooldownError:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail={
+                "error": {
+                    "code": "RESEND_COOLDOWN",
+                    "message": "Please wait before requesting another code.",
+                }
+            },
+        )
+
+    otp = await generate_and_store_otp(redis, current_user.id)
+    await send_verification_email(current_user.email, otp)

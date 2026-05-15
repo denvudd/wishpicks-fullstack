@@ -50,6 +50,7 @@ wishpicks/
 | Form validation | VeeValidate + Zod | Client-side schemas that mirror backend validation |
 | HTTP layer | Native `$fetch` / `useFetch` | Built into Nuxt, no extra dependencies |
 | Theme | Nuxt UI Theme component | Simple way to implement theme toggle |
+| Drag and drop | `vue-draggable-plus` | SortableJS wrapper for Vue 3; used for reordering wish item images |
 
 ### Backend — `apps/api`
 
@@ -67,7 +68,7 @@ wishpicks/
 | Cache | Redis (Upstash) | URL parser cache, session blocklist; free serverless tier via HTTP |
 | Settings | `pydantic-settings` | Typed config from `.env` file |
 
-### Infrastructure — zero-cost MVP
+### Infrastructure
 
 | Concern | Decision | Notes |
 |---|---|---|
@@ -79,7 +80,7 @@ wishpicks/
 | Cache / Rate limit store | Upstash Redis | Free tier: 10k commands/day, 256 MB; HTTP-based, no sidecar needed |
 | Local dev | Docker Compose | Postgres + Redis + API + Web, fully reproducible |
 
-> **Rule:** Every infrastructure choice must have a free tier covering ~1,000 users. No paid services at MVP stage.
+> **Rule:** Every infrastructure choice must have a free tier covering ~1,000 users. 
 
 ---
 
@@ -212,12 +213,16 @@ User ──< RefreshToken
 | `wishlist_id` | FK → wishlists | Cascade delete |
 | `title` | text | |
 | `description` | text, nullable | |
-| `image_url` | text, nullable | |
-| `price` | decimal(12,2), nullable | |
+| `image_url` | text, nullable | Primary image (Cloudinary URL) |
+| `images` | JSON array of text, nullable | Up to 5 additional Cloudinary URLs; ordered (position matters) |
+| `price_min` | decimal(12,2), nullable | Exact price or range lower bound |
+| `price_max` | decimal(12,2), nullable | Range upper bound; equals `price_min` for exact prices |
 | `currency` | char(3) | ISO 4217, default `UAH` |
 | `product_url` | text, nullable | Link to original product page |
 | `priority` | smallint | `0` = normal, `1` = high, `2` = must-have |
 | `is_surprise` | boolean | If true, hidden from owner on shared view |
+| `notes` | text, nullable | Hints for gift-givers |
+| `tags` | JSON array of text, nullable | Free-form tags |
 | `position` | integer | Manual sort order within wishlist |
 | `created_at` / `updated_at` | timestamptz | |
 
@@ -297,7 +302,6 @@ DELETE /api/items/:id
 PATCH  /api/items/:id/position            # update sort order
 
 POST   /api/items/parse-url               # { url } → scraped fields preview
-POST   /api/wishlists/:id/items/from-url  # parse + create in one step
 ```
 
 ### Reservations
@@ -498,10 +502,10 @@ Phases represent logical groupings of work, completed in order. No dates attache
 
 - Monorepo setup, Docker Compose configuration, environment variable structure
 - Database schema design + initial Alembic migration
+- Nuxt project setup: routing, i18n configuration, dark/light theme, auth composable + Pinia store
 - Full auth system: register, login, logout, token refresh, refresh token rotation + theft detection
 - Google OAuth integration
 - User profile read + update
-- Nuxt project setup: routing, i18n configuration, dark/light theme, auth composable + Pinia store
 
 ### Phase 2 — Core product
 

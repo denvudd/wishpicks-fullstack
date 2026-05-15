@@ -5,14 +5,14 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
     '@nuxtjs/i18n',
+    '@nuxtjs/color-mode',
     '@pinia/nuxt',
     '@nuxt/eslint',
   ],
 
   css: ['~/assets/css/main.css'],
-
+  
   ui: {
-    // @ts-expect-error Nuxt UI types are not updated yet
     prose: true
   },
 
@@ -27,8 +27,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    apiBaseUrl: '', // NUXT_API_BASE_URL — internal Docker URL for SSR (e.g. http://api:8000)
     public: {
-      apiBaseUrl: '',
+      apiBaseUrl: '', // NUXT_PUBLIC_API_BASE_URL — browser-facing URL
       cloudinaryCloudName: '',
     },
   },

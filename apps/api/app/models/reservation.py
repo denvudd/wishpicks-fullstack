@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, UUID, ForeignKey, String, func
+from sqlalchemy import TIMESTAMP, UUID, Boolean, ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, UUIDMixin
@@ -23,8 +23,8 @@ class Reservation(Base, UUIDMixin):
         index=True,
     )
     reserver_name: Mapped[str | None] = mapped_column(String, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), server_default=func.now(), nullable=False
-    )
+    is_fulfilled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    anon_token: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
 
     item: Mapped["WishItem"] = relationship("WishItem", back_populates="reservation")

@@ -20,9 +20,7 @@ class SavedWishlist(Base):
         ForeignKey("wishlists.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    saved_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), server_default=func.now(), nullable=False
-    )
+    saved_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="saved_wishlists")
     wishlist: Mapped["Wishlist"] = relationship("Wishlist", back_populates="saved_by")
@@ -41,9 +39,7 @@ class SavedItem(Base):
         ForeignKey("wish_items.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    saved_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), server_default=func.now(), nullable=False
-    )
+    saved_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="saved_items")
     item: Mapped["WishItem"] = relationship("WishItem", back_populates="saved_by")

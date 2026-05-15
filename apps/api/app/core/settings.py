@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     FRONTEND_URL: str = "http://localhost:3000"
     ENVIRONMENT: str = "development"
     REDIS_URL: str = "redis://localhost:6379"
+    RESEND_API_KEY: str = ""
+    EMAIL_FROM: str = "noreply@sendora.forum"
 
 
 settings = Settings()

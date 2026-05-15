@@ -37,18 +37,29 @@
             </div>
   
             <button
+              :ref="el => { if (el) btnRefs[i] = el as HTMLButtonElement }"
               class="shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200 font-body"
               :class="reserved[i]
                 ? 'bg-chip-gray dark:bg-white/[0.06] text-muted-gray cursor-default'
                 : 'bg-black dark:bg-white text-white dark:text-black hover:scale-105 active:scale-95'"
-              :ref="el => { if (el) btnRefs[i] = el as HTMLButtonElement }"
               @click="handleReserve(i)"
             >
               <span v-if="reserved[i]" class="flex items-center gap-1">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"
-                    :class="drawn[i] ? 'check-drawn' : 'check-idle'" class="check-path" />
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline
+                    points="20 6 9 17 4 12"
+                    :class="drawn[i] ? 'check-drawn' : 'check-idle'"
+                    class="check-path"
+                  />
                 </svg>
                 {{ $t('landing.reserved') }}
               </span>

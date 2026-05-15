@@ -6,25 +6,57 @@
     "tagline": "Create a wishlist, share a link with friends. They pick and reserve gifts — without spoiling the surprise.",
     "register": "Create your wishlist",
     "login": "See how it works",
-    "note": "Free to use · No account needed to view",
+    "note": "Free to use · No credit card required",
     "steps_label": "How it works",
     "steps": [
-      { "n": "01", "title": "Create a wishlist", "body": "Add items by pasting a product URL or typing manually. Wishpicks pulls the title, image and price automatically." },
-      { "n": "02", "title": "Share your link", "body": "Copy your unique wishlist link and send it to anyone — via messenger, email or socials. No app required." },
-      { "n": "03", "title": "Friends reserve gifts", "body": "Guests open the link and mark items as reserved. You never see who picked what — the surprise stays intact." }
+      {
+        "n": "01",
+        "title": "Create a wishlist",
+        "body": "Add items by pasting a product URL or typing manually. Wishpicks pulls the title, image and price automatically."
+      },
+      {
+        "n": "02",
+        "title": "Share your link",
+        "body": "Copy your unique wishlist link and send it to anyone — via messenger, email or socials. No app required."
+      },
+      {
+        "n": "03",
+        "title": "Friends reserve gifts",
+        "body": "Guests open the link and mark items as reserved. You never see who picked what — the surprise stays intact."
+      }
     ],
     "features_label": "Built around the surprise",
     "features": [
-      { "icon": "🔒", "title": "Surprise stays safe", "body": "The wishlist owner never sees reservation status. Only guests can see what's been picked." },
-      { "icon": "🔗", "title": "Share without signing up", "body": "Anyone with the link can view and reserve. No account needed for guests." },
-      { "icon": "📎", "title": "URL auto-import", "body": "Paste any product link — Wishpicks fetches the name, photo and price for you." },
-      { "icon": "📌", "title": "Save others' lists", "body": "Authenticated users can bookmark a friend's wishlist or save individual items to their own collection." }
+      {
+        "icon": "🔒",
+        "title": "Surprise stays safe",
+        "body": "The wishlist owner never sees reservation status. Only guests can see what's been picked."
+      },
+      {
+        "icon": "🔗",
+        "title": "Share without signing up",
+        "body": "Anyone with the link can view and reserve. No account needed for guests."
+      },
+      {
+        "icon": "📎",
+        "title": "URL auto-import",
+        "body": "Paste any product link — Wishpicks fetches the name, photo and price for you."
+      },
+      {
+        "icon": "📌",
+        "title": "Save others' lists",
+        "body": "Authenticated users can bookmark a friend's wishlist or save individual items to their own collection."
+      }
     ],
     "privacy_label": "What your friends see",
     "privacy_heading_1": "Guests see everything.",
     "privacy_heading_2": "You see nothing.",
     "privacy_body": "Reservations are visible only to other guests — never to the list owner. The element of surprise is preserved by design, not by trust.",
-    "bullets": ["No login required for guests", "Real-time reservation sync", "Duplicate gifts are impossible"],
+    "bullets": [
+      "No login required for guests",
+      "Real-time reservation sync",
+      "Duplicate gifts are impossible"
+    ],
     "cta_title": "Ready to share your wishlist?",
     "cta_sub": "It takes less than two minutes.",
     "cta_btn": "Get started — it's free",
@@ -41,24 +73,63 @@
     "reserve": "Reserve",
     "reserved": "Reserved"
   },
-  "nav": { "language": "Language" },
+  "theme": {
+    "switch_to_light": "Switch to light mode",
+    "switch_to_dark": "Switch to dark mode",
+    "switch_to_system": "Switch to system theme"
+  },
+  "nav": {
+    "language": "Language",
+    "collections": "Collections",
+    "interesting": "Interesting",
+    "profile": "Profile",
+    "reserved": "Reserved",
+    "settings": "Settings"
+  },
   "auth": {
     "login": {
-      "title": "Sign in to Wishpicks", "subtitle": "Welcome back",
-      "email": "Email", "email_placeholder": "you@example.com",
-      "password": "Password", "password_placeholder": "••••••••",
-      "submit": "Sign in", "submitting": "Signing in…",
-      "no_account": "Don't have an account?", "register_link": "Create one",
-      "or": "or", "google": "Continue with Google"
+      "title": "Sign in to Wishpicks",
+      "subtitle": "Welcome back",
+      "email": "Email",
+      "email_placeholder": "you@example.com",
+      "password": "Password",
+      "password_placeholder": "••••••••",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "no_account": "Don't have an account?",
+      "register_link": "Create one",
+      "or": "or",
+      "google": "Continue with Google"
     },
     "register": {
-      "title": "Create your account", "subtitle": "Start building your wishlists",
-      "display_name": "Display name", "display_name_placeholder": "How should we call you?",
-      "email": "Email", "email_placeholder": "you@example.com",
-      "password": "Password", "password_placeholder": "At least 8 characters",
-      "submit": "Create account", "submitting": "Creating account…",
-      "have_account": "Already have an account?", "login_link": "Sign in",
-      "or": "or", "google": "Continue with Google"
+      "title": "Create your account",
+      "subtitle": "Start building your wishlists",
+      "display_name": "Display name",
+      "display_name_placeholder": "How should we call you?",
+      "email": "Email",
+      "email_placeholder": "you@example.com",
+      "password": "Password",
+      "password_placeholder": "At least 8 characters",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "have_account": "Already have an account?",
+      "login_link": "Sign in",
+      "or": "or",
+      "google": "Continue with Google"
+    },
+    "verify_email": {
+      "title": "Verify your email",
+      "subtitle": "Check your inbox",
+      "instructions": "We sent a 6-digit code to {email}. Enter it below to confirm your address.",
+      "code": "Verification code",
+      "code_placeholder": "123456",
+      "submit": "Verify email",
+      "submitting": "Verifying…",
+      "resend": "Resend code",
+      "resend_cooldown": "Resend in {seconds}s",
+      "resend_success": "A new code has been sent to your inbox.",
+      "no_code": "Didn't receive it?",
+      "skip": "Continue without verifying"
     },
     "callback": { "processing": "Signing you in…" },
     "errors": {
@@ -66,10 +137,228 @@
       "EMAIL_ALREADY_EXISTS": "An account with this email already exists.",
       "NOT_AUTHENTICATED": "Session expired. Please sign in again.",
       "SESSION_REVOKED": "Your session was revoked. Please sign in again.",
+      "OTP_INVALID": "Invalid or expired verification code.",
+      "OTP_MAX_ATTEMPTS": "Too many failed attempts. Request a new code.",
+      "RESEND_COOLDOWN": "Please wait before requesting another code.",
+      "EMAIL_ALREADY_VERIFIED": "Email is already verified.",
       "unknown": "Something went wrong. Please try again.",
       "network": "Could not reach the server. Check your connection.",
       "oauth_failed": "Google sign-in failed. Please try again."
     },
     "logout": "Sign out"
+  },
+  "profile": {
+    "display_name": "Display name",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "username_label": "Username",
+    "share": "Share profile",
+    "share_copied": "Link copied",
+    "save": "Save",
+    "saving": "Saving…",
+    "avatar_change": "Change photo",
+    "wishlists_section": "My wishlists",
+    "board_section": "Wish board",
+    "coming_soon": "Coming soon",
+    "errors": {
+      "upload_failed": "Failed to upload photo",
+      "username_taken": "This username is already taken",
+      "unknown": "Something went wrong"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "theme_label": "Theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "language_label": "Language"
+  },
+  "wishlists": {
+    "title": "My wishlists",
+    "new": "New wishlist",
+    "empty_title": "No wishlists yet",
+    "empty_body": "Create your first one and share it with friends",
+    "items_count": "{n} item | {n} items",
+    "items_layout": {
+      "switch_to_masonry": "Masonry layout",
+      "switch_to_grid": "Fixed grid layout"
+    },
+    "loading": "Loading…",
+    "create": {
+      "title": "New wishlist",
+      "name_label": "Name",
+      "name_placeholder": "E.g. Birthday wishlist",
+      "submit": "Create",
+      "submitting": "Creating…"
+    },
+    "visibility": {
+      "label": "Privacy",
+      "public": "Public",
+      "public_desc": "Anyone can view this wishlist. It will appear on your profile.",
+      "link_only": "Link only",
+      "link_only_desc": "Only people with the link can view this wishlist.",
+      "private": "Private",
+      "private_desc": "Only you and invited users can view this wishlist."
+    },
+    "reservation": {
+      "label": "Reservation mode",
+      "anonymous": "Anonymous",
+      "anonymous_desc": "Anyone can reserve items. You won't see who reserved what.",
+      "registered_only": "Registered only",
+      "registered_only_desc": "Only registered users can reserve. You'll see the reserver's name."
+    },
+    "settings": {
+      "title": "Settings",
+      "tab_basic": "Basic",
+      "tab_access": "Access",
+      "tab_booking": "Booking",
+      "save": "Save",
+      "saving": "Saving…",
+      "description_label": "Description",
+      "description_placeholder": "Optional",
+      "event_type_label": "Event type",
+      "event_type_none": "No event",
+      "event_date_label": "Event date",
+      "event_date_placeholder": "Select date",
+      "delete": "Delete wishlist",
+      "delete_confirm_body": "This action cannot be undone. All wishlist data will be permanently deleted.",
+      "delete_confirm_yes": "Yes, delete",
+      "delete_cancel": "Cancel",
+      "copy_link": "Copy link",
+      "link_copied": "Link copied",
+      "invite_label": "Invited",
+      "invite_email_placeholder": "friend@example.com",
+      "invite_submit": "Invite",
+      "invite_revoke": "Revoke",
+      "deleting": "Deleting…"
+    },
+    "event_type": {
+      "birthday": "Birthday",
+      "wedding": "Wedding",
+      "anniversary": "Anniversary",
+      "new_year": "New Year",
+      "other": "Other"
+    },
+    "errors": {
+      "WISHLIST_LIMIT_REACHED": "You have reached the maximum of 10 wishlists.",
+      "INVITE_ALREADY_SENT": "This email has already been invited.",
+      "INVITE_NOT_APPLICABLE": "Invites are only available for private wishlists.",
+      "network": "Could not reach the server. Check your connection.",
+      "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "items": {
+    "new": "New wish",
+    "entry_title": "Add a wish",
+    "entry_placeholder": "Item name or product link…",
+    "entry_continue": "Continue",
+    "scanning": {
+      "title": "Scanning page…",
+      "success": "Done!",
+      "error": "Could not fetch page data",
+      "error_body": "Fill in the details manually",
+      "proceed": "Continue"
+    },
+    "form_title_create": "Wish details",
+    "form_title_edit": "Edit wish",
+    "preview_label": "New wish",
+    "image_uploading": "Uploading…",
+    "fields": {
+      "title": "Name",
+      "title_placeholder": "e.g. Sony WH-1000XM5",
+      "product_url": "Store link",
+      "product_url_placeholder": "https://…",
+      "price_exact": "Price",
+      "price_range": "Range",
+      "price_placeholder": "0.00",
+      "price_min_placeholder": "From",
+      "price_max_placeholder": "To",
+      "currency": "Currency",
+      "wishlist": "Wishlist",
+      "notes": "Notes for gift-givers",
+      "notes_placeholder": "Hints or preferences…"
+    },
+    "advanced": {
+      "title": "Advanced settings",
+      "priority": "Priority",
+      "tags": "Tags",
+      "tags_placeholder": "Add a tag and press Enter…",
+      "description": "Description",
+      "description_placeholder": "More about this wish…",
+      "images": "Images",
+      "images_add": "Add image"
+    },
+    "priority": {
+      "normal": "Nice to have",
+      "high": "Really want it",
+      "must_have": "Top priority"
+    },
+    "submit_create": "Add wish",
+    "submit_edit": "Save changes",
+    "submitting": "Saving…",
+    "delete": "Delete wish",
+    "delete_confirm_body": "This action cannot be undone.",
+    "delete_confirm_yes": "Delete",
+    "delete_cancel": "Cancel",
+    "deleting": "Deleting…",
+    "edit": "Edit",
+    "copy": "Make a copy",
+    "share": "Share",
+    "fulfill": "Mark as fulfilled",
+    "show_more": "Show more",
+    "show_less": "Show less",
+    "fulfill_question": "Want to fulfill this wish?",
+    "open_store": "Go to store",
+    "share_title": "Share wish",
+    "share_copy_link": "Copy link",
+    "share_link_copied": "Copied!",
+    "share_via": "Share via:",
+    "empty_title": "No wishes yet",
+    "empty_body": "Add your first wish to this list",
+    "empty_action": "Add a wish",
+    "reserved": "Reserved",
+    "add": "Add a wish",
+    "card_open_detail": "Open wish details: {title}",
+    "filters": {
+      "title": "Filters",
+      "clear": "Clear",
+      "reservation_status": "Reservation status",
+      "not_reserved": "Not reserved",
+      "reserved": "Reserved",
+      "fulfillment_status": "Fulfillment status",
+      "not_fulfilled": "Not fulfilled",
+      "fulfilled": "Fulfilled",
+      "priority": "Priority",
+      "store": "Store"
+    },
+    "errors": {
+      "unknown": "Something went wrong. Please try again.",
+      "network": "Could not connect. Check your connection.",
+      "image_upload_failed": "Failed to upload image"
+    }
+  },
+  "reservation": {
+    "reserve": "Reserve",
+    "cancel": "Cancel reservation",
+    "reserved_by_you": "You reserved this",
+    "name_label": "Your name",
+    "name_placeholder": "e.g. Anna",
+    "name_required": "Please enter your name",
+    "already_reserved": "Already reserved",
+    "fulfill": "Mark as fulfilled",
+    "unfulfill": "Unmark fulfillment",
+    "fulfilled_by_you": "You fulfilled this",
+    "registered_only_prompt": "Sign in to reserve this item",
+    "sign_in": "Sign in",
+    "confirm": "Confirm reservation",
+    "reserving": "Reserving…"
+  },
+  "shared": {
+    "no_items": "No items in this list yet",
+    "items_count": "{n} item | {n} items",
+    "reserved_badge": "Reserved",
+    "fulfilled_badge": "Fulfilled",
+    "anonymous_author": "Anonymous"
   }
 }

@@ -61,9 +61,27 @@ export const useAuthApi = () => {
     return res.data
   }
 
+  async function verifyEmail(code: string): Promise<AuthUser> {
+    const res = await $fetch<ApiResponse<AuthUser>>('/api/auth/verify-email', {
+      method: 'POST',
+      baseURL,
+      credentials: 'include',
+      body: { code },
+    })
+    return res.data
+  }
+
+  async function resendVerification(): Promise<void> {
+    await $fetch('/api/auth/resend-verification', {
+      method: 'POST',
+      baseURL,
+      credentials: 'include',
+    })
+  }
+
   function googleAuthUrl(): string {
     return `${baseURL}/api/auth/google`
   }
 
-  return { register, login, logout, refresh, me, googleAuthUrl }
+  return { register, login, logout, refresh, me, verifyEmail, resendVerification, googleAuthUrl }
 }

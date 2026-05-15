@@ -53,6 +53,38 @@ All variables are documented in `.env.example`. Required before first run:
 
 Variables without values in `.env.example` are optional for local development (the features that depend on them won't work, but the app will start).
 
+## Local development setup
+
+### API (Python)
+
+Requires [uv](https://docs.astral.sh/uv/).
+
+```bash
+cd apps/api
+uv sync          # create .venv and install dependencies
+```
+
+### VS Code
+
+Install the [Ruff extension](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff) for inline lint errors and auto-fix on save.
+
+The `.vscode/settings.json` in this repo configures it automatically — ruff picks up `apps/api/pyproject.toml` for line length and excluded paths.
+
+For Python type checking and import resolution, Pylance uses the venv at `apps/api/.venv`. Run `uv sync` once to populate it, then select the interpreter in VS Code (`Ctrl+Shift+P` → `Python: Select Interpreter`).
+
+### Pre-commit hooks
+
+Husky runs lint checks before every commit, mirroring the CI jobs:
+
+| Hook | What runs |
+|------|-----------|
+| `pre-commit` | `ruff check` + `ruff format --check` (API), `nuxt prepare` + `eslint` (Web) |
+| `commit-msg` | commitlint — validates commit message format |
+
+Hooks are installed automatically when you run `npm install` at the repo root (husky is a dev dependency).
+
+If the pre-commit hook fails, the commit is blocked. Fix commands are printed in the error output.
+
 ## Commit convention
 
 This project uses [Conventional Commits](https://www.conventionalcommits.org). The format is enforced locally via Husky and in CI via the commitlint workflow.

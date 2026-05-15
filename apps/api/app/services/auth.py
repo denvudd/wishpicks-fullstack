@@ -1,3 +1,6 @@
+import logging
+import random
+import re
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -11,6 +14,10 @@ from app.core.settings import settings
 from app.models.refresh_token import RefreshToken
 from app.models.user import User
 from app.schemas.auth import LoginRequest, RegisterRequest
+from app.services.email import send_verification_email
+from app.services.otp import generate_and_store_otp
+
+logger = logging.getLogger(__name__)
 
 
 def _hash_password(password: str) -> str:
@@ -21,6 +28,13 @@ def _verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 
+def _generate_username_from_email(email: str) -> str:
+    prefix = re.sub(r"[^a-z0-9]", "_", email.split("@")[0].lower())
+    prefix = prefix[:20].strip("_") or "user"
+    suffix = random.randint(1000, 9999)
+    return f"{prefix}_{suffix}"
+
+
 async def _issue_tokens(db: AsyncSession, user_id: uuid.UUID) -> tuple[str, str]:
     jti = uuid.uuid4()
     expires_at = datetime.now(UTC) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
@@ -29,7 +43,7 @@ async def _issue_tokens(db: AsyncSession, user_id: uuid.UUID) -> tuple[str, str]
     return create_access_token(user_id), create_refresh_token(user_id, jti)
 
 
-async def register(db: AsyncSession, data: RegisterRequest) -> tuple[User, str, str]:
+async def register(db: AsyncSession, redis, data: RegisterRequest) -> tuple[User, str, str]:
     existing = await db.scalar(select(User).where(User.email == data.email))
     if existing:
         raise HTTPException(
@@ -41,16 +55,33 @@ async def register(db: AsyncSession, data: RegisterRequest) -> tuple[User, str, 
                 }
             },
         )
+    # Generate a unique username derived from the email prefix
+    username: str | None = None
+    for _ in range(5):
+        candidate = _generate_username_from_email(data.email)
+        taken = await db.scalar(select(User).where(User.username == candidate))
+        if not taken:
+            username = candidate
+            break
+
     user = User(
         email=data.email,
         password_hash=_hash_password(data.password),
         display_name=data.display_name,
+        username=username,
     )
     db.add(user)
     await db.flush()
     access_token, refresh_token = await _issue_tokens(db, user.id)
     await db.commit()
     await db.refresh(user)
+
+    try:
+        otp = await generate_and_store_otp(redis, user.id)
+        await send_verification_email(user.email, otp)
+    except Exception as exc:
+        logger.error("Failed to send OTP after registration for %s: %s", user.email, exc)  # noqa: E501
+
     return user, access_token, refresh_token
 
 
@@ -173,11 +204,7 @@ async def refresh_tokens(
     # Store old JTI in Redis with remaining TTL for fast rejection
     if redis:
         try:
-            remaining = int(
-                (
-                    token_record.expires_at.replace(tzinfo=UTC) - datetime.now(UTC)
-                ).total_seconds()
-            )
+            remaining = int((token_record.expires_at.replace(tzinfo=UTC) - datetime.now(UTC)).total_seconds())
             if remaining > 0:
                 await redis.setex(f"revoked_jti:{jti}", remaining, "1")
         except Exception:
