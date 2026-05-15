@@ -113,13 +113,13 @@
         <UFormField>
           <div class="space-y-3">
             <USelect
+              v-model="form.price_mode"
               :ui="{
                 base: 'p-0 bg-transparent! ring-0 focus:ring-0 w-fit',
                 value: 'mr-6',
                 trailing: 'pe-0',
                 content: 'min-w-3xs',
               }"
-              v-model="form.price_mode"
               :items="[
                 { value: 'exact', label: t('items.fields.price_exact') },
                 { value: 'range', label: t('items.fields.price_range') },

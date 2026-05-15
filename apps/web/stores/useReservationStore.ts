@@ -30,7 +30,8 @@ export const useReservationStore = defineStore('reservation', () => {
   }
 
   function clearToken(itemId: string) {
-    delete tokens.value[itemId]
+    const { [itemId]: _removed, ...rest } = tokens.value
+    tokens.value = rest
     _persist()
   }
 

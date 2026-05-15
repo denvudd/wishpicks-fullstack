@@ -172,7 +172,9 @@ async function onReserve(item: SharedItemResponse) {
         ? { ...i, is_reserved: true, my_reservation: { anon_token: null } }
         : i,
     )
-  } catch {}
+  } catch {
+    // reservation failed — list state unchanged
+  }
 }
 
 async function onCancel(item: SharedItemResponse) {
@@ -185,7 +187,9 @@ async function onCancel(item: SharedItemResponse) {
         ? { ...i, is_reserved: false, is_fulfilled: false, my_reservation: null }
         : i,
     )
-  } catch {}
+  } catch {
+    // cancel failed — list state unchanged
+  }
 }
 
 async function onFulfill(item: SharedItemResponse) {
@@ -196,6 +200,8 @@ async function onFulfill(item: SharedItemResponse) {
     displayItems.value = displayItems.value.map((i) =>
       i.id === item.id ? { ...i, is_fulfilled: newState } : i,
     )
-  } catch {}
+  } catch {
+    // fulfill failed — list state unchanged
+  }
 }
 </script>
