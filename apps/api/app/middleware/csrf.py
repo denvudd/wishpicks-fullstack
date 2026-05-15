@@ -14,9 +14,7 @@ class CSRFMiddleware(BaseHTTPMiddleware):
             if not origin.startswith(settings.FRONTEND_URL):
                 return JSONResponse(
                     status_code=403,
-                    content={
-                        "error": {"code": "FORBIDDEN", "message": "Invalid origin."}
-                    },
+                    content={"error": {"code": "FORBIDDEN", "message": "Invalid origin."}},
                 )
         return await call_next(request)
 

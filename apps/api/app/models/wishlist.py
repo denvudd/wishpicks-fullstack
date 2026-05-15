@@ -21,9 +21,7 @@ class Wishlist(Base, UUIDMixin, TimestampMixin):
     title: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     cover_url: Mapped[str | None] = mapped_column(String, nullable=True)
-    event_type: Mapped[EventType | None] = mapped_column(
-        Enum(EventType, native_enum=False), nullable=True
-    )
+    event_type: Mapped[EventType | None] = mapped_column(Enum(EventType, native_enum=False), nullable=True)
     event_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     visibility: Mapped[WishlistVisibility] = mapped_column(
         Enum(WishlistVisibility, native_enum=False),
@@ -38,9 +36,7 @@ class Wishlist(Base, UUIDMixin, TimestampMixin):
     slug: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True)
 
     owner: Mapped["User"] = relationship("User", back_populates="wishlists")
-    items: Mapped[list["WishItem"]] = relationship(
-        "WishItem", back_populates="wishlist", cascade="all, delete-orphan"
-    )
+    items: Mapped[list["WishItem"]] = relationship("WishItem", back_populates="wishlist", cascade="all, delete-orphan")
     saved_by: Mapped[list["SavedWishlist"]] = relationship(
         "SavedWishlist", back_populates="wishlist", cascade="all, delete-orphan"
     )

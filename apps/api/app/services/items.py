@@ -25,9 +25,7 @@ def _extract_store_domain(url: str | None) -> str | None:
 
 async def get_is_fulfilled(db: AsyncSession, item_id: uuid.UUID) -> bool:
     result = await db.execute(
-        select(func.count(Reservation.id))
-        .where(Reservation.item_id == item_id)
-        .where(Reservation.is_fulfilled == True)  # noqa: E712
+        select(func.count(Reservation.id)).where(Reservation.item_id == item_id).where(Reservation.is_fulfilled == True)  # noqa: E712
     )
     return result.scalar_one() > 0
 
@@ -56,19 +54,12 @@ async def list_items(
         .scalar_subquery()
     )
 
-    stmt = (
-        select(
-            WishItem,
-            res_count_subq.label("is_reserved"),
-            fulfilled_count_subq.label("is_fulfilled"),
-        )
-        .where(WishItem.wishlist_id == wishlist.id)
-    )
-    count_stmt = (
-        select(func.count())
-        .select_from(WishItem)
-        .where(WishItem.wishlist_id == wishlist.id)
-    )
+    stmt = select(
+        WishItem,
+        res_count_subq.label("is_reserved"),
+        fulfilled_count_subq.label("is_fulfilled"),
+    ).where(WishItem.wishlist_id == wishlist.id)
+    count_stmt = select(func.count()).select_from(WishItem).where(WishItem.wishlist_id == wishlist.id)
 
     if is_reserved is True:
         stmt = stmt.where(res_count_subq > 0)
@@ -110,9 +101,7 @@ async def list_items(
 
 async def create_item(db: AsyncSession, wishlist: Wishlist, data: WishItemCreate) -> WishItem:
     max_pos = (
-        await db.execute(
-            select(func.max(WishItem.position)).where(WishItem.wishlist_id == wishlist.id)
-        )
+        await db.execute(select(func.max(WishItem.position)).where(WishItem.wishlist_id == wishlist.id))
     ).scalar_one_or_none()
 
     item = WishItem(
@@ -139,9 +128,7 @@ async def create_item(db: AsyncSession, wishlist: Wishlist, data: WishItemCreate
 
 
 async def get_item_by_id(db: AsyncSession, item_id: uuid.UUID) -> WishItem:
-    item = (
-        await db.execute(select(WishItem).where(WishItem.id == item_id))
-    ).scalar_one_or_none()
+    item = (await db.execute(select(WishItem).where(WishItem.id == item_id))).scalar_one_or_none()
     if item is None:
         raise HTTPException(
             status_code=404,
@@ -150,20 +137,14 @@ async def get_item_by_id(db: AsyncSession, item_id: uuid.UUID) -> WishItem:
     return item
 
 
-async def get_item_for_owner(
-    db: AsyncSession, item_id: uuid.UUID, user: User
-) -> WishItem:
-    item = (
-        await db.execute(select(WishItem).where(WishItem.id == item_id))
-    ).scalar_one_or_none()
+async def get_item_for_owner(db: AsyncSession, item_id: uuid.UUID, user: User) -> WishItem:
+    item = (await db.execute(select(WishItem).where(WishItem.id == item_id))).scalar_one_or_none()
     if item is None:
         raise HTTPException(
             status_code=404,
             detail={"error": {"code": "ITEM_NOT_FOUND", "message": "Wish item not found."}},
         )
-    owner_id = (
-        await db.execute(select(Wishlist.user_id).where(Wishlist.id == item.wishlist_id))
-    ).scalar_one_or_none()
+    owner_id = (await db.execute(select(Wishlist.user_id).where(Wishlist.id == item.wishlist_id))).scalar_one_or_none()
     if owner_id != user.id:
         raise HTTPException(
             status_code=403,
@@ -195,9 +176,7 @@ async def update_position(db: AsyncSession, item: WishItem, position: int) -> Wi
 
 
 async def get_is_reserved(db: AsyncSession, item_id: uuid.UUID) -> bool:
-    result = await db.execute(
-        select(func.count(Reservation.id)).where(Reservation.item_id == item_id)
-    )
+    result = await db.execute(select(func.count(Reservation.id)).where(Reservation.item_id == item_id))
     return result.scalar_one() > 0
 
 

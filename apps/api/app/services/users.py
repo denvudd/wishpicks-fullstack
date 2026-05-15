@@ -8,9 +8,7 @@ from app.schemas.users import UserUpdateRequest
 
 async def update_profile(db: AsyncSession, user: User, data: UserUpdateRequest) -> User:
     if "username" in data.model_fields_set and data.username is not None:
-        existing = await db.scalar(
-            select(User).where(User.username == data.username, User.id != user.id)
-        )
+        existing = await db.scalar(select(User).where(User.username == data.username, User.id != user.id))
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,

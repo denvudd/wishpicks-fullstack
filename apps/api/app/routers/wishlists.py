@@ -8,6 +8,7 @@ from app.dependencies.get_current_user import get_current_user
 from app.dependencies.get_db import get_db
 from app.models.user import User
 from app.models.wishlist import Wishlist
+from app.schemas.items import WishItemCreate, WishItemListResponse, WishItemSingleResponse
 from app.schemas.wishlists import (
     WishlistCreate,
     WishlistInviteCreate,
@@ -18,7 +19,6 @@ from app.schemas.wishlists import (
     WishlistSingleResponse,
     WishlistUpdate,
 )
-from app.schemas.items import WishItemCreate, WishItemListResponse, WishItemSingleResponse
 from app.services import items as item_service
 from app.services import wishlist_invites as invite_service
 from app.services import wishlists as wishlist_service
@@ -58,9 +58,7 @@ async def list_wishlists(
 ) -> WishlistListResponse:
     rows, total = await wishlist_service.list_wishlists(db, current_user, limit, offset)
     items = [_build_response(wishlist, count) for wishlist, count in rows]
-    return WishlistListResponse(
-        data={"items": items, "total": total, "limit": limit, "offset": offset}
-    )
+    return WishlistListResponse(data={"items": items, "total": total, "limit": limit, "offset": offset})
 
 
 @router.post(
@@ -168,9 +166,7 @@ async def list_invites(
 ) -> WishlistInviteListResponse:
     wishlist = await wishlist_service.get_wishlist(db, wishlist_id, current_user)
     invites = await invite_service.list_invites(db, wishlist)
-    return WishlistInviteListResponse(
-        data={"items": [WishlistInviteResponse.model_validate(i) for i in invites]}
-    )
+    return WishlistInviteListResponse(data={"items": [WishlistInviteResponse.model_validate(i) for i in invites]})
 
 
 @router.post(
@@ -247,8 +243,7 @@ async def list_items(
         db, wishlist, limit, offset, is_reserved, is_fulfilled, priority, store
     )
     items = [
-        item_service.build_item_response(row.WishItem, bool(row.is_reserved), bool(row.is_fulfilled))
-        for row in rows
+        item_service.build_item_response(row.WishItem, bool(row.is_reserved), bool(row.is_fulfilled)) for row in rows
     ]
     return WishItemListResponse(
         data={

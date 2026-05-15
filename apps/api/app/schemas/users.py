@@ -30,9 +30,7 @@ class UserUpdateRequest(BaseModel):
     @classmethod
     def username_format(cls, v: str | None) -> str | None:
         if v is not None and not _USERNAME_RE.match(v):
-            raise ValueError(
-                "Must be 3–30 characters: lowercase letters, digits, _ or -"
-            )
+            raise ValueError("Must be 3–30 characters: lowercase letters, digits, _ or -")
         return v
 
     @field_validator("avatar_url")

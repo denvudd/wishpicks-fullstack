@@ -43,9 +43,7 @@ async def _issue_tokens(db: AsyncSession, user_id: uuid.UUID) -> tuple[str, str]
     return create_access_token(user_id), create_refresh_token(user_id, jti)
 
 
-async def register(
-    db: AsyncSession, redis, data: RegisterRequest
-) -> tuple[User, str, str]:
+async def register(db: AsyncSession, redis, data: RegisterRequest) -> tuple[User, str, str]:
     existing = await db.scalar(select(User).where(User.email == data.email))
     if existing:
         raise HTTPException(
@@ -206,11 +204,7 @@ async def refresh_tokens(
     # Store old JTI in Redis with remaining TTL for fast rejection
     if redis:
         try:
-            remaining = int(
-                (
-                    token_record.expires_at.replace(tzinfo=UTC) - datetime.now(UTC)
-                ).total_seconds()
-            )
+            remaining = int((token_record.expires_at.replace(tzinfo=UTC) - datetime.now(UTC)).total_seconds())
             if remaining > 0:
                 await redis.setex(f"revoked_jti:{jti}", remaining, "1")
         except Exception:

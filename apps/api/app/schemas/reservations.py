@@ -7,9 +7,7 @@ from pydantic import BaseModel, ConfigDict
 class ReservationCreate(BaseModel):
     reserver_name: str | None = None
 
-    model_config = ConfigDict(
-        json_schema_extra={"example": {"reserver_name": "Олена"}}
-    )
+    model_config = ConfigDict(json_schema_extra={"example": {"reserver_name": "Олена"}})
 
 
 class ReservationResponse(BaseModel):
@@ -42,6 +40,4 @@ class ReservationSingleResponse(BaseModel):
 class FulfillRequest(BaseModel):
     is_fulfilled: bool
 
-    model_config = ConfigDict(
-        json_schema_extra={"example": {"is_fulfilled": True}}
-    )
+    model_config = ConfigDict(json_schema_extra={"example": {"is_fulfilled": True}})

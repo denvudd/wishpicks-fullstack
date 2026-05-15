@@ -14,12 +14,12 @@ class ItemPriority(enum.IntEnum):
     must_have = 2
 
 
-class WishlistVisibility(str, enum.Enum):
-    public = "public"        # discoverable on profile, indexable
+class WishlistVisibility(enum.StrEnum):
+    public = "public"  # discoverable on profile, indexable
     link_only = "link_only"  # accessible only via direct link, noindex
-    private = "private"      # owner + invited emails only
+    private = "private"  # owner + invited emails only
 
 
-class ReservationMode(str, enum.Enum):
-    anonymous = "anonymous"              # anyone, including unauthenticated
+class ReservationMode(enum.StrEnum):
+    anonymous = "anonymous"  # anyone, including unauthenticated
     registered_only = "registered_only"  # registered users only

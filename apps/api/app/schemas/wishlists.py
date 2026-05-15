@@ -99,9 +99,7 @@ class WishlistSingleResponse(BaseModel):
 class WishlistInviteCreate(BaseModel):
     email: EmailStr
 
-    model_config = ConfigDict(
-        json_schema_extra={"example": {"email": "friend@example.com"}}
-    )
+    model_config = ConfigDict(json_schema_extra={"example": {"email": "friend@example.com"}})
 
 
 class WishlistInviteResponse(BaseModel):
