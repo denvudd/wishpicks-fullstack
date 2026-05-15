@@ -197,25 +197,7 @@
           <template #content>
             <div class="mt-4 space-y-5">
               <UFormField :label="t('items.advanced.priority')">
-                <div class="flex gap-2">
-                  <UButton
-                    v-for="opt in priorityChoices"
-                    :key="opt.value"
-                    type="button"
-                    class="flex-1 gap-1 whitespace-normal"
-                    :variant="form.priority === opt.value ? 'solid' : 'outline'"
-                    color="neutral"
-                    :aria-pressed="form.priority === opt.value"
-                    @click="form.priority = opt.value"
-                  >
-                    <span class="text-xl leading-none" aria-hidden="true">{{
-                      opt.emoji
-                    }}</span>
-                    <span class="text-center text-xs leading-snug font-medium">
-                      {{ opt.label }}
-                    </span>
-                  </UButton>
-                </div>
+                <ItemsItemPriorityPicker v-model="form.priority" />
               </UFormField>
 
               <UFormField :label="t('items.advanced.tags')">
@@ -441,7 +423,7 @@ function resetFormForCreate() {
   form.currency = 'UAH'
   form.wishlist_id = props.wishlistId
   form.notes = ''
-  form.priority = '0'
+  form.priority = 0
   form.tags = []
   form.description = ''
   form.images = []
@@ -472,7 +454,7 @@ function applyFormFromItem(item: WishItemResponse) {
   form.currency = item.currency ?? 'UAH'
   form.wishlist_id = item.wishlist_id
   form.notes = item.notes ?? ''
-  form.priority = String(item.priority ?? 0)
+  form.priority = item.priority ?? 0
   form.tags = [...(item.tags ?? [])]
   form.description = item.description ?? ''
   form.images = [...(item.images ?? [])]
@@ -488,7 +470,7 @@ const form = reactive({
   currency: 'UAH',
   wishlist_id: props.wishlistId,
   notes: '',
-  priority: '0',
+  priority: 0,
   tags: [] as string[],
   description: '',
   images: [] as string[],
@@ -515,12 +497,6 @@ const currencyOptions = ['UAH', 'USD', 'EUR', 'GBP']
 const wishlistOptions = computed(() =>
   wishlists.value.map((w) => ({ value: w.id, label: w.title }))
 )
-
-const priorityChoices = computed(() => [
-  { value: '0', emoji: '🙂', label: t('items.priority.normal') },
-  { value: '1', emoji: '🥰', label: t('items.priority.high') },
-  { value: '2', emoji: '😍', label: t('items.priority.must_have') },
-])
 
 const pricePreview = computed(() => {
   const min = form.price_min
@@ -573,7 +549,7 @@ function buildBody() {
     price_min: priceMin,
     price_max: priceMax,
     currency: form.currency,
-    priority: Number(form.priority),
+    priority: form.priority,
     notes: form.notes.trim() || null,
     tags: form.tags.length ? form.tags : null,
     images: form.images.length ? form.images : null,

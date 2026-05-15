@@ -97,6 +97,9 @@ const props = defineProps<{
   wishlist: WishlistResponse
   open: boolean
 }>()
+const emit = defineEmits<{
+  (e: 'close'): void
+}>()
 
 const { t } = useI18n()
 const { update, invites, fetchInvites, addInvite, removeInvite } =
@@ -158,8 +161,11 @@ watch(
 async function save() {
   saving.value = true
   error.value = null
+
   try {
     await update(props.wishlist.id, { visibility: form.visibility })
+
+    emit('close')
   } catch {
     error.value = t('wishlists.errors.unknown')
   } finally {
@@ -170,7 +176,9 @@ async function save() {
 async function copyLink() {
   const url = `${window.location.origin}/w/${props.wishlist.slug}`
   await navigator.clipboard.writeText(url)
+
   linkCopied.value = true
+
   setTimeout(() => {
     linkCopied.value = false
   }, 2000)
@@ -178,8 +186,10 @@ async function copyLink() {
 
 async function submitInvite() {
   if (!inviteEmail.value.trim()) return
+
   inviting.value = true
   inviteError.value = null
+
   try {
     await addInvite(props.wishlist.id, inviteEmail.value.trim())
     inviteEmail.value = ''
@@ -187,6 +197,7 @@ async function submitInvite() {
     const code = (err as ApiFetchError)?.data?.error?.code ?? 'unknown'
     const knownCodes = ['INVITE_ALREADY_SENT', 'INVITE_NOT_APPLICABLE']
     const key = knownCodes.includes(code) ? code : 'unknown'
+
     inviteError.value = t(`wishlists.errors.${key}`)
   } finally {
     inviting.value = false

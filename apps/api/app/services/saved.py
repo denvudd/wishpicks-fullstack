@@ -17,9 +17,7 @@ from app.services.wishlists import _fetch_preview_images
 # ── Saved wishlists ──────────────────────────────────────────────────────────
 
 
-async def list_saved_wishlists(
-    db: AsyncSession, user: User, limit: int, offset: int
-) -> tuple[list, int]:
+async def list_saved_wishlists(db: AsyncSession, user: User, limit: int, offset: int) -> tuple[list, int]:
     item_count_subq = (
         select(WishItem.wishlist_id, func.count(WishItem.id).label("item_count"))
         .group_by(WishItem.wishlist_id)
@@ -40,11 +38,7 @@ async def list_saved_wishlists(
         .limit(limit)
         .offset(offset)
     )
-    count_stmt = (
-        select(func.count())
-        .select_from(SavedWishlist)
-        .where(SavedWishlist.user_id == user.id)
-    )
+    count_stmt = select(func.count()).select_from(SavedWishlist).where(SavedWishlist.user_id == user.id)
 
     rows = (await db.execute(stmt)).all()
     total = (await db.execute(count_stmt)).scalar_one()
@@ -57,9 +51,7 @@ async def list_saved_wishlists(
 
 async def save_wishlist(db: AsyncSession, user: User, wishlist_id: uuid.UUID) -> tuple[Wishlist, SavedWishlist]:
     wishlist = (
-        await db.execute(
-            select(Wishlist).where(Wishlist.id == wishlist_id).options(selectinload(Wishlist.owner))
-        )
+        await db.execute(select(Wishlist).where(Wishlist.id == wishlist_id).options(selectinload(Wishlist.owner)))
     ).scalar_one_or_none()
     if wishlist is None:
         raise HTTPException(
@@ -111,9 +103,7 @@ async def unsave_wishlist(db: AsyncSession, user: User, wishlist_id: uuid.UUID) 
 # ── Saved items (copy) ───────────────────────────────────────────────────────
 
 
-async def list_saved_items(
-    db: AsyncSession, user: User, limit: int, offset: int
-) -> tuple[list, int]:
+async def list_saved_items(db: AsyncSession, user: User, limit: int, offset: int) -> tuple[list, int]:
     stmt = (
         select(SavedItem.saved_at, WishItem)
         .join(WishItem, SavedItem.item_id == WishItem.id)
@@ -122,11 +112,7 @@ async def list_saved_items(
         .limit(limit)
         .offset(offset)
     )
-    count_stmt = (
-        select(func.count())
-        .select_from(SavedItem)
-        .where(SavedItem.user_id == user.id)
-    )
+    count_stmt = select(func.count()).select_from(SavedItem).where(SavedItem.user_id == user.id)
 
     rows = (await db.execute(stmt)).all()
     total = (await db.execute(count_stmt)).scalar_one()
@@ -138,9 +124,7 @@ async def copy_and_save_item(
     db: AsyncSession, user: User, source_item_id: uuid.UUID, data: CopyItemRequest
 ) -> WishItem:
     # Load source item
-    source = (
-        await db.execute(select(WishItem).where(WishItem.id == source_item_id))
-    ).scalar_one_or_none()
+    source = (await db.execute(select(WishItem).where(WishItem.id == source_item_id))).scalar_one_or_none()
     if source is None:
         raise HTTPException(
             status_code=404,
@@ -159,9 +143,7 @@ async def copy_and_save_item(
 
     # Target wishlist must belong to the current user
     target = (
-        await db.execute(
-            select(Wishlist).where(Wishlist.id == data.wishlist_id, Wishlist.user_id == user.id)
-        )
+        await db.execute(select(Wishlist).where(Wishlist.id == data.wishlist_id, Wishlist.user_id == user.id))
     ).scalar_one_or_none()
     if target is None:
         raise HTTPException(
@@ -171,9 +153,7 @@ async def copy_and_save_item(
 
     # Next position in target wishlist
     max_pos = (
-        await db.execute(
-            select(func.max(WishItem.position)).where(WishItem.wishlist_id == target.id)
-        )
+        await db.execute(select(func.max(WishItem.position)).where(WishItem.wishlist_id == target.id))
     ).scalar_one_or_none()
 
     copy = WishItem(
@@ -194,11 +174,7 @@ async def copy_and_save_item(
     db.add(copy)
 
     # Record bookmark; ignore if already bookmarked
-    await db.execute(
-        pg_insert(SavedItem)
-        .values(user_id=user.id, item_id=source_item_id)
-        .on_conflict_do_nothing()
-    )
+    await db.execute(pg_insert(SavedItem).values(user_id=user.id, item_id=source_item_id).on_conflict_do_nothing())
 
     await db.commit()
     await db.refresh(copy)

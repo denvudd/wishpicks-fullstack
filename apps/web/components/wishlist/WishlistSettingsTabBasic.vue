@@ -69,7 +69,8 @@
 import type { EventType, WishlistResponse } from '~/types/api'
 
 const emit = defineEmits<{
-  deleted: []
+  deleted: [],
+  close: [],
 }>()
 
 const { t, locale: i18nLocale } = useI18n()
@@ -115,6 +116,7 @@ watch(
 async function save() {
   saving.value = true
   error.value = null
+
   try {
     await update(props.wishlist.id, {
       title: form.title.trim(),
@@ -122,6 +124,8 @@ async function save() {
       event_type: form.event_type || null,
       event_date: form.event_date || null,
     })
+
+    emit('close')
   } catch {
     error.value = t('wishlists.errors.unknown')
   } finally {
@@ -131,6 +135,7 @@ async function save() {
 
 async function confirmDelete() {
   deleting.value = true
+
   try {
     await remove(props.wishlist.id)
     emit('deleted')

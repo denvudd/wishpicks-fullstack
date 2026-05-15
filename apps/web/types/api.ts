@@ -40,6 +40,7 @@ export interface WishlistResponse {
   slug: string
   cover_url: string | null
   item_count: number
+  preview_images: string[]
   created_at: string
   updated_at: string
 }
@@ -205,4 +206,38 @@ export interface ParseUrlData {
   price: string | null       // Decimal serialised as string by the API
   currency: string | null
   product_url: string
+}
+
+// --- Saved wishlists & items ---
+
+export interface SavedWishlistResponse {
+  id: string
+  title: string
+  description: string | null
+  visibility: WishlistVisibility
+  slug: string
+  cover_url: string | null
+  item_count: number
+  preview_images: string[]
+  owner_display_name: string | null
+  saved_at: string
+}
+
+export interface SavedItemResponse {
+  item_id: string
+  wishlist_id: string
+  title: string
+  image_url: string | null
+  images: string[] | null
+  product_url: string | null
+  price_min: string | null
+  price_max: string | null
+  currency: string
+  saved_at: string
+}
+
+export interface CopyItemRequest {
+  wishlist_id: string
+  priority?: number
+  notes?: string | null
 }

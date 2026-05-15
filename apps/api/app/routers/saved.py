@@ -55,10 +55,7 @@ async def list_saved_wishlists(
     current_user: User = Depends(get_current_user),
 ) -> SavedWishlistListResponse:
     rows, total = await saved_service.list_saved_wishlists(db, current_user, limit, offset)
-    items = [
-        _build_saved_wishlist_response(w, count, previews, saved_at)
-        for w, count, previews, saved_at in rows
-    ]
+    items = [_build_saved_wishlist_response(w, count, previews, saved_at) for w, count, previews, saved_at in rows]
     return SavedWishlistListResponse(data={"items": items, "total": total, "limit": limit, "offset": offset})
 
 
@@ -83,9 +80,7 @@ async def save_wishlist(
     wishlist, saved = await saved_service.save_wishlist(db, current_user, wishlist_id)
     count = await get_item_count(db, wishlist.id)
     previews = await get_preview_images(db, wishlist.id)
-    return SavedWishlistSingleResponse(
-        data=_build_saved_wishlist_response(wishlist, count, previews, saved.saved_at)
-    )
+    return SavedWishlistSingleResponse(data=_build_saved_wishlist_response(wishlist, count, previews, saved.saved_at))
 
 
 @router.delete(

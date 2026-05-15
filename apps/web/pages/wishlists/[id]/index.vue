@@ -35,9 +35,14 @@
             <UButton
               variant="outline"
               color="neutral"
+              square
               :icon="
                 shareLinkCopied ? 'i-heroicons-check' : 'i-heroicons-share'
               "
+              class="size-8"
+              :ui="{
+                leadingIcon: 'size-4.5 shrink-0',
+              }"
               @click="copyShareLink"
             />
           </UTooltip>
@@ -98,18 +103,32 @@
             v-if="!itemsLoading"
             variant="outline"
             color="neutral"
-            :icon="
-              itemsLayout === 'grid'
-                ? 'i-heroicons-view-columns'
-                : 'i-heroicons-squares-2x2'
-            "
+            square
             :aria-label="
               itemsLayout === 'grid'
                 ? t('wishlists.items_layout.switch_to_masonry')
                 : t('wishlists.items_layout.switch_to_grid')
             "
             @click="toggleItemsLayout"
-          />
+          >
+            <template #leading>
+              <Transition
+                mode="out-in"
+                enter-active-class="animate-in fade-in-0 zoom-in-95 ease-out"
+                leave-active-class="animate-out fade-out-0 zoom-out-95 ease-in"
+              >
+                <UIcon
+                  :key="itemsLayout"
+                  :name="
+                    itemsLayout === 'grid'
+                      ? 'i-heroicons-view-columns'
+                      : 'i-heroicons-squares-2x2'
+                  "
+                  class="size-5 shrink-0"
+                />
+              </Transition>
+            </template>
+          </UButton>
         </UTooltip>
       </div>
 
