@@ -39,7 +39,7 @@
   const inView = ref(false)
   onMounted(() => {
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { inView.value = true; obs.disconnect() } },
+      ([e]) => { if (e?.isIntersecting) { inView.value = true; obs.disconnect() } },
       { threshold: 0.15 }
     )
     if (sectionRef.value) obs.observe(sectionRef.value)
