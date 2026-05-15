@@ -80,6 +80,4 @@ async def fulfill_reservation(
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(optional_current_user),
 ) -> None:
-    await reservation_service.fulfill_reservation(
-        db, item_id, body.is_fulfilled, current_user, x_anon_token
-    )
+    await reservation_service.fulfill_reservation(db, item_id, body.is_fulfilled, current_user, x_anon_token)

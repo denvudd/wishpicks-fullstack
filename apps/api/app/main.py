@@ -6,6 +6,10 @@ from slowapi.errors import RateLimitExceeded
 
 from app.core.limiter import limiter
 from app.core.settings import settings
+from app.middleware.cors import add_cors_middleware
+from app.middleware.csrf import add_csrf_middleware
+from app.middleware.security_headers import add_security_headers_middleware
+from app.routers import auth, items, media, reservations, saved, shared, users, wishlists
 
 cloudinary.config(
     cloud_name=settings.CLOUDINARY_CLOUD_NAME,
@@ -13,10 +17,6 @@ cloudinary.config(
     api_secret=settings.CLOUDINARY_API_SECRET,
     secure=True,
 )
-from app.middleware.cors import add_cors_middleware
-from app.middleware.csrf import add_csrf_middleware
-from app.middleware.security_headers import add_security_headers_middleware
-from app.routers import auth, items, media, reservations, saved, shared, users, wishlists
 
 app = FastAPI(
     title="Wishpicks API",

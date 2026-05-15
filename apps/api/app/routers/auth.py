@@ -121,9 +121,7 @@ async def refresh(
                 }
             },
         )
-    user, access_token, new_refresh_token = await auth_service.refresh_tokens(
-        db, redis, refresh_token
-    )
+    user, access_token, new_refresh_token = await auth_service.refresh_tokens(db, redis, refresh_token)
     set_auth_cookies(response, access_token, new_refresh_token)
     return AuthResponse(data=UserResponse.model_validate(user))
 

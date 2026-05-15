@@ -29,9 +29,7 @@ class RegisterRequest(BaseModel):
 
 class LoginRequest(BaseModel):
     model_config = ConfigDict(
-        json_schema_extra={
-            "example": {"email": "user@example.com", "password": "securepassword"}
-        }
+        json_schema_extra={"example": {"email": "user@example.com", "password": "securepassword"}}
     )
 
     email: EmailStr
@@ -39,9 +37,7 @@ class LoginRequest(BaseModel):
 
 
 class VerifyEmailRequest(BaseModel):
-    model_config = ConfigDict(
-        json_schema_extra={"example": {"code": "123456"}}
-    )
+    model_config = ConfigDict(json_schema_extra={"example": {"code": "123456"}})
 
     code: str
 

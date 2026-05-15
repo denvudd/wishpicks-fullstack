@@ -131,9 +131,7 @@ class WishItemUpdate(BaseModel):
 class WishItemPositionUpdate(BaseModel):
     position: int = Field(..., ge=0)
 
-    model_config = ConfigDict(
-        json_schema_extra={"example": {"position": 2}}
-    )
+    model_config = ConfigDict(json_schema_extra={"example": {"position": 2}})
 
 
 class WishItemResponse(BaseModel):

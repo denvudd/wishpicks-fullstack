@@ -42,9 +42,7 @@ async def list_wishlists(
         .limit(limit)
         .offset(offset)
     )
-    count_stmt = (
-        select(func.count()).select_from(Wishlist).where(Wishlist.user_id == user.id)
-    )
+    count_stmt = select(func.count()).select_from(Wishlist).where(Wishlist.user_id == user.id)
 
     results = await db.execute(stmt)
     total_result = await db.execute(count_stmt)
@@ -55,13 +53,13 @@ async def list_wishlists(
 
 
 async def create_wishlist(db: AsyncSession, user: User, data: WishlistCreate) -> Wishlist:
-    count_result = await db.execute(
-        select(func.count()).select_from(Wishlist).where(Wishlist.user_id == user.id)
-    )
+    count_result = await db.execute(select(func.count()).select_from(Wishlist).where(Wishlist.user_id == user.id))
     if count_result.scalar_one() >= MAX_WISHLISTS_PER_USER:
         raise HTTPException(
             status_code=409,
-            detail={"error": {"code": "WISHLIST_LIMIT_REACHED", "message": "You have reached the maximum of 10 wishlists."}},
+            detail={
+                "error": {"code": "WISHLIST_LIMIT_REACHED", "message": "You have reached the maximum of 10 wishlists."}
+            },  # noqa: E501
         )
 
     slug = await _generate_slug(db)
@@ -100,9 +98,7 @@ async def get_wishlist(db: AsyncSession, wishlist_id: uuid.UUID, user: User) -> 
 
 
 async def get_item_count(db: AsyncSession, wishlist_id: uuid.UUID) -> int:
-    result = await db.execute(
-        select(func.count()).select_from(WishItem).where(WishItem.wishlist_id == wishlist_id)
-    )
+    result = await db.execute(select(func.count()).select_from(WishItem).where(WishItem.wishlist_id == wishlist_id))
     return result.scalar_one()
 
 

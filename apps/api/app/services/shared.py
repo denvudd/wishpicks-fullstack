@@ -7,7 +7,7 @@ from app.models.reservation import Reservation
 from app.models.user import User
 from app.models.wish_item import WishItem
 from app.models.wishlist import Wishlist
-from app.schemas.shared import MyReservation, SharedAuthor, SharedItemResponse
+from app.schemas.shared import MyReservation, SharedItemResponse
 
 
 async def get_shared_wishlist(
@@ -16,11 +16,7 @@ async def get_shared_wishlist(
     current_user: User | None,
 ) -> tuple[Wishlist, User, list[SharedItemResponse]]:
     row = (
-        await db.execute(
-            select(Wishlist, User)
-            .join(User, Wishlist.user_id == User.id)
-            .where(Wishlist.slug == slug)
-        )
+        await db.execute(select(Wishlist, User).join(User, Wishlist.user_id == User.id).where(Wishlist.slug == slug))
     ).first()
 
     if not row or row.Wishlist.visibility == WishlistVisibility.private:

@@ -30,7 +30,7 @@ async def upload_image(file_bytes: bytes, content_type: str, folder: str) -> str
                 }
             },
         )
-        
+
     if folder not in _ALLOWED_FOLDERS:
         raise HTTPException(
             status_code=400,

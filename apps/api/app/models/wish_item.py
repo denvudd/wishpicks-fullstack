@@ -2,8 +2,8 @@ import uuid
 from decimal import Decimal
 
 from sqlalchemy import (
-    UUID,
     JSON,
+    UUID,
     Boolean,
     ForeignKey,
     Integer,
@@ -48,6 +48,4 @@ class WishItem(Base, UUIDMixin, TimestampMixin):
         uselist=False,
         cascade="all, delete-orphan",
     )
-    saved_by: Mapped[list["SavedItem"]] = relationship(
-        "SavedItem", back_populates="item", cascade="all, delete-orphan"
-    )
+    saved_by: Mapped[list["SavedItem"]] = relationship("SavedItem", back_populates="item", cascade="all, delete-orphan")

@@ -11,9 +11,7 @@ from app.models.user import User
 
 _NOT_AUTHENTICATED = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail={
-        "error": {"code": "NOT_AUTHENTICATED", "message": "Authentication required."}
-    },
+    detail={"error": {"code": "NOT_AUTHENTICATED", "message": "Authentication required."}},
 )
 
 

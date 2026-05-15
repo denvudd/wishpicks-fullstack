@@ -19,13 +19,16 @@ async def list_invites(db: AsyncSession, wishlist: Wishlist) -> list[WishlistInv
     return list(result.scalars().all())
 
 
-async def create_invite(
-    db: AsyncSession, wishlist: Wishlist, email: str
-) -> WishlistInvite:
+async def create_invite(db: AsyncSession, wishlist: Wishlist, email: str) -> WishlistInvite:
     if wishlist.visibility != WishlistVisibility.private:
         raise HTTPException(
             status_code=422,
-            detail={"error": {"code": "INVITE_NOT_APPLICABLE", "message": "Invites are only applicable to private wishlists."}},
+            detail={
+                "error": {
+                    "code": "INVITE_NOT_APPLICABLE",
+                    "message": "Invites are only applicable to private wishlists.",
+                }
+            },  # noqa: E501
         )
 
     existing = await db.execute(
@@ -53,9 +56,7 @@ async def create_invite(
     return invite
 
 
-async def delete_invite(
-    db: AsyncSession, wishlist: Wishlist, invite_id: uuid.UUID
-) -> None:
+async def delete_invite(db: AsyncSession, wishlist: Wishlist, invite_id: uuid.UUID) -> None:
     result = await db.execute(
         select(WishlistInvite).where(
             WishlistInvite.id == invite_id,

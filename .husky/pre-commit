@@ -1,0 +1,11 @@
+echo "API lint"
+(cd apps/api && uvx ruff check . && uvx ruff format --check .) || {
+  echo "✖ API lint failed. Fix with: cd apps/api && uvx ruff check --fix . && uvx ruff format ."
+  exit 1
+}
+
+echo "Web lint"
+(cd apps/web && npx nuxt prepare && npm run lint) || {
+  echo "✖ Web lint failed. Fix with: cd apps/web && npm run lint:fix"
+  exit 1
+}

@@ -8,11 +8,7 @@ class MediaUploadData(BaseModel):
 class MediaUploadResponse(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
-            "example": {
-                "data": {
-                    "url": "https://res.cloudinary.com/wishpicks/image/upload/avatars/abc123.jpg"
-                }
-            }
+            "example": {"data": {"url": "https://res.cloudinary.com/wishpicks/image/upload/avatars/abc123.jpg"}}
         }
     )
 

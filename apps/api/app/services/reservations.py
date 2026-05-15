@@ -12,13 +12,9 @@ from app.models.wishlist import Wishlist
 from app.schemas.reservations import ReservationCreate
 
 
-async def _get_item_and_wishlist(
-    db: AsyncSession, item_id: uuid.UUID
-) -> tuple[WishItem, Wishlist]:
+async def _get_item_and_wishlist(db: AsyncSession, item_id: uuid.UUID) -> tuple[WishItem, Wishlist]:
     result = await db.execute(
-        select(WishItem, Wishlist)
-        .join(Wishlist, WishItem.wishlist_id == Wishlist.id)
-        .where(WishItem.id == item_id)
+        select(WishItem, Wishlist).join(Wishlist, WishItem.wishlist_id == Wishlist.id).where(WishItem.id == item_id)
     )
     row = result.first()
     if not row:
@@ -68,9 +64,7 @@ async def create_reservation(
             detail={"error": {"code": "NAME_REQUIRED", "message": "Provide your name to reserve anonymously."}},
         )
 
-    existing = await db.scalar(
-        select(Reservation).where(Reservation.item_id == item_id)
-    )
+    existing = await db.scalar(select(Reservation).where(Reservation.item_id == item_id))
     if existing:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -98,9 +92,7 @@ async def delete_reservation(
     anon_token: str | None,
 ) -> None:
     item, wishlist = await _get_item_and_wishlist(db, item_id)
-    reservation = await db.scalar(
-        select(Reservation).where(Reservation.item_id == item_id)
-    )
+    reservation = await db.scalar(select(Reservation).where(Reservation.item_id == item_id))
     if not reservation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -119,9 +111,7 @@ async def fulfill_reservation(
     anon_token: str | None,
 ) -> None:
     item, wishlist = await _get_item_and_wishlist(db, item_id)
-    reservation = await db.scalar(
-        select(Reservation).where(Reservation.item_id == item_id)
-    )
+    reservation = await db.scalar(select(Reservation).where(Reservation.item_id == item_id))
     if not reservation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
