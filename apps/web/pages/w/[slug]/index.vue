@@ -56,6 +56,31 @@
             · {{ createdAt }}
           </span>
         </div>
+
+        <!-- Save button -->
+        <div class="flex">
+          <UButton
+            v-if="isAuthenticated"
+            :icon="
+              savedState ? 'i-heroicons-bookmark-solid' : 'i-heroicons-bookmark'
+            "
+            :label="savedState ? t('saved.saved') : t('saved.save')"
+            variant="outline"
+            color="neutral"
+            size="sm"
+            :loading="saveLoading"
+            @click="onToggleSave"
+          />
+          <UButton
+            v-else
+            icon="i-heroicons-bookmark"
+            :label="t('saved.save')"
+            variant="outline"
+            color="neutral"
+            size="sm"
+            @click="onSaveGuest"
+          />
+        </div>
       </div>
 
       <!-- Items grid -->
@@ -76,6 +101,7 @@
           @reserve="onReserve(item)"
           @cancel="onCancel(item)"
           @fulfill="onFulfill(item)"
+          @copy="onCopyItem"
         />
       </div>
 
@@ -101,6 +127,23 @@
       @cancel="onCancel(detailItem)"
       @fulfill="onFulfill(detailItem)"
     />
+
+    <!-- Reservation modal (handles anonymous name prompt + registered-only gate) -->
+    <SharedReservationModal
+      v-if="reserveItem && wishlist"
+      v-model:open="reserveOpen"
+      :item="reserveItem"
+      :reservation-mode="wishlist.reservation_mode"
+      :is-authenticated="isAuthenticated"
+      @reserved="onReserved"
+    />
+
+    <!-- Copy item modal -->
+    <SavedCopyItemModal
+      v-if="copyModalItem"
+      v-model:open="copyOpen"
+      :item="copyModalItem"
+    />
   </div>
 </template>
 
@@ -115,16 +158,63 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 const slug = computed(() => route.params.slug as string)
 
-const { wishlist, items: fetchedItems, pending, error } = useSharedWishlist(slug)
+const {
+  wishlist,
+  items: fetchedItems,
+  pending,
+  error,
+} = useSharedWishlist(slug)
 const reservationStore = useReservationStore()
 const reservationsApi = useReservationsApi()
 const authStore = useAuthStore()
+const toast = useToast()
 
 const isAuthenticated = computed(() => !!authStore.user)
 
+const { isSaved, fetchWishlists, toggleWishlist } = useSaved()
+
+const savedState = computed(() =>
+  wishlist.value ? isSaved(wishlist.value.id) : false
+)
+const saveLoading = ref(false)
+
+const copyModalItem = ref<SharedItemResponse | null>(null)
+const copyOpen = ref(false)
+
+const reserveItem = ref<SharedItemResponse | null>(null)
+const reserveOpen = ref(false)
+
+async function onToggleSave() {
+  if (!wishlist.value) return
+  saveLoading.value = true
+  await toggleWishlist(wishlist.value.id)
+  saveLoading.value = false
+}
+
+function onSaveGuest() {
+  toast.add({
+    title: t('saved.save_guest_prompt'),
+    actions: [
+      {
+        label: t('auth.login.submit'),
+        onClick: () => {
+          navigateTo(localePath('/login'))
+        },
+      },
+    ],
+  })
+}
+
+function onCopyItem(item: SharedItemResponse) {
+  copyModalItem.value = item
+  copyOpen.value = true
+}
+
 const createdAt = computed(() => {
   if (!wishlist.value) return ''
+
   const locale = useI18n().locale.value === 'uk' ? 'uk-UA' : 'en-US'
+  
   return new Date(wishlist.value.created_at).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
@@ -133,12 +223,24 @@ const createdAt = computed(() => {
 })
 
 const displayItems = ref<SharedItemResponse[]>([])
-watch(fetchedItems, (val) => { displayItems.value = [...val] }, { immediate: true })
+watch(
+  fetchedItems,
+  (val) => {
+    displayItems.value = [...val]
+  },
+  { immediate: true }
+)
 
-onMounted(() => reservationStore.load())
+onMounted(() => {
+  reservationStore.load()
+  if (isAuthenticated.value) {
+    fetchWishlists()
+  }
+})
 
 useSeoMeta({
-  title: () => wishlist.value ? `${wishlist.value.title} — Wishpicks` : 'Wishpicks',
+  title: () =>
+    wishlist.value ? `${wishlist.value.title} — Wishpicks` : 'Wishpicks',
   ogTitle: () => wishlist.value?.title ?? 'Wishpicks',
   description: () => wishlist.value?.description ?? '',
   ogDescription: () => wishlist.value?.description ?? '',
@@ -151,6 +253,7 @@ const detailOpen = ref(false)
 watch(displayItems, (items) => {
   if (detailItem.value) {
     const updated = items.find((i) => i.id === detailItem.value!.id)
+
     if (updated) detailItem.value = updated
   }
 })
@@ -160,32 +263,37 @@ function openDetail(item: SharedItemResponse) {
   detailOpen.value = true
 }
 
-async function onReserve(item: SharedItemResponse) {
-  if (wishlist.value?.reservation_mode === 'registered_only' && !isAuthenticated.value) {
-    return navigateTo(localePath('/login'))
-  }
-  try {
-    const res = await reservationsApi.reserve(item.id)
-    if (res.data.anon_token) reservationStore.setToken(item.id, res.data.anon_token)
-    displayItems.value = displayItems.value.map((i) =>
-      i.id === item.id
-        ? { ...i, is_reserved: true, my_reservation: { anon_token: null } }
-        : i,
-    )
-  } catch {
-    // reservation failed — list state unchanged
-  }
+function onReserve(item: SharedItemResponse) {
+  reserveItem.value = item
+  reserveOpen.value = true
+}
+
+function onReserved(itemId: string, anonToken: string | null) {
+  if (anonToken) reservationStore.setToken(itemId, anonToken)
+
+  displayItems.value = displayItems.value.map((i) =>
+    i.id === itemId
+      ? { ...i, is_reserved: true, my_reservation: { anon_token: null } }
+      : i
+  )
 }
 
 async function onCancel(item: SharedItemResponse) {
   const anonToken = reservationStore.getToken(item.id)
+
   try {
     await reservationsApi.cancel(item.id, anonToken)
     reservationStore.clearToken(item.id)
+
     displayItems.value = displayItems.value.map((i) =>
       i.id === item.id
-        ? { ...i, is_reserved: false, is_fulfilled: false, my_reservation: null }
-        : i,
+        ? {
+            ...i,
+            is_reserved: false,
+            is_fulfilled: false,
+            my_reservation: null,
+          }
+        : i
     )
   } catch {
     // cancel failed — list state unchanged
@@ -195,10 +303,11 @@ async function onCancel(item: SharedItemResponse) {
 async function onFulfill(item: SharedItemResponse) {
   const anonToken = reservationStore.getToken(item.id)
   const newState = !item.is_fulfilled
+
   try {
     await reservationsApi.fulfill(item.id, newState, anonToken)
     displayItems.value = displayItems.value.map((i) =>
-      i.id === item.id ? { ...i, is_fulfilled: newState } : i,
+      i.id === item.id ? { ...i, is_fulfilled: newState } : i
     )
   } catch {
     // fulfill failed — list state unchanged

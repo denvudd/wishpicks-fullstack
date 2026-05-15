@@ -22,11 +22,12 @@ from app.schemas.wishlists import (
 from app.services import items as item_service
 from app.services import wishlist_invites as invite_service
 from app.services import wishlists as wishlist_service
+from app.services.wishlists import get_preview_images
 
 router = APIRouter()
 
 
-def _build_response(wishlist: Wishlist, item_count: int) -> WishlistResponse:
+def _build_response(wishlist: Wishlist, item_count: int, preview_images: list[str]) -> WishlistResponse:
     return WishlistResponse(
         id=wishlist.id,
         title=wishlist.title,
@@ -38,6 +39,7 @@ def _build_response(wishlist: Wishlist, item_count: int) -> WishlistResponse:
         slug=wishlist.slug,
         cover_url=wishlist.cover_url,
         item_count=item_count,
+        preview_images=preview_images,
         created_at=wishlist.created_at,
         updated_at=wishlist.updated_at,
     )
@@ -57,7 +59,7 @@ async def list_wishlists(
     current_user: User = Depends(get_current_user),
 ) -> WishlistListResponse:
     rows, total = await wishlist_service.list_wishlists(db, current_user, limit, offset)
-    items = [_build_response(wishlist, count) for wishlist, count in rows]
+    items = [_build_response(wishlist, count, previews) for wishlist, count, previews in rows]
     return WishlistListResponse(data={"items": items, "total": total, "limit": limit, "offset": offset})
 
 
@@ -80,7 +82,7 @@ async def create_wishlist(
     current_user: User = Depends(get_current_user),
 ) -> WishlistSingleResponse:
     wishlist = await wishlist_service.create_wishlist(db, current_user, body)
-    return WishlistSingleResponse(data=_build_response(wishlist, 0))
+    return WishlistSingleResponse(data=_build_response(wishlist, 0, []))
 
 
 @router.get(
@@ -101,7 +103,8 @@ async def get_wishlist(
 ) -> WishlistSingleResponse:
     wishlist = await wishlist_service.get_wishlist(db, wishlist_id, current_user)
     count = await wishlist_service.get_item_count(db, wishlist.id)
-    return WishlistSingleResponse(data=_build_response(wishlist, count))
+    previews = await get_preview_images(db, wishlist.id)
+    return WishlistSingleResponse(data=_build_response(wishlist, count, previews))
 
 
 @router.patch(
@@ -125,7 +128,8 @@ async def update_wishlist(
     wishlist = await wishlist_service.get_wishlist(db, wishlist_id, current_user)
     updated = await wishlist_service.update_wishlist(db, wishlist, body)
     count = await wishlist_service.get_item_count(db, updated.id)
-    return WishlistSingleResponse(data=_build_response(updated, count))
+    previews = await get_preview_images(db, updated.id)
+    return WishlistSingleResponse(data=_build_response(updated, count, previews))
 
 
 @router.delete(

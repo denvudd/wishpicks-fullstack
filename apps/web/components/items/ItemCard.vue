@@ -149,7 +149,7 @@
 
     <div class="space-y-1 p-3">
       <p
-        class="line-clamp-2 text-sm leading-tight font-semibold text-black dark:text-white"
+        class="line-clamp-1 text-sm leading-tight font-semibold text-black dark:text-white"
       >
         {{ item.title }}
       </p>

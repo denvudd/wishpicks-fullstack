@@ -30,6 +30,7 @@
           <WishlistSettingsTabBasic
             v-if="activeTab === 'basic'"
             :wishlist="props.wishlist"
+            @close="open = false"
             @deleted="handleDeleted"
           />
 
@@ -37,11 +38,13 @@
             v-if="activeTab === 'access'"
             :wishlist="props.wishlist"
             :open="open"
+            @close="open = false"
           />
 
           <WishlistSettingsTabBooking
             v-if="activeTab === 'booking'"
             :wishlist="props.wishlist"
+            @close="open = false"
           />
         </div>
       </div>
@@ -70,7 +73,6 @@ onMounted(() => {
 
 const dialogComponent = computed(() => (isMobile.value ? UDrawer : UModal))
 
-// ─── Tabs ─────────────────────────────────────────────────────────────────
 const activeTab = ref('basic')
 
 const tabShellHeight = ref<number | null>(null)
@@ -79,6 +81,7 @@ const tabInnerRef = ref<HTMLElement | null>(null)
 function measureTabPanelHeight() {
   const el = tabInnerRef.value
   if (!el || !open.value) return
+
   tabShellHeight.value = el.scrollHeight
 }
 
@@ -87,6 +90,7 @@ watch([open, activeTab], async () => {
     tabShellHeight.value = null
     return
   }
+
   await nextTick()
   requestAnimationFrame(() => measureTabPanelHeight())
 })
@@ -98,6 +102,7 @@ onMounted(() => {
   tabPanelResizeObserver = new ResizeObserver(() => {
     if (open.value) measureTabPanelHeight()
   })
+
   stopTabInnerWatch = watch(
     tabInnerRef,
     (el, prev) => {
