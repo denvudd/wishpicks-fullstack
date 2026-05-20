@@ -145,6 +145,15 @@
           </div>
         </Transition>
       </div>
+      <UTooltip :text="t('items.drag_item')">
+        <div
+          v-if="draggable"
+          class="drag-handle absolute bottom-2 left-2 z-20 cursor-grab rounded bg-black/20 px-1.5 py-0.5 opacity-0 transition-opacity group-hover:opacity-100 dark:bg-white/10"
+          @click.stop
+        >
+          <UIcon name="i-heroicons-bars-3" class="size-4 text-white" />
+        </div>
+      </UTooltip>
     </div>
 
     <div class="space-y-1 p-3">
@@ -180,7 +189,7 @@
 import { useDebounceFn } from '@vueuse/core'
 import type { WishItemResponse } from '~/types/api'
 
-const props = defineProps<{ item: WishItemResponse }>()
+const props = defineProps<{ item: WishItemResponse; draggable?: boolean }>()
 const emit = defineEmits<{
   select: [item: WishItemResponse]
   edit: [item: WishItemResponse]
