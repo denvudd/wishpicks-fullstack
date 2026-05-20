@@ -321,6 +321,8 @@
     "reserved": "Reserved",
     "add": "Add a wish",
     "card_open_detail": "Open wish details: {title}",
+    "drag_filter_warning": "Clear filters to reorder items",
+    "drag_item": "Drag item",
     "filters": {
       "title": "Filters",
       "clear": "Clear",
