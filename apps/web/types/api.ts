@@ -241,3 +241,29 @@ export interface CopyItemRequest {
   priority?: number
   notes?: string | null
 }
+
+// --- My reservations ---
+
+export interface MyReservationResponse {
+  item_id: string
+  item_title: string
+  item_image_url: string | null
+  item_images: string[] | null
+  item_product_url: string | null
+  item_price_min: string | null
+  item_price_max: string | null
+  item_currency: string
+  wishlist_id: string
+  wishlist_title: string
+  wishlist_slug: string
+  owner_display_name: string
+  is_fulfilled: boolean
+  reserved_at: string
+}
+
+export interface MyReservationListData {
+  items: MyReservationResponse[]
+  total: number
+  limit: number
+  offset: number
+}
