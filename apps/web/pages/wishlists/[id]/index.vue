@@ -250,15 +250,19 @@
               @fulfill="onFulfillItem"
             />
           </VueDraggable>
-          <div v-else class="columns-2 gap-x-4 sm:columns-4 lg:columns-5">
-            <div
-              v-for="(item, i) in items"
-              :key="item.id"
-              class="animate-in fade-in-0 zoom-in-95 fill-mode-both mb-4 break-inside-avoid duration-300"
-              :style="{ animationDelay: `${Math.min(i * 40, 280)}ms` }"
-            >
-              <ItemsItemCard
+          <MasonryWall
+            v-else
+            :items="items"
+            :column-width="220"
+            :gap="16"
+            :min-columns="2"
+            :max-columns="5"
+          >
+            <template #default="{ item, index }">
+              <ItemsMasonryCard
                 :item="item"
+                class="animate-in fade-in-0 zoom-in-95 fill-mode-both duration-300"
+                :style="{ animationDelay: `${Math.min(index * 40, 280)}ms` }"
                 @select="openItemDetail"
                 @edit="onEditItem"
                 @delete="onDeleteItem"
@@ -266,8 +270,8 @@
                 @update-priority="onUpdatePriority"
                 @fulfill="onFulfillItem"
               />
-            </div>
-          </div>
+            </template>
+          </MasonryWall>
         </div>
       </Transition>
 
@@ -342,6 +346,7 @@
 
 <script setup lang="ts">
 import { VueDraggable } from 'vue-draggable-plus'
+import { MasonryWall } from '@yeger/vue-masonry-wall'
 import type { ParseUrlData, WishItemResponse, ItemFilters } from '~/types/api'
 import { useItemsApi } from '~/composables/api/useItemsApi'
 import { useReservationsApi } from '~/composables/api/useReservationsApi'

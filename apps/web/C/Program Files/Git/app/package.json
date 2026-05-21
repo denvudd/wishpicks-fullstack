@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@yeger/vue-masonry-wall": "^6.1.1"
+  }
+}

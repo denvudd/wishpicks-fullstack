@@ -8,7 +8,7 @@ _ALLOWED_FOLDERS = {"avatars", "covers", "items", "general"}
 _MAX_BYTES = 5 * 1024 * 1024  # 5 MB
 
 
-async def upload_image(file_bytes: bytes, content_type: str, folder: str) -> str:
+async def upload_image(file_bytes: bytes, content_type: str, folder: str) -> tuple[str, int, int]:
     if content_type not in _ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=400,
@@ -60,4 +60,4 @@ async def upload_image(file_bytes: bytes, content_type: str, folder: str) -> str
             },
         ) from exc
 
-    return result["secure_url"]
+    return result["secure_url"], result["width"], result["height"]

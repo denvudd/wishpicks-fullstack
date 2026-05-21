@@ -17,7 +17,7 @@ export const useItemStore = defineStore('item', {
       this.status = 'idle'
     },
     appendOne(item: WishItemResponse) {
-      this.items.push(item)
+      this.items = [...this.items, item]
       this.total += 1
     },
     updateOne(item: WishItemResponse) {

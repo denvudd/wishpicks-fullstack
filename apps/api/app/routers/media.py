@@ -28,5 +28,5 @@ async def upload_image(
     current_user: User = Depends(get_current_user),
 ) -> MediaUploadResponse:
     file_bytes = await file.read()
-    url = await media_service.upload_image(file_bytes, file.content_type or "", folder)
-    return MediaUploadResponse(data=MediaUploadData(url=url))
+    url, width, height = await media_service.upload_image(file_bytes, file.content_type or "", folder)
+    return MediaUploadResponse(data=MediaUploadData(url=url, width=width, height=height))
