@@ -40,6 +40,8 @@ class WishItem(Base, UUIDMixin, TimestampMixin):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     tags: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
     images: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
+    image_width: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    image_height: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     wishlist: Mapped["Wishlist"] = relationship("Wishlist", back_populates="items")
     reservation: Mapped["Reservation | None"] = relationship(

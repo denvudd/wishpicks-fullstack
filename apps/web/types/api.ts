@@ -88,6 +88,8 @@ export interface WishItemResponse {
   notes: string | null
   tags: string[] | null
   images: string[] | null
+  image_width: number | null
+  image_height: number | null
   is_reserved: boolean
   is_fulfilled: boolean
   created_at: string
@@ -114,6 +116,8 @@ export interface WishItemCreateBody {
   notes?: string | null
   tags?: string[] | null
   images?: string[] | null
+  image_width?: number | null
+  image_height?: number | null
 }
 
 export interface WishItemUpdateBody {
@@ -129,6 +133,8 @@ export interface WishItemUpdateBody {
   notes?: string | null
   tags?: string[] | null
   images?: string[] | null
+  image_width?: number | null
+  image_height?: number | null
 }
 
 // --- Shared wishlist (public guest view) ---
@@ -206,6 +212,8 @@ export interface ParseUrlData {
   price: string | null       // Decimal serialised as string by the API
   currency: string | null
   product_url: string
+  image_width: number | null
+  image_height: number | null
 }
 
 // --- Saved wishlists & items ---

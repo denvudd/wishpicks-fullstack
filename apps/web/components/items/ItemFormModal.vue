@@ -49,7 +49,7 @@
               />
               <div
                 class="absolute inset-0 flex items-center justify-center bg-black/45 opacity-0 transition-opacity group-hover:opacity-100"
-                @click.stop="form.image_url = null"
+                @click.stop="form.image_url = null; form.image_width = null; form.image_height = null"
               >
                 <UIcon name="i-heroicons-x-mark" class="h-5 w-5 text-white" />
               </div>
@@ -415,6 +415,8 @@ function priceModeFromItem(item: WishItemResponse): 'exact' | 'range' {
 
 function resetFormForCreate() {
   form.image_url = null
+  form.image_width = null
+  form.image_height = null
   form.title = props.initialTitle || ''
   form.product_url = props.initialProductUrl || ''
   form.price_mode = 'exact'
@@ -434,6 +436,8 @@ function resetFormForCreate() {
     if (p.title) form.title = p.title
     if (p.description) form.description = p.description
     if (p.image_url) form.image_url = p.image_url
+    if (p.image_width) form.image_width = p.image_width
+    if (p.image_height) form.image_height = p.image_height
 
     if (p.price) {
       form.price_min = p.price
@@ -446,6 +450,8 @@ function resetFormForCreate() {
 
 function applyFormFromItem(item: WishItemResponse) {
   form.image_url = item.image_url ?? null
+  form.image_width = item.image_width ?? null
+  form.image_height = item.image_height ?? null
   form.title = item.title ?? ''
   form.product_url = item.product_url ?? ''
   form.price_mode = priceModeFromItem(item)
@@ -462,6 +468,8 @@ function applyFormFromItem(item: WishItemResponse) {
 
 const form = reactive({
   image_url: null as string | null,
+  image_width: null as number | null,
+  image_height: null as number | null,
   title: '',
   product_url: '',
   price_mode: 'exact' as 'exact' | 'range',
@@ -545,6 +553,8 @@ function buildBody() {
     title: form.title.trim(),
     description: form.description.trim() || null,
     image_url: form.image_url,
+    image_width: form.image_width,
+    image_height: form.image_height,
     product_url: form.product_url.trim() || null,
     price_min: priceMin,
     price_max: priceMax,
@@ -565,7 +575,10 @@ async function onImagePick(event: Event) {
   imageUploading.value = true
 
   try {
-    form.image_url = await mediaApi.uploadImage(file, 'items')
+    const uploaded = await mediaApi.uploadImage(file, 'items')
+    form.image_url = uploaded.url
+    form.image_width = uploaded.width
+    form.image_height = uploaded.height
   } catch {
     useToast().add({
       title: t('items.errors.image_upload_failed'),

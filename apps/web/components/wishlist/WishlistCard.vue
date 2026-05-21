@@ -37,7 +37,7 @@
         </div>
 
         <!-- 3+ images: 5-col × 2-row asymmetric grid -->
-        <div v-else class="grid h-full grid-cols-5 grid-rows-2 gap-0.5">
+        <div v-else class="grid h-full grid-cols-5 grid-rows-2 gap-1">
           <img
             :src="images[0]"
             :alt="wishlist.title"

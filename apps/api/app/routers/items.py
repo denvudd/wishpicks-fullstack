@@ -45,6 +45,8 @@ async def parse_product_url(
             title=result.title,
             description=result.description,
             image_url=result.image_url,
+            image_width=result.image_width,
+            image_height=result.image_height,
             price=result.price,
             currency=result.currency,
             product_url=result.product_url,
