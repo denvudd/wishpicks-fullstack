@@ -386,5 +386,19 @@
     "errors": {
       "unknown": "Something went wrong. Please try again."
     }
+  },
+  "reserved": {
+    "title": "Reserved",
+    "empty_title": "Nothing reserved yet",
+    "empty_body": "Browse friends' wishlists and reserve gifts",
+    "by_owner": "by {name}",
+    "wishlist_label": "Wishlist:",
+    "go_to_store": "Go to store",
+    "want_it_too": "I want this too!",
+    "cancel": "Cancel reservation",
+    "fulfilled_badge": "Fulfilled",
+    "errors": {
+      "cancel_failed": "Failed to cancel reservation"
+    }
   }
 }
