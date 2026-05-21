@@ -74,7 +74,7 @@ wishpicks/
 |---|---|---|
 | Database | Neon | Free tier serverless Postgres |
 | Media storage | Cloudinary | Free tier, 25 GB, handles image transforms |
-| Frontend hosting | Vercel | Free tier, native Nuxt SSR support |
+| Frontend hosting | Vercel/Netlify | Free tier, native Nuxt SSR support |
 | Backend hosting | Railway or Render | Free tier sufficient for MVP traffic |
 | CI | Github Actions | Releases, CI builds |
 | Cache / Rate limit store | Upstash Redis | Free tier: 10k commands/day, 256 MB; HTTP-based, no sidecar needed |
