@@ -119,6 +119,8 @@ async def create_item(db: AsyncSession, wishlist: Wishlist, data: WishItemCreate
         notes=data.notes,
         tags=data.tags,
         images=data.images,
+        image_width=data.image_width,
+        image_height=data.image_height,
         position=(max_pos + 1) if max_pos is not None else 0,
     )
     db.add(item)
@@ -197,6 +199,8 @@ def build_item_response(item: WishItem, is_reserved: bool, is_fulfilled: bool) -
         notes=item.notes,
         tags=item.tags,
         images=item.images,
+        image_width=item.image_width,
+        image_height=item.image_height,
         is_reserved=is_reserved,
         is_fulfilled=is_fulfilled,
         created_at=item.created_at,

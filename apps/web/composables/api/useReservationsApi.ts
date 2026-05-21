@@ -1,5 +1,5 @@
 import { apiFetch } from '~/composables/useApiFetch'
-import type { ReservationSingleResponse } from '~/types/api'
+import type { ApiResponse, MyReservationListData, ReservationSingleResponse } from '~/types/api'
 
 export const useReservationsApi = () => {
   async function reserve(
@@ -31,5 +31,12 @@ export const useReservationsApi = () => {
     })
   }
 
-  return { reserve, cancel, fulfill }
+  async function listMine(limit = 50, offset = 0): Promise<MyReservationListData> {
+    const res = await apiFetch<ApiResponse<MyReservationListData>>('/api/reservations', {
+      query: { limit, offset },
+    })
+    return res.data
+  }
+
+  return { reserve, cancel, fulfill, listMine }
 }

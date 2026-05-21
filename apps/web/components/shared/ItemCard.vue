@@ -1,7 +1,7 @@
 <template>
   <div
     tabindex="0"
-    class="cursor-pointer overflow-hidden rounded-xl border border-neutral-100 bg-white transition-colors hover:border-neutral-300 focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-600 dark:focus-visible:ring-neutral-500"
+    class="group cursor-pointer overflow-hidden rounded-xl border border-neutral-100 bg-white transition-colors hover:border-neutral-300 focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-600 dark:focus-visible:ring-neutral-500"
     style="box-shadow: var(--shadow-card)"
     @click="$emit('open', item)"
     @keydown.enter.prevent="$emit('open', item)"
@@ -22,7 +22,7 @@
       <!-- Priority emoji -->
       <span
         v-if="priorityEmoji"
-        class="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-base backdrop-blur-sm dark:bg-black/50"
+        class="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-base backdrop-blur-sm dark:bg-black/50"
       >
         {{ priorityEmoji }}
       </span>
@@ -34,23 +34,53 @@
           enter-active-class="animate-in fade-in-0 zoom-in-90 duration-200 ease-out"
           leave-active-class="animate-out fade-out-0 zoom-out-90 duration-150 ease-in"
         >
-          <UBadge v-if="item.is_fulfilled" key="fulfilled" color="success" variant="solid" size="sm">
+          <UBadge
+            v-if="item.is_fulfilled"
+            key="fulfilled"
+            color="success"
+            variant="solid"
+            size="sm"
+          >
             {{ t('shared.fulfilled_badge') }}
           </UBadge>
-          <UBadge v-else-if="item.is_reserved" key="reserved" color="neutral" variant="solid" size="sm">
+          <UBadge
+            v-else-if="item.is_reserved"
+            key="reserved"
+            color="neutral"
+            variant="solid"
+            size="sm"
+          >
             {{ t('shared.reserved_badge') }}
           </UBadge>
         </Transition>
+      </div>
+
+      <div
+        v-if="isAuthenticated"
+        class="pointer-events-none absolute left-3 top-2 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100"
+        @click.stop
+      >
+        <UButton
+          size="sm"
+          color="secondary"
+          variant="solid"
+          :label="t('saved.add')"
+          @click.stop="$emit('copy', item)"
+        />
       </div>
     </div>
 
     <!-- Info + actions -->
     <div class="space-y-3 p-3">
       <div class="space-y-1">
-        <p class="line-clamp-2 text-sm font-semibold leading-tight text-black dark:text-white">
+        <p
+          class="line-clamp-1 text-sm leading-tight font-semibold text-black dark:text-white"
+        >
           {{ item.title }}
         </p>
-        <div class="text-body-gray dark:text-muted-gray flex items-center gap-2 text-xs">
+        <div
+          class="text-body-gray dark:text-muted-gray flex items-center gap-2 text-xs"
+        >
           <a
             v-if="item.product_url"
             :href="item.product_url"
@@ -61,7 +91,10 @@
           >
             {{ storeDomain }}
           </a>
-          <span v-if="priceDisplay" :class="item.product_url ? 'ml-auto shrink-0' : ''">
+          <span
+            v-if="priceDisplay"
+            :class="item.product_url ? 'ml-auto shrink-0' : ''"
+          >
             {{ priceDisplay }}
           </span>
         </div>
@@ -86,7 +119,11 @@
           />
 
           <!-- Reserved by me -->
-          <div v-else-if="isReservedByMe" key="mine" class="flex flex-col gap-2">
+          <div
+            v-else-if="isReservedByMe"
+            key="mine"
+            class="flex flex-col gap-2"
+          >
             <Transition
               mode="out-in"
               enter-active-class="animate-in fade-in-0 duration-150 ease-out"
@@ -96,7 +133,11 @@
                 :key="item.is_fulfilled ? 'fulfilled-label' : 'reserved-label'"
                 class="text-xs font-medium text-black dark:text-white"
               >
-                {{ item.is_fulfilled ? t('reservation.fulfilled_by_you') : t('reservation.reserved_by_you') }}
+                {{
+                  item.is_fulfilled
+                    ? t('reservation.fulfilled_by_you')
+                    : t('reservation.reserved_by_you')
+                }}
               </p>
             </Transition>
             <div class="flex gap-2">
@@ -111,7 +152,11 @@
                   color="neutral"
                   size="sm"
                   class="flex-1"
-                  :label="item.is_fulfilled ? t('reservation.unfulfill') : t('reservation.fulfill')"
+                  :label="
+                    item.is_fulfilled
+                      ? t('reservation.unfulfill')
+                      : t('reservation.fulfill')
+                  "
                   @click="$emit('fulfill')"
                 />
               </Transition>
@@ -126,7 +171,11 @@
           </div>
 
           <!-- Reserved by someone else -->
-          <p v-else key="other" class="text-body-gray dark:text-muted-gray text-xs">
+          <p
+            v-else
+            key="other"
+            class="text-body-gray dark:text-muted-gray text-xs"
+          >
             {{ t('reservation.already_reserved') }}
           </p>
         </Transition>
@@ -150,15 +199,18 @@ defineEmits<{
   cancel: []
   fulfill: []
   open: [item: SharedItemResponse]
+  copy: [item: SharedItemResponse]
 }>()
 
 const { t } = useI18n()
 
 const PRIORITY_EMOJI: Record<number, string> = { 0: '🙂', 1: '🥰', 2: '😍' }
-const priorityEmoji = computed(() => PRIORITY_EMOJI[props.item.priority] ?? null)
+const priorityEmoji = computed(
+  () => PRIORITY_EMOJI[props.item.priority] ?? null
+)
 
 const isReservedByMe = computed(
-  () => !!props.item.my_reservation || !!props.anonToken,
+  () => !!props.item.my_reservation || !!props.anonToken
 )
 
 const storeDomain = computed(() => {

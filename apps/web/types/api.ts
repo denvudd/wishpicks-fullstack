@@ -40,6 +40,7 @@ export interface WishlistResponse {
   slug: string
   cover_url: string | null
   item_count: number
+  preview_images: string[]
   created_at: string
   updated_at: string
 }
@@ -87,6 +88,8 @@ export interface WishItemResponse {
   notes: string | null
   tags: string[] | null
   images: string[] | null
+  image_width: number | null
+  image_height: number | null
   is_reserved: boolean
   is_fulfilled: boolean
   created_at: string
@@ -113,6 +116,8 @@ export interface WishItemCreateBody {
   notes?: string | null
   tags?: string[] | null
   images?: string[] | null
+  image_width?: number | null
+  image_height?: number | null
 }
 
 export interface WishItemUpdateBody {
@@ -128,6 +133,8 @@ export interface WishItemUpdateBody {
   notes?: string | null
   tags?: string[] | null
   images?: string[] | null
+  image_width?: number | null
+  image_height?: number | null
 }
 
 // --- Shared wishlist (public guest view) ---
@@ -205,4 +212,66 @@ export interface ParseUrlData {
   price: string | null       // Decimal serialised as string by the API
   currency: string | null
   product_url: string
+  image_width: number | null
+  image_height: number | null
+}
+
+// --- Saved wishlists & items ---
+
+export interface SavedWishlistResponse {
+  id: string
+  title: string
+  description: string | null
+  visibility: WishlistVisibility
+  slug: string
+  cover_url: string | null
+  item_count: number
+  preview_images: string[]
+  owner_display_name: string | null
+  saved_at: string
+}
+
+export interface SavedItemResponse {
+  item_id: string
+  wishlist_id: string
+  title: string
+  image_url: string | null
+  images: string[] | null
+  product_url: string | null
+  price_min: string | null
+  price_max: string | null
+  currency: string
+  saved_at: string
+}
+
+export interface CopyItemRequest {
+  wishlist_id: string
+  priority?: number
+  notes?: string | null
+}
+
+// --- My reservations ---
+
+export interface MyReservationResponse {
+  item_id: string
+  item_title: string
+  item_image_url: string | null
+  item_images: string[] | null
+  item_product_url: string | null
+  item_price_min: string | null
+  item_price_max: string | null
+  item_currency: string
+  wishlist_id: string
+  wishlist_title: string
+  wishlist_slug: string
+  owner_display_name: string
+  is_fulfilled: boolean
+  reserved_at: string
+}
+
+export interface MyReservationListData {
+  items: MyReservationResponse[]
+  total: number
+  limit: number
+  offset: number
 }

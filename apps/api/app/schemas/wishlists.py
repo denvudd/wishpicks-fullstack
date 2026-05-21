@@ -57,6 +57,7 @@ class WishlistResponse(BaseModel):
     slug: str
     cover_url: str | None
     item_count: int
+    preview_images: list[str]
     created_at: datetime
     updated_at: datetime
 
@@ -74,6 +75,7 @@ class WishlistResponse(BaseModel):
                 "slug": "abc12345xyz",
                 "cover_url": None,
                 "item_count": 5,
+                "preview_images": [],
                 "created_at": "2026-05-07T10:00:00Z",
                 "updated_at": "2026-05-07T10:00:00Z",
             }

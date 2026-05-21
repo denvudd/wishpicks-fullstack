@@ -31,6 +31,9 @@ import type { ReservationMode, WishlistResponse } from '~/types/api'
 const props = defineProps<{
   wishlist: WishlistResponse
 }>()
+const emit = defineEmits<{
+  (e: 'close'): void
+}>()
 
 const { t } = useI18n()
 const { update } = useWishlists()
@@ -64,10 +67,13 @@ watch(
 async function save() {
   saving.value = true
   error.value = null
+  
   try {
     await update(props.wishlist.id, {
       reservation_mode: form.reservation_mode,
     })
+
+    emit('close')
   } catch {
     error.value = t('wishlists.errors.unknown')
   } finally {

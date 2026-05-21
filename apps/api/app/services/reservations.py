@@ -1,7 +1,7 @@
 import uuid
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.enums import ReservationMode
@@ -9,7 +9,7 @@ from app.models.reservation import Reservation
 from app.models.user import User
 from app.models.wish_item import WishItem
 from app.models.wishlist import Wishlist
-from app.schemas.reservations import ReservationCreate
+from app.schemas.reservations import MyReservationResponse, ReservationCreate
 
 
 async def _get_item_and_wishlist(db: AsyncSession, item_id: uuid.UUID) -> tuple[WishItem, Wishlist]:
@@ -120,3 +120,47 @@ async def fulfill_reservation(
     _authorize_action(reservation, wishlist, current_user, anon_token)
     reservation.is_fulfilled = is_fulfilled
     await db.commit()
+
+
+async def list_my_reservations(
+    db: AsyncSession,
+    user_id: uuid.UUID,
+    limit: int,
+    offset: int,
+) -> tuple[list[MyReservationResponse], int]:
+    count_stmt = select(func.count()).select_from(Reservation).where(Reservation.reserver_id == user_id)
+    total: int = (await db.execute(count_stmt)).scalar_one()
+
+    stmt = (
+        select(Reservation, WishItem, Wishlist, User)
+        .join(WishItem, Reservation.item_id == WishItem.id)
+        .join(Wishlist, WishItem.wishlist_id == Wishlist.id)
+        .join(User, Wishlist.user_id == User.id)
+        .where(Reservation.reserver_id == user_id)
+        .order_by(Reservation.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    rows = (await db.execute(stmt)).all()
+
+    items = [
+        MyReservationResponse(
+            item_id=row.WishItem.id,
+            item_title=row.WishItem.title,
+            item_image_url=row.WishItem.image_url,
+            item_images=row.WishItem.images,
+            item_product_url=row.WishItem.product_url,
+            item_price_min=row.WishItem.price_min,
+            item_price_max=row.WishItem.price_max,
+            item_currency=row.WishItem.currency,
+            wishlist_id=row.Wishlist.id,
+            wishlist_title=row.Wishlist.title,
+            wishlist_slug=row.Wishlist.slug,
+            owner_display_name=row.User.display_name,
+            is_fulfilled=row.Reservation.is_fulfilled,
+            reserved_at=row.Reservation.created_at,
+        )
+        for row in rows
+    ]
+
+    return items, total

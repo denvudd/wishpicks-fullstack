@@ -1,14 +1,16 @@
 import uuid
 
-from fastapi import APIRouter, Depends, Header, Request
+from fastapi import APIRouter, Depends, Header, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.limiter import limiter
-from app.dependencies.get_current_user import optional_current_user
+from app.dependencies.get_current_user import get_current_user, optional_current_user
 from app.dependencies.get_db import get_db
 from app.models.user import User
 from app.schemas.reservations import (
     FulfillRequest,
+    MyReservationListData,
+    MyReservationListResponse,
     ReservationCreate,
     ReservationResponse,
     ReservationSingleResponse,
@@ -81,3 +83,28 @@ async def fulfill_reservation(
     current_user: User | None = Depends(optional_current_user),
 ) -> None:
     await reservation_service.fulfill_reservation(db, item_id, body.is_fulfilled, current_user, x_anon_token)
+
+
+@router.get(
+    "/reservations",
+    summary="List current user's reservations",
+    response_model=MyReservationListResponse,
+    responses={
+        401: {"description": "Not authenticated"},
+    },
+)
+async def list_my_reservations(
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> MyReservationListResponse:
+    items, total = await reservation_service.list_my_reservations(db, current_user.id, limit, offset)
+    return MyReservationListResponse(
+        data=MyReservationListData(
+            items=items,
+            total=total,
+            limit=limit,
+            offset=offset,
+        )
+    )

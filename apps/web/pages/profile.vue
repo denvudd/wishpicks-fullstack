@@ -1,209 +1,199 @@
 <template>
-  <div class="p-6 max-w-2xl">
-    <!-- Identity card -->
-    <UCard>
-      <div class="flex items-start gap-5">
-        <!-- Avatar -->
-        <div class="shrink-0">
-          <button
-            type="button"
-            class="group relative size-16 cursor-pointer overflow-hidden rounded-full bg-chip-gray dark:bg-white/10 focus:outline-none"
-            :aria-label="$t('profile.avatar_change')"
-            :disabled="isUploadingAvatar"
-            @click="fileInput?.click()"
-          >
-            <Transition name="wp-avatar">
-              <img
-                v-if="currentAvatarSrc"
-                :key="currentAvatarSrc"
-                :src="currentAvatarSrc"
-                alt=""
-                class="size-full object-cover"
-              />
-              <div
-                v-else
-                class="flex size-full items-center justify-center"
-              >
-                <span class="text-xl font-bold text-muted-gray">
-                  {{ initials }}
-                </span>
-              </div>
-            </Transition>
-
-            <div
-              class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-              :class="{ 'opacity-100': isUploadingAvatar }"
+  <div class="mx-auto max-w-lg p-6">
+    <section>
+      <h1 class="mb-3 text-lg font-bold text-black dark:text-white">
+        {{ t('profile.title') }}
+      </h1>
+      <!-- Identity card -->
+      <UCard>
+        <div class="flex items-start gap-5">
+          <!-- Avatar -->
+          <div class="shrink-0">
+            <button
+              type="button"
+              class="group bg-chip-gray relative size-16 cursor-pointer overflow-hidden rounded-full focus:outline-none dark:bg-white/10"
+              :aria-label="$t('profile.avatar_change')"
+              :disabled="isUploadingAvatar"
+              @click="fileInput?.click()"
             >
-              <UIcon
-                v-if="!isUploadingAvatar"
-                name="i-heroicons-camera"
-                class="size-5 text-white"
-              />
-              <UIcon
-                v-else
-                name="i-heroicons-arrow-path"
-                class="size-5 text-white animate-spin"
-              />
-            </div>
-          </button>
-
-          <input
-            ref="fileInput"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            class="hidden"
-            @change="onAvatarFileChange"
-          />
-        </div>
-
-        <div class="flex-1 space-y-4">
-          <UFormField>
-            <div class="min-h-9">
-              <Transition
-                mode="out-in"
-                enter-active-class="animate-in fade-in-0 slide-in-from-top-1 duration-200 ease-out"
-                leave-active-class="animate-out fade-out-0 slide-out-to-top-1 duration-150 ease-in"
-              >
-                <div
-                  v-if="isEditingDisplayName"
-                  key="display-name-edit"
-                  class="flex gap-2"
-                >
-                  <UInput
-                    v-model="displayNameDraft"
-                    class="flex-1"
-                    size="sm"
-                    :placeholder="$t('profile.display_name')"
-                  />
-                  <UButton
-                    color="neutral"
-                    variant="outline"
-                    size="sm"
-                    :label="$t('profile.cancel')"
-                    @click="cancelEditingDisplayName"
-                  />
-                  <UButton
-                    color="neutral"
-                    variant="solid"
-                    :loading="isSavingDisplayName"
-                    :label="isSavingDisplayName ? $t('profile.saving') : $t('profile.save')"
-                    @click="saveDisplayName"
-                  />
-                </div>
-                <div
-                  v-else
-                  key="display-name-view"
-                  class="flex items-center justify-between gap-3"
-                >
-                  <p class="text-sm text-body-gray dark:text-muted-gray py-2">
-                    {{ user?.display_name || '—' }}
-                  </p>
-                  <UButton
-                    color="neutral"
-                    variant="outline"
-                    size="sm"
-                    :label="$t('profile.edit')"
-                    @click="startEditingDisplayName"
-                  />
+              <Transition name="wp-avatar">
+                <img
+                  v-if="currentAvatarSrc"
+                  :key="currentAvatarSrc"
+                  :src="currentAvatarSrc"
+                  alt=""
+                  class="size-full object-cover"
+                />
+                <div v-else class="flex size-full items-center justify-center">
+                  <span class="text-muted-gray text-xl font-bold">
+                    {{ initials }}
+                  </span>
                 </div>
               </Transition>
-            </div>
-          </UFormField>
 
-          <!-- Username -->
-          <UFormField :label="$t('profile.username_label')">
-            <div class="min-h-9">
-              <Transition
-                mode="out-in"
-                enter-active-class="animate-in fade-in-0 slide-in-from-top-1 duration-200 ease-out"
-                leave-active-class="animate-out fade-out-0 slide-out-to-top-1 duration-150 ease-in"
+              <div
+                class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+                :class="{ 'opacity-100': isUploadingAvatar }"
               >
-                <div
-                  v-if="isEditingUsername"
-                  key="username-edit"
-                  class="flex flex-col gap-1.5"
+                <UIcon
+                  v-if="!isUploadingAvatar"
+                  name="i-heroicons-camera"
+                  class="size-5 text-white"
+                />
+                <UIcon
+                  v-else
+                  name="i-heroicons-arrow-path"
+                  class="size-5 animate-spin text-white"
+                />
+              </div>
+            </button>
+
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              class="hidden"
+              @change="onAvatarFileChange"
+            />
+          </div>
+
+          <div class="flex-1 space-y-4">
+            <UFormField>
+              <div class="min-h-9">
+                <Transition
+                  mode="out-in"
+                  enter-active-class="animate-in fade-in-0 slide-in-from-top-1 duration-200 ease-out"
+                  leave-active-class="animate-out fade-out-0 slide-out-to-top-1 duration-150 ease-in"
                 >
-                  <div class="flex gap-2">
+                  <div
+                    v-if="isEditingDisplayName"
+                    key="display-name-edit"
+                    class="flex gap-2"
+                  >
                     <UInput
-                      v-model="usernameDraft"
+                      v-model="displayNameDraft"
                       class="flex-1"
                       size="sm"
-                      autocomplete="username"
-                      @input="usernameError = ''"
+                      :placeholder="$t('profile.display_name')"
                     />
                     <UButton
                       color="neutral"
                       variant="outline"
                       size="sm"
                       :label="$t('profile.cancel')"
-                      @click="cancelEditingUsername"
+                      @click="cancelEditingDisplayName"
                     />
                     <UButton
                       color="neutral"
                       variant="solid"
-                      size="sm"
-                      :loading="isSavingUsername"
-                      :label="isSavingUsername ? $t('profile.saving') : $t('profile.save')"
-                      @click="saveUsername"
+                      :loading="isSavingDisplayName"
+                      :label="
+                        isSavingDisplayName
+                          ? $t('profile.saving')
+                          : $t('profile.save')
+                      "
+                      @click="saveDisplayName"
                     />
                   </div>
-                  <p v-if="usernameError" class="text-xs text-red-500">
-                    {{ usernameError }}
-                  </p>
-                </div>
-                <div
-                  v-else
-                  key="username-view"
-                  class="flex items-center justify-between gap-3"
+                  <div
+                    v-else
+                    key="display-name-view"
+                    class="flex items-center justify-between gap-3"
+                  >
+                    <p class="text-body-gray dark:text-muted-gray py-2 text-sm">
+                      {{ user?.display_name || '—' }}
+                    </p>
+                    <UButton
+                      color="neutral"
+                      variant="outline"
+                      size="sm"
+                      icon="i-heroicons-pencil-square"
+                      square
+                      :aria-label="$t('profile.edit')"
+                      @click="startEditingDisplayName"
+                    />
+                  </div>
+                </Transition>
+              </div>
+            </UFormField>
+
+            <!-- Username -->
+            <UFormField>
+              <div class="min-h-9">
+                <Transition
+                  mode="out-in"
+                  enter-active-class="animate-in fade-in-0 slide-in-from-top-1 duration-200 ease-out"
+                  leave-active-class="animate-out fade-out-0 slide-out-to-top-1 duration-150 ease-in"
                 >
-                  <p class="text-sm text-body-gray dark:text-muted-gray py-2">
-                    @{{ user?.username || '—' }}
-                  </p>
-                  <UButton
-                    color="neutral"
-                    variant="outline"
-                    size="sm"
-                    :label="$t('profile.edit')"
-                    @click="startEditingUsername"
-                  />
-                </div>
-              </Transition>
-            </div>
-          </UFormField>
+                  <div
+                    v-if="isEditingUsername"
+                    key="username-edit"
+                    class="flex flex-col gap-1.5"
+                  >
+                    <div class="flex gap-2">
+                      <UInput
+                        v-model="usernameDraft"
+                        class="flex-1"
+                        size="sm"
+                        autocomplete="username"
+                        @input="usernameError = ''"
+                      />
+                      <UButton
+                        color="neutral"
+                        variant="outline"
+                        size="sm"
+                        :label="$t('profile.cancel')"
+                        @click="cancelEditingUsername"
+                      />
+                      <UButton
+                        color="neutral"
+                        variant="solid"
+                        size="sm"
+                        :loading="isSavingUsername"
+                        :label="
+                          isSavingUsername
+                            ? $t('profile.saving')
+                            : $t('profile.save')
+                        "
+                        @click="saveUsername"
+                      />
+                    </div>
+                    <p v-if="usernameError" class="text-xs text-red-500">
+                      {{ usernameError }}
+                    </p>
+                  </div>
+                  <div
+                    v-else
+                    key="username-view"
+                    class="flex items-center justify-between gap-3"
+                  >
+                    <p class="text-body-gray dark:text-muted-gray py-2 text-sm">
+                      @{{ user?.username || '—' }}
+                    </p>
+                    <UButton
+                      color="neutral"
+                      variant="outline"
+                      size="sm"
+                      icon="i-heroicons-pencil-square"
+                      square
+                      :aria-label="$t('profile.edit')"
+                      @click="startEditingUsername"
+                    />
+                  </div>
+                </Transition>
+              </div>
+            </UFormField>
 
-          <!-- Share profile -->
-          <UButton
-            variant="outline"
-            color="neutral"
-            icon="i-heroicons-share"
-            :label="$t('profile.share')"
-            @click="shareProfile"
-          />
+            <!-- Share profile -->
+            <UButton
+              variant="outline"
+              color="neutral"
+              icon="i-heroicons-share"
+              :label="$t('profile.share')"
+              @click="shareProfile"
+            />
+          </div>
         </div>
-      </div>
-    </UCard>
-
-    <!-- Wishlists section stub -->
-    <section class="mt-8">
-      <h2 class="text-lg font-bold text-black dark:text-white mb-3">
-        {{ $t('profile.wishlists_section') }}
-      </h2>
-      <UCard>
-        <p class="text-sm text-body-gray dark:text-muted-gray">
-          {{ $t('profile.coming_soon') }}
-        </p>
-      </UCard>
-    </section>
-
-    <!-- Wish board section stub -->
-    <section class="mt-8">
-      <h2 class="text-lg font-bold text-black dark:text-white mb-3">
-        {{ $t('profile.board_section') }}
-      </h2>
-      <UCard>
-        <p class="text-sm text-body-gray dark:text-muted-gray">
-          {{ $t('profile.coming_soon') }}
-        </p>
       </UCard>
     </section>
   </div>
@@ -221,18 +211,18 @@ const { user } = useAuth()
 const { updateProfile } = useUsers()
 const mediaApi = useMediaApi()
 
-// Avatar
 const fileInput = ref<HTMLInputElement | null>(null)
 const previewUrl = ref<string | null>(null)
 const isUploadingAvatar = ref(false)
 
 const currentAvatarSrc = computed(
-  () => previewUrl.value ?? user.value?.avatar_url ?? null,
+  () => previewUrl.value ?? user.value?.avatar_url ?? null
 )
 
 const initials = computed(() => {
   const src =
     user.value?.display_name ?? user.value?.username ?? user.value?.email ?? ''
+
   return src.charAt(0).toUpperCase()
 })
 
@@ -246,11 +236,14 @@ async function onAvatarFileChange(e: Event) {
 
   try {
     const avatarUrl = await mediaApi.uploadImage(file, 'avatars')
+
     await updateProfile({ avatar_url: avatarUrl })
     URL.revokeObjectURL(previewUrl.value!)
+
     previewUrl.value = null
   } catch {
     toast.add({ title: t('profile.errors.upload_failed'), color: 'error' })
+
     URL.revokeObjectURL(previewUrl.value!)
     previewUrl.value = null
   } finally {
@@ -263,7 +256,6 @@ onBeforeUnmount(() => {
   if (previewUrl.value) URL.revokeObjectURL(previewUrl.value)
 })
 
-// Display name
 const displayNameDraft = ref(user.value?.display_name ?? '')
 const isSavingDisplayName = ref(false)
 const isEditingDisplayName = ref(false)
@@ -272,11 +264,11 @@ watch(
   () => user.value?.display_name,
   (val) => {
     if (!isSavingDisplayName.value) displayNameDraft.value = val ?? ''
-  },
+  }
 )
 
 const isDisplayNameDirty = computed(
-  () => displayNameDraft.value !== (user.value?.display_name ?? ''),
+  () => displayNameDraft.value !== (user.value?.display_name ?? '')
 )
 
 function startEditingDisplayName() {
@@ -306,7 +298,6 @@ async function saveDisplayName() {
   }
 }
 
-// Username
 const usernameDraft = ref(user.value?.username ?? '')
 const isSavingUsername = ref(false)
 const isEditingUsername = ref(false)
@@ -316,11 +307,11 @@ watch(
   () => user.value?.username,
   (val) => {
     if (!isSavingUsername.value) usernameDraft.value = val ?? ''
-  },
+  }
 )
 
 const isUsernameDirty = computed(
-  () => usernameDraft.value !== (user.value?.username ?? ''),
+  () => usernameDraft.value !== (user.value?.username ?? '')
 )
 
 function startEditingUsername() {
@@ -343,11 +334,13 @@ async function saveUsername() {
 
   isSavingUsername.value = true
   usernameError.value = ''
+
   try {
     await updateProfile({ username: usernameDraft.value })
     isEditingUsername.value = false
   } catch (err: unknown) {
     const code = (err as ApiFetchError)?.data?.error?.code
+
     if (code === 'USERNAME_TAKEN') {
       usernameError.value = t('profile.errors.username_taken')
     } else {
@@ -361,13 +354,15 @@ async function saveUsername() {
 function shareProfile() {
   const url = `${window.location.origin}/u/${user.value?.username}`
   navigator.clipboard.writeText(url)
-  toast.add({ title: t('profile.share_copied') })
+  toast.add({ title: t('profile.share_copied'), progress: false })
 }
 </script>
 
 <style scoped>
 .wp-avatar-enter-active {
-  transition: opacity 200ms ease-out, transform 200ms ease-out;
+  transition:
+    opacity 200ms ease-out,
+    transform 200ms ease-out;
 }
 .wp-avatar-enter-from {
   opacity: 0;

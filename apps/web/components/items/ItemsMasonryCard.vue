@@ -8,60 +8,21 @@
     @keydown.enter.prevent="emit('select', item)"
     @keydown.space.prevent="emit('select', item)"
   >
-    <div class="bg-chip-gray relative aspect-square dark:bg-neutral-800">
-      <!-- 0 images -->
+    <div class="bg-chip-gray relative dark:bg-neutral-800" :style="imageContainerStyle">
       <div
-        v-if="cardImages.length === 0"
+        v-if="!item.image_url"
         class="flex h-full items-center justify-center"
       >
         <UIcon name="i-heroicons-gift" class="text-muted-gray h-10 w-10" />
       </div>
 
-      <!-- 1 image -->
       <img
-        v-else-if="cardImages.length === 1"
-        :src="cardImages[0]"
+        v-else
+        :src="item.image_url"
         :alt="item.title"
-        class="h-full w-full object-cover"
+        class="h-full w-full object-contain"
         loading="lazy"
       />
-
-      <!-- 2 images -->
-      <div
-        v-else-if="cardImages.length === 2"
-        class="grid h-full w-full grid-cols-2 gap-px"
-      >
-        <img
-          v-for="(src, i) in cardImages"
-          :key="i"
-          :src="src"
-          :alt="item.title"
-          class="h-full w-full object-cover"
-          loading="lazy"
-        />
-      </div>
-
-      <!-- 3 images -->
-      <div v-else class="grid h-full w-full grid-cols-2 gap-px">
-        <img
-          :src="cardImages[0]"
-          :alt="item.title"
-          class="row-span-2 h-full w-full object-cover"
-          loading="lazy"
-        />
-        <img
-          :src="cardImages[1]"
-          :alt="item.title"
-          class="h-full w-full object-cover"
-          loading="lazy"
-        />
-        <img
-          :src="cardImages[2]"
-          :alt="item.title"
-          class="h-full w-full object-cover"
-          loading="lazy"
-        />
-      </div>
 
       <div
         v-if="priorityEmoji"
@@ -145,20 +106,11 @@
           </div>
         </Transition>
       </div>
-      <UTooltip :text="t('items.drag_item')">
-        <div
-          v-if="draggable"
-          class="drag-handle absolute bottom-2 left-2 z-20 cursor-grab rounded bg-black/20 px-1.5 py-0.5 opacity-0 transition-opacity group-hover:opacity-100 dark:bg-white/10"
-          @click.stop
-        >
-          <UIcon name="i-heroicons-bars-3" class="size-4 text-white" />
-        </div>
-      </UTooltip>
     </div>
 
     <div class="space-y-1 p-3">
       <p
-        class="line-clamp-1 text-sm leading-tight font-semibold text-black dark:text-white"
+        class="line-clamp-2 text-sm leading-tight font-semibold text-black dark:text-white"
       >
         {{ item.title }}
       </p>
@@ -189,7 +141,7 @@
 import { useDebounceFn } from '@vueuse/core'
 import type { WishItemResponse } from '~/types/api'
 
-const props = defineProps<{ item: WishItemResponse; draggable?: boolean }>()
+const props = defineProps<{ item: WishItemResponse }>()
 const emit = defineEmits<{
   select: [item: WishItemResponse]
   edit: [item: WishItemResponse]
@@ -208,9 +160,7 @@ const schedulePriorityEmit = useDebounceFn((priority: number) => {
 
 const PRIORITY_EMOJI: Record<number, string> = { 0: '🙂', 1: '🥰', 2: '😍' }
 
-const priorityEmoji = computed(
-  () => PRIORITY_EMOJI[props.item.priority] ?? null
-)
+const priorityEmoji = computed(() => PRIORITY_EMOJI[props.item.priority] ?? null)
 
 const priorityLabel = computed(() => {
   const map: Record<number, string> = {
@@ -218,13 +168,19 @@ const priorityLabel = computed(() => {
     1: t('items.priority.high'),
     2: t('items.priority.must_have'),
   }
-
   return map[props.item.priority] ?? ''
+})
+
+const imageContainerStyle = computed(() => {
+  const { image_width, image_height } = props.item
+  if (image_width && image_height) {
+    return { aspectRatio: `${image_width} / ${image_height}` }
+  }
+  return { aspectRatio: '1 / 1' }
 })
 
 const storeDomain = computed(() => {
   if (!props.item.product_url) return null
-
   try {
     return new URL(props.item.product_url).hostname.replace(/^www\./, '')
   } catch {
@@ -232,23 +188,12 @@ const storeDomain = computed(() => {
   }
 })
 
-const cardImages = computed(() => {
-  const all = [
-    ...(props.item.image_url ? [props.item.image_url] : []),
-    ...(props.item.images ?? []),
-  ]
-  return all.slice(0, 3)
-})
-
 const priceDisplay = computed(() => {
   const { price_min, price_max, currency } = props.item
-
   if (!price_min && !price_max) return null
-
   if (price_min && price_max && price_min !== price_max) {
     return `${price_min}–${price_max} ${currency}`
   }
-
   return `${price_min || price_max} ${currency}`
 })
 

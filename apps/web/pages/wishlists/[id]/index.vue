@@ -35,9 +35,14 @@
             <UButton
               variant="outline"
               color="neutral"
+              square
               :icon="
                 shareLinkCopied ? 'i-heroicons-check' : 'i-heroicons-share'
               "
+              class="size-8"
+              :ui="{
+                leadingIcon: 'size-4.5 shrink-0',
+              }"
               @click="copyShareLink"
             />
           </UTooltip>
@@ -98,18 +103,32 @@
             v-if="!itemsLoading"
             variant="outline"
             color="neutral"
-            :icon="
-              itemsLayout === 'grid'
-                ? 'i-heroicons-view-columns'
-                : 'i-heroicons-squares-2x2'
-            "
+            square
             :aria-label="
               itemsLayout === 'grid'
                 ? t('wishlists.items_layout.switch_to_masonry')
                 : t('wishlists.items_layout.switch_to_grid')
             "
             @click="toggleItemsLayout"
-          />
+          >
+            <template #leading>
+              <Transition
+                mode="out-in"
+                enter-active-class="animate-in fade-in-0 zoom-in-95 ease-out"
+                leave-active-class="animate-out fade-out-0 zoom-out-95 ease-in"
+              >
+                <UIcon
+                  :key="itemsLayout"
+                  :name="
+                    itemsLayout === 'grid'
+                      ? 'i-heroicons-view-columns'
+                      : 'i-heroicons-squares-2x2'
+                  "
+                  class="size-5 shrink-0"
+                />
+              </Transition>
+            </template>
+          </UButton>
         </UTooltip>
       </div>
 
@@ -206,14 +225,21 @@
         />
 
         <div v-else :key="itemsLayout">
-          <div
+          <VueDraggable
             v-if="itemsLayout === 'grid'"
+            v-model="draggableItems"
+            :animation="250"
+            handle=".drag-handle"
+            drag-class="drag-clone"
             class="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5"
+            @start="onDragStart"
+            @end="onDragEnd"
           >
             <ItemsItemCard
-              v-for="(item, i) in items"
+              v-for="(item, i) in draggableItems"
               :key="item.id"
               :item="item"
+              :draggable="true"
               class="animate-in fade-in-0 zoom-in-95 fill-mode-both duration-300"
               :style="{ animationDelay: `${Math.min(i * 40, 280)}ms` }"
               @select="openItemDetail"
@@ -223,16 +249,20 @@
               @update-priority="onUpdatePriority"
               @fulfill="onFulfillItem"
             />
-          </div>
-          <div v-else class="columns-2 gap-x-4 sm:columns-4 lg:columns-5">
-            <div
-              v-for="(item, i) in items"
-              :key="item.id"
-              class="animate-in fade-in-0 zoom-in-95 fill-mode-both mb-4 break-inside-avoid duration-300"
-              :style="{ animationDelay: `${Math.min(i * 40, 280)}ms` }"
-            >
-              <ItemsItemCard
+          </VueDraggable>
+          <MasonryWall
+            v-else
+            :items="items"
+            :column-width="220"
+            :gap="16"
+            :min-columns="2"
+            :max-columns="5"
+          >
+            <template #default="{ item, index }">
+              <ItemsMasonryCard
                 :item="item"
+                class="animate-in fade-in-0 zoom-in-95 fill-mode-both duration-300"
+                :style="{ animationDelay: `${Math.min(index * 40, 280)}ms` }"
                 @select="openItemDetail"
                 @edit="onEditItem"
                 @delete="onDeleteItem"
@@ -240,8 +270,8 @@
                 @update-priority="onUpdatePriority"
                 @fulfill="onFulfillItem"
               />
-            </div>
-          </div>
+            </template>
+          </MasonryWall>
         </div>
       </Transition>
 
@@ -315,6 +345,9 @@
 </template>
 
 <script setup lang="ts">
+import { useLocalStorage } from '@vueuse/core'
+import { VueDraggable } from 'vue-draggable-plus'
+import { MasonryWall } from '@yeger/vue-masonry-wall'
 import type { ParseUrlData, WishItemResponse, ItemFilters } from '~/types/api'
 import { useItemsApi } from '~/composables/api/useItemsApi'
 import { useReservationsApi } from '~/composables/api/useReservationsApi'
@@ -332,12 +365,19 @@ const {
   fetchList,
   updateItem,
   removeItem,
+  reorderItems,
   availableStores,
   clear,
 } = useItems()
 const reservationsApi = useReservationsApi()
 const itemsApi = useItemsApi()
 const itemStore = useItemStore()
+const toast = useToast()
+
+const draggableItems = ref<WishItemResponse[]>([])
+const previousOrder = ref<WishItemResponse[]>([])
+const isDragging = ref(false)
+const dragBlocked = ref(false)
 
 type ItemsLayoutMode = 'grid' | 'masonry'
 
@@ -346,7 +386,10 @@ const entryOpen = ref(false)
 const formOpen = ref(false)
 const shareOpen = ref(false)
 const filterOpen = ref(false)
-const itemsLayout = ref<ItemsLayoutMode>('grid')
+const itemsLayout = useLocalStorage<ItemsLayoutMode>(
+  computed(() => `wishlist-layout:${route.params.id}`),
+  'grid',
+)
 const editingItem = ref<WishItemResponse | null>(null)
 const sharingItem = ref<WishItemResponse | null>(null)
 const detailOpen = ref(false)
@@ -364,6 +407,16 @@ const filters = ref<ItemFilters>({
   priority: [],
   store: null,
 })
+
+watch(
+  items,
+  (newItems) => {
+    if (!isDragging.value) {
+      draggableItems.value = [...newItems]
+    }
+  },
+  { immediate: true }
+)
 
 const activeFilterCount = computed(
   () =>
@@ -387,6 +440,33 @@ function clearFilters() {
     is_fulfilled: null,
     priority: [],
     store: null,
+  }
+}
+
+function onDragStart() {
+  previousOrder.value = [...draggableItems.value]
+  isDragging.value = true
+  if (activeFilterCount.value > 0) {
+    dragBlocked.value = true
+    toast.add({ title: t('items.drag_filter_warning'), color: 'warning' })
+  }
+}
+
+async function onDragEnd() {
+  isDragging.value = false
+  if (dragBlocked.value) {
+    draggableItems.value = [...previousOrder.value]
+    dragBlocked.value = false
+    return
+  }
+  const newOrder = [...draggableItems.value]
+  itemStore.setItems(newOrder, itemStore.total)
+  try {
+    await reorderItems(newOrder)
+  } catch {
+    itemStore.setItems(previousOrder.value, itemStore.total)
+    draggableItems.value = [...previousOrder.value]
+    toast.add({ title: t('items.errors.unknown'), color: 'error' })
   }
 }
 
@@ -508,3 +588,22 @@ async function onFulfillItem(item: WishItemResponse) {
   }
 }
 </script>
+
+<style>
+.drag-clone {
+  border-radius: 0.75rem;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.18),
+    0 8px 16px rgba(0, 0, 0, 0.1) !important;
+  transform: scale(1.03) rotate(1deg) !important;
+  opacity: 0.96 !important;
+  cursor: grabbing !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .drag-ghost {
+    background: #262626;
+    outline-color: #525252;
+  }
+}
+</style>

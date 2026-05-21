@@ -60,9 +60,13 @@ export const useItems = () => {
     }
   }
 
+  async function reorderItems(newOrder: WishItemResponse[]): Promise<void> {
+    await Promise.all(newOrder.map((item, i) => api.updatePosition(item.id, i)))
+  }
+
   function clear(): void {
     store.clear()
   }
 
-  return { items, total, isLoading, availableStores, fetchOne, fetchList, createItem, updateItem, removeItem, clear }
+  return { items, total, isLoading, availableStores, fetchOne, fetchList, createItem, updateItem, removeItem, reorderItems, clear }
 }

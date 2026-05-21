@@ -13,6 +13,25 @@ from app.schemas.wishlists import WishlistCreate, WishlistUpdate
 MAX_WISHLISTS_PER_USER = 10
 
 
+async def _fetch_preview_images(db: AsyncSession, wishlist_ids: list[uuid.UUID]) -> dict[uuid.UUID, list[str]]:
+    """Return up to 3 non-null image_urls per wishlist, ordered by position."""
+    if not wishlist_ids:
+        return {}
+    stmt = (
+        select(WishItem.wishlist_id, WishItem.image_url)
+        .where(WishItem.wishlist_id.in_(wishlist_ids))
+        .where(WishItem.image_url.is_not(None))
+        .order_by(WishItem.wishlist_id, WishItem.position.asc())
+    )
+    rows = (await db.execute(stmt)).all()
+    result: dict[uuid.UUID, list[str]] = {wid: [] for wid in wishlist_ids}
+    for row in rows:
+        bucket = result[row.wishlist_id]
+        if len(bucket) < 3:
+            bucket.append(row.image_url)
+    return result
+
+
 async def _generate_slug(db: AsyncSession) -> str:
     for _ in range(3):
         slug = secrets.token_urlsafe(8)
@@ -27,7 +46,7 @@ async def _generate_slug(db: AsyncSession) -> str:
 
 async def list_wishlists(
     db: AsyncSession, user: User, limit: int, offset: int
-) -> tuple[list[tuple[Wishlist, int]], int]:
+) -> tuple[list[tuple[Wishlist, int, list[str]]], int]:
     item_count_subq = (
         select(WishItem.wishlist_id, func.count(WishItem.id).label("item_count"))
         .group_by(WishItem.wishlist_id)
@@ -49,7 +68,11 @@ async def list_wishlists(
 
     rows = [(row.Wishlist, row.item_count) for row in results.all()]
     total = total_result.scalar_one()
-    return rows, total
+
+    wishlist_ids = [w.id for w, _ in rows]
+    preview_map = await _fetch_preview_images(db, wishlist_ids)
+
+    return [(w, count, preview_map[w.id]) for w, count in rows], total
 
 
 async def create_wishlist(db: AsyncSession, user: User, data: WishlistCreate) -> Wishlist:
@@ -113,3 +136,14 @@ async def update_wishlist(db: AsyncSession, wishlist: Wishlist, data: WishlistUp
 async def delete_wishlist(db: AsyncSession, wishlist: Wishlist) -> None:
     await db.delete(wishlist)
     await db.commit()
+
+
+async def get_preview_images(db: AsyncSession, wishlist_id: uuid.UUID) -> list[str]:
+    stmt = (
+        select(WishItem.image_url)
+        .where(WishItem.wishlist_id == wishlist_id)
+        .where(WishItem.image_url.is_not(None))
+        .order_by(WishItem.position.asc())
+        .limit(3)
+    )
+    return list((await db.execute(stmt)).scalars().all())

@@ -22,6 +22,8 @@ class WishItemCreate(BaseModel):
     notes: str | None = None
     tags: list[str] | None = None
     images: list[str] | None = None
+    image_width: int | None = None
+    image_height: int | None = None
 
     @model_validator(mode="after")
     def validate_price_range(self) -> "WishItemCreate":
@@ -85,6 +87,8 @@ class WishItemUpdate(BaseModel):
     notes: str | None = None
     tags: list[str] | None = None
     images: list[str] | None = None
+    image_width: int | None = None
+    image_height: int | None = None
 
     @model_validator(mode="after")
     def validate_price_range(self) -> "WishItemUpdate":
@@ -150,6 +154,8 @@ class WishItemResponse(BaseModel):
     notes: str | None
     tags: list[str] | None
     images: list[str] | None
+    image_width: int | None
+    image_height: int | None
     is_reserved: bool
     is_fulfilled: bool
     created_at: datetime
@@ -213,6 +219,8 @@ class ParseUrlData(BaseModel):
     price: Decimal | None
     currency: str | None
     product_url: str
+    image_width: int | None = None
+    image_height: int | None = None
 
     model_config = ConfigDict(
         json_schema_extra={

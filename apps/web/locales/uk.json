@@ -148,6 +148,7 @@
     "logout": "Вийти"
   },
   "profile": {
+    "title": "Профіль",
     "display_name": "Імʼя",
     "edit": "Редагувати",
     "cancel": "Скасувати",
@@ -320,6 +321,8 @@
     "reserved": "Зарезервовано",
     "add": "Додати бажання",
     "card_open_detail": "Відкрити деталі бажання: {title}",
+    "drag_filter_warning": "Вимкніть фільтри, щоб змінити порядок",
+    "drag_item": "Перетягнути бажання",
     "filters": {
       "title": "Фільтри",
       "clear": "Очистити",
@@ -360,5 +363,42 @@
     "reserved_badge": "Зарезервовано",
     "fulfilled_badge": "Подаровано",
     "anonymous_author": "Анонімно"
+  },
+  "saved": {
+    "save": "Зберегти",
+    "saved": "Збережено",
+    "unsave": "Видалити зі збережених",
+    "add": "Додати",
+    "tab_my": "Мої вішлісти",
+    "tab_saved": "Збережені",
+    "empty_wishlists_title": "Немає збережених вішлістів",
+    "empty_wishlists_body": "Зберігай вішлісти друзів, щоб не загубити",
+    "copy_modal_title": "Додати до вішліста",
+    "copy_wishlist_label": "Вішліст",
+    "copy_priority_label": "Пріоритет",
+    "copy_notes_label": "Нотатки",
+    "copy_submit": "Додати до вішліста",
+    "copy_submitting": "Додавання…",
+    "copy_success": "Додано до «{title}»",
+    "copy_no_wishlists": "Спочатку створи вішліст",
+    "save_guest_prompt": "Увійди, щоб зберегти",
+    "cannot_save_own": "Не можна зберегти власний вішліст",
+    "errors": {
+      "unknown": "Щось пішло не так. Спробуй ще раз."
+    }
+  },
+  "reserved": {
+    "title": "Зарезервовані",
+    "empty_title": "Ти ще нічого не зарезервував",
+    "empty_body": "Переглядай вішлісти друзів і резервуй подарунки",
+    "by_owner": "від {name}",
+    "wishlist_label": "Вішліст:",
+    "go_to_store": "Перейти до магазину",
+    "want_it_too": "Я теж хочу!",
+    "cancel": "Скасувати резерв",
+    "fulfilled_badge": "Виконано",
+    "errors": {
+      "cancel_failed": "Не вдалося скасувати резерв"
+    }
   }
 }

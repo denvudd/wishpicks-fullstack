@@ -37,6 +37,8 @@ class ParsedItemData:
     title: str | None
     description: str | None
     image_url: str | None
+    image_width: int | None
+    image_height: int | None
     price: Decimal | None
     currency: str | None
     product_url: str
@@ -178,12 +180,17 @@ async def _enrich(raw: RawParsed, product_url: str) -> ParsedItemData:
         price, currency = await _convert_currency(price, currency)
 
     cloudinary_url: str | None = None
+    image_width: int | None = None
+    image_height: int | None = None
+
     if raw.image_url:
         result = await _download_image(raw.image_url)
         if result is not None:
             image_bytes, content_type = result
             try:
-                cloudinary_url = await media_service.upload_image(image_bytes, content_type, "items")
+                cloudinary_url, image_width, image_height = await media_service.upload_image(
+                    image_bytes, content_type, "items"
+                )
             except Exception:
                 logger.warning("Cloudinary upload failed for image from %s", product_url)
 
@@ -191,6 +198,8 @@ async def _enrich(raw: RawParsed, product_url: str) -> ParsedItemData:
         title=raw.title,
         description=raw.description,
         image_url=cloudinary_url,
+        image_width=image_width,
+        image_height=image_height,
         price=price,
         currency=currency,
         product_url=product_url,
@@ -216,6 +225,8 @@ async def parse_url(url: str, redis) -> ParsedItemData:
                     title=data["title"],
                     description=data["description"],
                     image_url=data["image_url"],
+                    image_width=data.get("image_width"),
+                    image_height=data.get("image_height"),
                     price=Decimal(data["price"]) if data["price"] is not None else None,
                     currency=data["currency"],
                     product_url=data["product_url"],
@@ -260,6 +271,8 @@ async def parse_url(url: str, redis) -> ParsedItemData:
                 "title": result.title,
                 "description": result.description,
                 "image_url": result.image_url,
+                "image_width": result.image_width,
+                "image_height": result.image_height,
                 "price": str(result.price) if result.price is not None else None,
                 "currency": result.currency,
                 "product_url": result.product_url,

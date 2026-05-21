@@ -148,6 +148,7 @@
     "logout": "Sign out"
   },
   "profile": {
+    "title": "Profile",
     "display_name": "Display name",
     "edit": "Edit",
     "cancel": "Cancel",
@@ -320,6 +321,8 @@
     "reserved": "Reserved",
     "add": "Add a wish",
     "card_open_detail": "Open wish details: {title}",
+    "drag_filter_warning": "Clear filters to reorder items",
+    "drag_item": "Drag item",
     "filters": {
       "title": "Filters",
       "clear": "Clear",
@@ -360,5 +363,42 @@
     "reserved_badge": "Reserved",
     "fulfilled_badge": "Fulfilled",
     "anonymous_author": "Anonymous"
+  },
+  "saved": {
+    "save": "Save",
+    "saved": "Saved",
+    "unsave": "Remove from saved",
+    "add": "Add",
+    "tab_my": "My wishlists",
+    "tab_saved": "Saved",
+    "empty_wishlists_title": "No saved wishlists",
+    "empty_wishlists_body": "Save your friends' wishlists to keep them handy",
+    "copy_modal_title": "Add to wishlist",
+    "copy_wishlist_label": "Wishlist",
+    "copy_priority_label": "Priority",
+    "copy_notes_label": "Notes",
+    "copy_submit": "Add to wishlist",
+    "copy_submitting": "Adding…",
+    "copy_success": "Added to \"{title}\"",
+    "copy_no_wishlists": "Create a wishlist first",
+    "save_guest_prompt": "Sign in to save",
+    "cannot_save_own": "You can't save your own wishlist",
+    "errors": {
+      "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "reserved": {
+    "title": "Reserved",
+    "empty_title": "Nothing reserved yet",
+    "empty_body": "Browse friends' wishlists and reserve gifts",
+    "by_owner": "by {name}",
+    "wishlist_label": "Wishlist:",
+    "go_to_store": "Go to store",
+    "want_it_too": "I want this too!",
+    "cancel": "Cancel reservation",
+    "fulfilled_badge": "Fulfilled",
+    "errors": {
+      "cancel_failed": "Failed to cancel reservation"
+    }
   }
 }
