@@ -16,6 +16,7 @@ node_modules/
 # Env
 .env
 *.env.local
+*.env.prod
 
 # IDE
 .vscode/

@@ -11,7 +11,7 @@ A wishlist platform. Users create gift wishlists and share links with friends. F
 | Database | PostgreSQL (Neon in production) |
 | Cache / Rate limiting | Redis (Upstash in production) |
 | Media | Cloudinary |
-| Frontend hosting | Vercel |
+| Frontend hosting | Vercel/Netlify |
 | Backend hosting | Railway / Render |
 
 ## Project structure
