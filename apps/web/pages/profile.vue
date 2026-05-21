@@ -196,30 +196,6 @@
         </div>
       </UCard>
     </section>
-
-    <!-- Wishlists section stub -->
-    <section class="mt-8">
-      <h2 class="mb-3 text-lg font-bold text-black dark:text-white">
-        {{ $t('profile.wishlists_section') }}
-      </h2>
-      <UCard>
-        <p class="text-body-gray dark:text-muted-gray text-sm">
-          {{ $t('profile.coming_soon') }}
-        </p>
-      </UCard>
-    </section>
-
-    <!-- Wish board section stub -->
-    <section class="mt-8">
-      <h2 class="mb-3 text-lg font-bold text-black dark:text-white">
-        {{ $t('profile.board_section') }}
-      </h2>
-      <UCard>
-        <p class="text-body-gray dark:text-muted-gray text-sm">
-          {{ $t('profile.coming_soon') }}
-        </p>
-      </UCard>
-    </section>
   </div>
 </template>
 

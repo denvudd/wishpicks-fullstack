@@ -128,11 +128,7 @@ async def list_my_reservations(
     limit: int,
     offset: int,
 ) -> tuple[list[MyReservationResponse], int]:
-    count_stmt = (
-        select(func.count())
-        .select_from(Reservation)
-        .where(Reservation.reserver_id == user_id)
-    )
+    count_stmt = select(func.count()).select_from(Reservation).where(Reservation.reserver_id == user_id)
     total: int = (await db.execute(count_stmt)).scalar_one()
 
     stmt = (
