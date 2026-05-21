@@ -345,6 +345,7 @@
 </template>
 
 <script setup lang="ts">
+import { useLocalStorage } from '@vueuse/core'
 import { VueDraggable } from 'vue-draggable-plus'
 import { MasonryWall } from '@yeger/vue-masonry-wall'
 import type { ParseUrlData, WishItemResponse, ItemFilters } from '~/types/api'
@@ -385,7 +386,10 @@ const entryOpen = ref(false)
 const formOpen = ref(false)
 const shareOpen = ref(false)
 const filterOpen = ref(false)
-const itemsLayout = ref<ItemsLayoutMode>('grid')
+const itemsLayout = useLocalStorage<ItemsLayoutMode>(
+  computed(() => `wishlist-layout:${route.params.id}`),
+  'grid',
+)
 const editingItem = ref<WishItemResponse | null>(null)
 const sharingItem = ref<WishItemResponse | null>(null)
 const detailOpen = ref(false)
