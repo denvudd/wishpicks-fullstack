@@ -18,7 +18,10 @@ export default defineNuxtConfig({
 
   i18n: {
     defaultLocale: 'uk',
-    langDir: 'locales',
+    langDir: '../locales',
+    bundle: {
+      optimizeTranslationDirective: false,
+    },
     locales: [
       { code: 'uk', name: 'Українська', file: 'uk.json' },
       { code: 'en', name: 'English', file: 'en.json' },
