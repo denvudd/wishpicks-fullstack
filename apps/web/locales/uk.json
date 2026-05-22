@@ -229,7 +229,7 @@
       "copy_link": "Скопіювати посилання",
       "link_copied": "Посилання скопійовано",
       "invite_label": "Запрошені",
-      "invite_email_placeholder": "friend@example.com",
+      "invite_email_placeholder": "friend{'@'}example.com",
       "invite_submit": "Запросити",
       "invite_revoke": "Відкликати",
       "deleting": "Видалення…"

@@ -229,7 +229,7 @@
       "copy_link": "Copy link",
       "link_copied": "Link copied",
       "invite_label": "Invited",
-      "invite_email_placeholder": "friend@example.com",
+      "invite_email_placeholder": "friend{'@'}example.com",
       "invite_submit": "Invite",
       "invite_revoke": "Revoke",
       "deleting": "Deleting…"
