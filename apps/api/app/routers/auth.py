@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,6 +27,8 @@ from app.services.otp import (
     generate_and_store_otp,
     verify_otp,
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -179,6 +183,7 @@ async def google_callback(
     try:
         user, access_token, refresh_token = await auth_service.google_login(db, code)
     except Exception:
+        logger.exception("Google OAuth login failed")
         return error_redirect
 
     success_redirect = RedirectResponse(
