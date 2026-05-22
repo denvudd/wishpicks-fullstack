@@ -12,6 +12,7 @@ dist/
 node_modules/
 .nuxt/
 .output/
+apps/web/.netlify/
 
 # Env
 .env
