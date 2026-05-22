@@ -18,9 +18,10 @@ export default defineNuxtConfig({
 
   i18n: {
     defaultLocale: 'uk',
+    langDir: 'locales',
     locales: [
-      { code: 'uk', name: 'Українська' },
-      { code: 'en', name: 'English' },
+      { code: 'uk', name: 'Українська', file: 'uk.json' },
+      { code: 'en', name: 'English', file: 'en.json' },
     ],
     strategy: 'prefix_except_default',
     detectBrowserLanguage: false,
